@@ -126,7 +126,7 @@ body {
   right: 5px;
   transform: rotatez(180deg);
 }
-.card .figures {
+.card .figures { 
   position: absolute;
   top: 50%;
   left: 50%;
@@ -135,7 +135,7 @@ body {
 .figures {
   width: 20px;
   height: 20px;
-  background-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/441095/clovers.svg');
+  background-image: url('clovers.svg');
   background-size: 40px;
 }
 .figures.P {
