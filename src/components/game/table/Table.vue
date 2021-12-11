@@ -10,8 +10,8 @@
 </template> 
     
 <script>  
-import Card from './Card.vue'; 
-import Player from './Player.vue'; 
+import Card from '../card/Card.vue'; 
+import Player from '../player/Player.vue'; 
   
 export default {  
   name: 'Table',
@@ -83,7 +83,6 @@ export default {
 }
 </script> 
 
-<style scoped>
-  @import 'table.css';
-  /* @import 'table.js'; */
+<style scoped lang="less" >
+  @import 'table.less';
 </style>

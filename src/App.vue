@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Table from './components/game/Table.vue'
+import Table from './components/game/table/Table.vue'
 
 export default {
   name: 'App',
@@ -16,7 +16,13 @@ export default {
 </script>
 
 <style>
+html, body{
+	margin:0;
+	padding:0;
+}
+
 #app {
-  margin-top: 60px;
+	width:100vw;
+	height:100vh;
 }
 </style>
