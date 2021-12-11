@@ -4,7 +4,6 @@
         <Bank :bankValue="player.bank" :bankOnTable="player.onTable" />
         <Bet :betOnTable="player.onTable"/>
         <div class="name">{{player.name}}</div>
-        
     </div>
 </template>
 
