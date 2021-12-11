@@ -1,6 +1,8 @@
 <template>
-  <div id="app">
-    <Table/>
+  <div class="bg">
+    <div id="app">
+      <Table/>
+    </div>
   </div>
 </template>
 
