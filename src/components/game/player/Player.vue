@@ -8,16 +8,20 @@
 </template>
 
 <script>
+import { Options, Vue } from 'vue-class-component';
+
 import Bank from './bank/Bank.vue'; 
 import Bet from './bet/Bet.vue'; 
 
-export default {
-    name: 'Player',
-    components: {Bank, Bet},
-	props: {
-		player: Object
-	}
-}
+@Options({
+  props: {
+    player: Object
+  },
+  components: {
+    Bank, Bet
+  }
+})
+export default class Player extends Vue { }
 </script>
 
 <style scoped lang="less" >

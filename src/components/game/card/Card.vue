@@ -7,12 +7,14 @@
 </template>
 
 <script>
-export default {
-    name: 'Card',
-	props: {
-		card: Object
-	}
-}
+import { Options, Vue } from 'vue-class-component';
+
+@Options({
+  props: {
+    card: Object
+  }
+})
+export default class Card extends Vue {}
 </script>
 
 <style scoped lang="less" >

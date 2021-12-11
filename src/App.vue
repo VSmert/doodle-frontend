@@ -4,25 +4,18 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { Options, Vue } from 'vue-class-component';
 import Table from './components/game/table/Table.vue'
 
-export default {
-  name: 'App',
+@Options({
   components: {
-    Table
-  }
-}
+    Table,
+  },
+})
+export default class App extends Vue {}
 </script>
 
-<style>
-html, body{
-	margin:0;
-	padding:0;
-}
-
-#app {
-	width:100vw;
-	height:100vh;
-}
+<style lang="less">
+  @import 'app.less';
 </style>

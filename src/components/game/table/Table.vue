@@ -9,17 +9,24 @@
   </div>
 </template> 
     
-<script>  
+<script>
+import { Options, Vue } from 'vue-class-component';
+
 import Card from '../card/Card.vue'; 
 import Player from '../player/Player.vue'; 
-  
-export default {  
-  name: 'Table',
-  components: {Card, Player},
-  data() {
-		return {
-      player_playing: 3,
-      players: [
+
+@Options({
+  props: {
+    msg: String
+  },
+  components: {
+    Card, Player
+  }
+})
+export default class Table extends Vue {
+
+  player_playing = 3;
+  players = [
         {name:'rivy33', bank: 100, onTable: 77, hasCards: false},
         {name:'kattar', color: 'cyan', bank: 100, onTable: 20, hasCards: false},
         {name:'mikelaire', color: 'lightcoral', bank: 100, onTable: 20, hasCards: false},
@@ -28,32 +35,11 @@ export default {
         {name:'ionion', color: 'forestgreen', bank: 100, onTable: 20, hasCards: false},
         {name:'link6996', color: 'goldenrod', bank: 100, onTable: 20, hasCards: false},
         {name:'gossboganon', color: 'gold', bank: 100, onTable: 20, hasCards: false}
-      ],
-      figures : [
-        'S',
-        'H',
-        'C',
-        'D'
-      ],
-      values : [
-        '1',
-        '2',
-        '3',
-        '4',
-        '5',
-        '6',
-        '7',
-        '8',
-        '9',
-        '10',
-        'J',
-        'Q',
-        'K'
-      ]
-    }
-	},
-  computed: {
-    cards () {
+  ];
+  figures = ['S', 'H', 'C', 'D'];
+  values = [ '1', '2', '3','4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+
+  get cards () {
       let all = []
       for (let figure of this.figures) {
         for (let value of this.values) {
@@ -63,9 +49,10 @@ export default {
           })
         }
       }
-      return all
-    },
-    five_cards () {
+      return all;
+  } 
+
+  get five_cards () {
       let fives = []
       for (let i = 0; i < 5; i++) {
         let drawAgain = true;
@@ -77,8 +64,7 @@ export default {
         }
         fives.push(card)
       }
-      return fives
-    }
+      return fives;
   }
 }
 </script> 

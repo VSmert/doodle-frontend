@@ -16,16 +16,17 @@
 </template>
 
 <script>
-export default {
-    name: 'Bet',
-	props: {
-        betOnTable : Number
-	},
-    computed: {
-        // hasChipsWithDenomination() {
-        //     return (denomination) => (this.bankValue - this.bankOnTable) >= 1 / denomination;
-        // }
-    }
+import { Options, Vue } from 'vue-class-component';
+
+@Options({
+  props: {
+    betOnTable : Number
+  }
+})
+export default class Bet extends Vue { 
+    // get hasChipsWithDenomination() {
+    //         return (denomination) => (this.bankValue - this.bankOnTable) >= 1 / denomination;
+    // }
 }
 </script>
 

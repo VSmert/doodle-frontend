@@ -8,16 +8,17 @@
 </template>
 
 <script>
-export default {
-    name: 'Bank',
-	props: {
-		bankValue: Number,
-        bankOnTable: Number
-	},
-    computed: {
-        hasChipsWithDenomination() {
+import { Options, Vue } from 'vue-class-component';
+
+@Options({
+  props: {
+    bankValue: Number,
+    bankOnTable: Number
+  }
+})
+export default class Bank extends Vue { 
+    get hasChipsWithDenomination() {
             return (denomination) => (this.bankValue - this.bankOnTable) >= 1 / denomination;
-        }
     }
 }
 </script>
