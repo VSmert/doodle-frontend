@@ -37,33 +37,34 @@ export default class Table extends Vue {
   values = [ 'A', '2', '3','4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
 
   get cards () {
-      let all = []
-      for (let figure of this.figures) {
-        for (let value of this.values) {
-          all.push({
-          figure: figure,
-          value: value
-          })
-        }
-      }
+      let all : ICard[] = []
+      for (let figure of this.figures)
+        for (let value of this.values)
+          all.push({Figure: figure, Value: value})
       return all;
   } 
 
   get five_cards () {
-      let fives = []
+      let fives : ICard[] = []
       for (let i = 0; i < 5; i++) {
         let drawAgain = true;
-        let card;
+        let card : ICard = {Figure: "X", Value: "0"};
         while (drawAgain) {
-          let rand_id = parseInt(Math.random() * this.cards.length)
+          let rand_id = Math.random() * this.cards.length
           card = this.cards[rand_id];
-          drawAgain = fives.find(alreadyDrawnCard => alreadyDrawnCard.value === card.value && alreadyDrawnCard.figure === card.figure) !== undefined;
+          drawAgain = fives.find(alreadyDrawnCard => alreadyDrawnCard.Value === card.Value && alreadyDrawnCard.Figure === card.Figure) !== undefined;
         }
         fives.push(card)
       }
       return fives;
   }
 }
+
+interface ICard {
+  Figure : String,
+  Value : String
+}
+
 </script> 
 
 <style scoped lang="less" >

@@ -21,7 +21,7 @@ import ChipHelper from '../../chipStack/ChipHelper';
   }
 })
 export default class Bank extends Vue { 
-  chipCount : number;
+  chipCount = 0;
   
   // TODO: Improve this to use mod 
   get mockChips() : number {
