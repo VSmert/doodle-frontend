@@ -1,13 +1,13 @@
 <template>
     <div>
         <div class="avatar" :style="{backgroundColor: player.color || 'dodgerblue'}"></div>
-        <Bank :bankValue="player.bank" :bankOnTable="player.onTable" />
-        <Bet :betOnTable="player.onTable"/>
+        <Bank v-if="player.bank > 0" :chipCount="player.bank" :bankOnTable="player.onTable" />
+        <Bet  v-if="player.onTable > 0" :chipCount="player.onTable"/>
         <div class="name">{{player.name}}</div>
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 
 import Bank from './bank/Bank.vue'; 
@@ -24,6 +24,6 @@ import Bet from './bet/Bet.vue';
 export default class Player extends Vue { }
 </script>
 
-<style scoped lang="less" >
+<style lang="less" >
   @import 'player.less';
 </style>
