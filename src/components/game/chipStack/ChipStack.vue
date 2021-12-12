@@ -9,6 +9,7 @@ import { Options, Vue } from 'vue-class-component';
 
 import Chip from './Chip.vue'; 
 import ChipHelper from './ChipHelper';
+import IChipStack from '../../models/IChipStack';
 
 @Options({
   props: {
@@ -46,10 +47,5 @@ export default class Bet extends Vue {
             return chipCountInDenomination
         }
     }
-}
-
-interface IChipStack {
-    Denomination : number;
-    Count : number;
 }
 </script>
