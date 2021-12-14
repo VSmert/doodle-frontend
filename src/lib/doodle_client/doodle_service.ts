@@ -7,13 +7,18 @@ type MessageHandlers = { [key: string]: (index: number) => void };
 type ParameterResult = { [key: string]: Buffer };
 
 export interface Bet {
-  better: string;
-  amount: number;
-  betNumber: number | undefined;
+  //better: string;
+  //amount: number;
+  //betNumber: number | undefined;
+  tableNumber: number;
+  tableSeatNumber: number;
+  playerAgentId: string;
+  playersInitialChipCount: bigint;
+
 }
 
 export interface Events {
-  joinsNextHand: (msg: string) => void;
+  joinsNextHand: (msg: Bet) => void;
   roundStopped: () => void;
   betPlaced: (bet: Bet) => void;
   roundNumber: (roundNr: bigint) => void;
@@ -59,15 +64,16 @@ export class DoodleService {
   private handleVmMessage(message: string[]): void {
     console.log(message);
     const messageHandlers: MessageHandlers = {
-      // 'fairroulette.bet': (index) => {
-      //   const bet: Bet = {
-      //     better: message[index + 2],
-      //     amount: Number(message[index + 3]),
-      //     betNumber: Number(message[index + 4]),
-      //   };
+      'doodle.playerJoinsNextHand': (index) => {
+        const bet: Bet = {
+          tableNumber: Number(message[index + 2]),
+          tableSeatNumber: Number(message[index + 3]),
+          playerAgentId: message[index + 4],
+          playersInitialChipCount: BigInt(message[index + 4]),
+        };
 
-      //   this.emitter.emit('betPlaced', bet);
-      // },
+        this.emitter.emit('joinsNextHand', bet);
+      },
 
       // 'fairroulette.payout': (index) => {
       //   const bet: Bet = {
@@ -78,9 +84,9 @@ export class DoodleService {
 
       //   this.emitter.emit('payout', bet);
       // },
-      'doodle.table7.seat1.player.joins.nextHand': (index) => {
-        this.emitter.emit('joinsNextHand', message[index + 2] || 0);
-      },
+      // 'doodle_playerJoinsNextHand': (index) => {
+      //   this.emitter.emit('joinsNextHand', message[index + 2] || 0);
+      // },
     };
 
     const topicIndex = 3;
@@ -94,11 +100,7 @@ export class DoodleService {
   private handleIncomingMessage(message: MessageEvent<string>): void {
     const msg = message.data.toString().split('|');
 
-    if (msg.length == 0) {
-      return;
-    }
-
-    if (msg[0] != 'vmmsg') {
+    if (msg.length == 0 || !msg[0].startsWith('vmmsg')) {
       return;
     }
 

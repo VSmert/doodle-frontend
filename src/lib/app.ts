@@ -180,11 +180,11 @@ export async function sendFaucetRequest(): Promise<void> {
 }
 
 export function subscribeToDoodleEvents(): void {
-  doodleService.on('joinsNextHand', (msg) => {
+  doodleService.on('joinsNextHand', (msg : Bet) => {
     // void updateFunds();
     // // To mitigate time sync variances, we ignore the provided timestamp and use our local one.
     // round.update(($round) => ({ ...$round, active: true, startedAt: Date.now() / 1000, logs: [] }));
-    log(LogTag.SmartContract, msg);
+    log(LogTag.SmartContract, msg.playerAgentId + " " + msg.playersInitialChipCount + " " +msg.tableNumber + " " +msg.tableSeatNumber);
   });
 
 //   doodleService.on('roundStopped', () => {

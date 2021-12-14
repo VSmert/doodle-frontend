@@ -18,7 +18,7 @@ import * as doodleService from '../../../lib/app'
 
 doodleService.initialize();
 
-doodleService.joinNextHand(1,1);
+//doodleService.joinNextHand(1,1);
 
 @Options({
   props: {

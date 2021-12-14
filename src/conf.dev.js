@@ -3,7 +3,7 @@ module.exports = {
   seed: undefined,
   waspWebSocketUrl: 'ws://40.114.206.27:9090/chain/%chainId/ws',
   waspApiUrl: 'http://40.114.206.27:9090',
-  goshimmerApiUrl: 'https://api.goshimmer.sc.iota.org',
-  chainId: 'iSAhTzY52UuPR72DpH8bdJ1HCMwQfgNKDxuC2MBTNFDm',
+  goshimmerApiUrl: 'http://40.114.206.27:8080',
+  chainId: 'jpdoUaKDFVwGSgKzBJCs7wGRETW7qEHPxQY3xekSihxh',
   contractName: 'doodle'
 };
