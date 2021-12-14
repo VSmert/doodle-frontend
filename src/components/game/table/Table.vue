@@ -14,6 +14,11 @@ import { Options, Vue } from 'vue-class-component';
 
 import Card from '../card/Card.vue'; 
 import Player from '../player/Player.vue'; 
+import * as doodleService from '../../../lib/app' 
+
+doodleService.initialize();
+
+doodleService.joinNextHand(1,1);
 
 @Options({
   props: {
@@ -24,6 +29,8 @@ import Player from '../player/Player.vue';
   }
 })
 export default class Table extends Vue {
+
+
 
   player_playing = 3;
   players = [
