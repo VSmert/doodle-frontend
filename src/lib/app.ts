@@ -1,4 +1,4 @@
-import config from '../conf.dev';
+import config, { chainId } from '../conf.dev';
 import type { GameEnded, GameStarted, PlayerJoin, PlayerLeft } from './doodle_client';
 import { DoodleService } from './doodle_client';
 import { delay } from './utils';
@@ -50,6 +50,12 @@ export function log(tag: string, description: string): void {
   console.log(tag,description);
 }
 
+export async function getChainId(waspApiUrl : string): Promise<string> {
+  const response = await fetch(waspApiUrl + "/adm/chainrecords");
+  const data = await response.json();
+  return data[0].ChainID;
+}
+
 export async function initialize(): Promise<void> {
   if (initialized) {
     return;
@@ -60,6 +66,9 @@ export async function initialize(): Promise<void> {
   } else {
     seed = Seed.generate();
   }
+
+  config.chainId = await getChainId(config.waspApiUrl);
+  console.log("using chain: "+config.chainId)
   client = new BasicClient({
     GoShimmerAPIUrl: config.goshimmerApiUrl,
     WaspAPIUrl: config.waspApiUrl,
@@ -68,6 +77,8 @@ export async function initialize(): Promise<void> {
 
   doodleService = new DoodleService(client, config.chainId);
   walletService = new WalletService(client);
+
+
 
   //powManager.load('/build/pow.worker.js');
 
