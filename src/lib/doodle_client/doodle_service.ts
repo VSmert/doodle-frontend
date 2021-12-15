@@ -3,27 +3,35 @@ import { BasicClient, Buffer, Colors, IKeyPair, IOffLedger, IOnLedger, OffLedger
 import { createNanoEvents, Emitter, Unsubscribe } from 'nanoevents';
 import { HName } from '../wasp_client/crypto/hname';
 
-type MessageHandlers = { [key: string]: (index: number) => void };
+type MessageHandlers = { [key: string]: () => void };
 type ParameterResult = { [key: string]: Buffer };
 
-export interface Bet {
-  //better: string;
-  //amount: number;
-  //betNumber: number | undefined;
+export interface PlayerJoin {
   tableNumber: number;
   tableSeatNumber: number;
   playerAgentId: string;
   playersInitialChipCount: bigint;
+}
+export interface PlayerLeft {
+  tableNumber: number;
+  tableSeatNumber: number;
+}
 
+export interface GameStarted {
+  tableNumber: number;
+  paidBigBlindTableSeatNumber: number;
+  paidSmallBlindTableSeatNumber: number;
+}
+
+export interface GameEnded {
+  tableNumber: number;
 }
 
 export interface Events {
-  joinsNextHand: (msg: Bet) => void;
-  roundStopped: () => void;
-  betPlaced: (bet: Bet) => void;
-  roundNumber: (roundNr: bigint) => void;
-  payout: (bet: Bet) => void;
-  winningNumber: (number: bigint) => void;
+  playerJoinsNextHand: (msg: PlayerJoin) => void;
+  gameStarted: (msg: GameStarted) => void;
+  gameEnded: (msg: GameEnded) => void;
+  playerLeft: (msg: PlayerLeft) => void;
 }
 
 export class ViewEntrypoints {
@@ -62,38 +70,47 @@ export class DoodleService {
   }
 
   private handleVmMessage(message: string[]): void {
-    console.log(message);
     const messageHandlers: MessageHandlers = {
-      'doodle.playerJoinsNextHand': (index) => {
-        const bet: Bet = {
-          tableNumber: Number(message[index + 2]),
-          tableSeatNumber: Number(message[index + 3]),
-          playerAgentId: message[index + 4],
-          playersInitialChipCount: BigInt(message[index + 4]),
+      'doodle.playerJoinsNextHand': () => {
+        const playerJoin: PlayerJoin = {
+          playerAgentId: message[2],
+          playersInitialChipCount: BigInt(message[3]),
+          tableNumber: Number(message[4]),
+          tableSeatNumber: Number(message[5]),
         };
 
-        this.emitter.emit('joinsNextHand', bet);
+        this.emitter.emit('playerJoinsNextHand', playerJoin);
       },
+      'doodle.gameStarted': () => {
+        const gameStarted: GameStarted = {
+          paidBigBlindTableSeatNumber: Number(message[2]),
+          paidSmallBlindTableSeatNumber: Number(message[3]),
+          tableNumber: Number(message[4]),
+        };
 
-      // 'fairroulette.payout': (index) => {
-      //   const bet: Bet = {
-      //     better: message[index + 2],
-      //     amount: Number(message[index + 3]),
-      //     betNumber: undefined,
-      //   };
+        this.emitter.emit('gameStarted', gameStarted);
+      },
+      'doodle.gameEnded': () => {
+        const gameEnded: GameEnded = {
+          tableNumber: Number(message[2]),
+        };
 
-      //   this.emitter.emit('payout', bet);
-      // },
-      // 'doodle_playerJoinsNextHand': (index) => {
-      //   this.emitter.emit('joinsNextHand', message[index + 2] || 0);
-      // },
+        this.emitter.emit('gameEnded', gameEnded);
+      },
+      'doodle.playerLeft': () => {
+        const playerLeft: PlayerLeft = {
+          tableNumber: Number(message[2]),
+          tableSeatNumber: Number(message[3]),
+        };
+
+        this.emitter.emit('playerLeft', playerLeft);
+      },
     };
 
-    const topicIndex = 3;
-    const topic = message[topicIndex];
+    const topic=message[0].substr(message[0].indexOf(": ")).replace(": ","");
 
     if (typeof messageHandlers[topic] != 'undefined') {
-      messageHandlers[topic](topicIndex);
+      messageHandlers[topic]();
     }
   }
 
@@ -165,7 +182,6 @@ export class DoodleService {
     const resultMap: ParameterResult = {};
     if (response.Items) {
       for (const item of response.Items) {
-          console.log("response: " + item.Key, item.Value);
         const key = Buffer.from(item.Key, 'base64').toString();
         const value = Buffer.from(item.Value, 'base64');
 
@@ -176,17 +192,6 @@ export class DoodleService {
     return resultMap;
   }
 
-  // public async getRoundStatus(): Promise<number> {
-  //   const response = await this.callView(ViewEntrypoints.roundStatus);
-  //   const roundStatus = response[ViewEntrypoints.roundStatus];
-
-  //   if (!roundStatus) {
-  //     throw Error(`Failed to get ${ViewEntrypoints.roundStatus}`);
-  //   }
-
-  //   return roundStatus.readUInt16LE(0);
-  // }
-
   public async getTableCount(): Promise<number> {
     const response = await this.callView(ViewEntrypoints.getTableCount);
     const tableCount = response["tableCount"];
@@ -196,50 +201,6 @@ export class DoodleService {
     }
     return tableCount.readInt32LE(0);
   }
-
-  // public async getRoundNumber(): Promise<bigint> {
-  //   const response = await this.callView(ViewEntrypoints.roundNumber);
-  //   const roundNumber = response[ViewEntrypoints.roundNumber];
-
-  //   if (!roundNumber) {
-  //     throw Error(`Failed to get ${ViewEntrypoints.roundNumber}`);
-  //   }
-
-  //   return roundNumber.readBigUInt64LE(0);
-  // }
-
-  // public async getRoundStartedAt(): Promise<number> {
-  //   const response = await this.callView(ViewEntrypoints.roundStartedAt);
-  //   const roundStartedAt = response[ViewEntrypoints.roundStartedAt];
-
-  //   if (!roundStartedAt) {
-  //     throw Error(`Failed to get ${ViewEntrypoints.roundStartedAt}`);
-  //   }
-
-  //   return roundStartedAt.readInt32LE(0);
-  // }
-
-  // public async getLastWinningNumber(): Promise<bigint> {
-  //   const response = await this.callView(ViewEntrypoints.lastWinningNumber);
-  //   const lastWinningNumber = response[ViewEntrypoints.lastWinningNumber];
-
-  //   if (!lastWinningNumber) {
-  //     throw Error(`Failed to get ${ViewEntrypoints.lastWinningNumber}`);
-  //   }
-
-  //   return lastWinningNumber.readBigUInt64LE(0);
-  // }
-
-  // public async getRoundTimeLeft(): Promise<number> {
-  //   const response = await this.callView(ViewEntrypoints.roundTimeLeft);
-  //   const roundTimeLeft = response[ViewEntrypoints.roundTimeLeft];
-
-  //   if (!roundTimeLeft) {
-  //     throw Error(`Failed to get ${ViewEntrypoints.roundTimeLeft}`);
-  //   }
-
-  //   return roundTimeLeft.readInt32LE(0);
-  // }
 
   public on<E extends keyof Events>(event: E, callback: Events[E]): Unsubscribe {
     return this.emitter.on(event, callback);

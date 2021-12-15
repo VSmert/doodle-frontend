@@ -4,6 +4,6 @@ module.exports = {
   waspWebSocketUrl: 'ws://40.114.206.27:9090/chain/%chainId/ws',
   waspApiUrl: 'http://40.114.206.27:9090',
   goshimmerApiUrl: 'http://40.114.206.27:8080',
-  chainId: 'jpdoUaKDFVwGSgKzBJCs7wGRETW7qEHPxQY3xekSihxh',
+  chainId: 'rK5k1FKgSAMAenzqJmAjoub3k1FSLADuiir2LmzdepuB',
   contractName: 'doodle'
 };

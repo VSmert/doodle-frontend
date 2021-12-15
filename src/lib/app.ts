@@ -1,5 +1,5 @@
 import config from '../conf.dev';
-import type { Bet } from './doodle_client';
+import type { GameEnded, GameStarted, PlayerJoin, PlayerLeft } from './doodle_client';
 import { DoodleService } from './doodle_client';
 import { delay } from './utils';
 import { BasicClient, Colors, PoWWorkerManager, WalletService, Buffer, IKeyPair } from './wasp_client';
@@ -100,8 +100,6 @@ export function setAddress(index: number): void {
 }
 
 export function createNewAddress(): void {
-  // addressesHistory.update((_history) => [..._history, get(address)]);
-  // addressIndex.update(($addressIndex) => $addressIndex + 1);
   setAddress(0);
 }
 
@@ -180,87 +178,18 @@ export async function sendFaucetRequest(): Promise<void> {
 }
 
 export function subscribeToDoodleEvents(): void {
-  doodleService.on('joinsNextHand', (msg : Bet) => {
-    // void updateFunds();
-    // // To mitigate time sync variances, we ignore the provided timestamp and use our local one.
-    // round.update(($round) => ({ ...$round, active: true, startedAt: Date.now() / 1000, logs: [] }));
-    log(LogTag.SmartContract, msg.playerAgentId + " " + msg.playersInitialChipCount + " " +msg.tableNumber + " " +msg.tableSeatNumber);
+  doodleService.on('playerJoinsNextHand', (msg : PlayerJoin) => {
+    log(LogTag.SmartContract, "playerJoinsNextHand: " + msg.playerAgentId + " " + msg.playersInitialChipCount + " " +msg.tableNumber + " " +msg.tableSeatNumber);
   });
-
-//   doodleService.on('roundStopped', () => {
-//     void updateFunds();
-//     if (get(placingBet) || get(showBettingSystem)) {
-//       showNotification({
-//         type: Notification.Info,
-//         message: 'The current round just ended. Your bet will be placed in the next round. ',
-//         timeout: DEFAULT_AUTODISMISS_TOAST_TIME,
-//       });
-//     } else if (get(round).betPlaced && !get(isAWinnerPlayer)) {
-//       showNotification({
-//         type: Notification.Lose,
-//         message: 'Sorry, you lost this round. Try again!',
-//         timeout: DEFAULT_AUTODISMISS_TOAST_TIME,
-//       });
-//     }
-//     const winners = get(round).winners;
-
-//     if (winners > 0) {
-//       log(LogTag.SmartContract, `Distributed the iotas to  ${winners === 1 ? '1 winner.' : `${winners} winners.`}`);
-//     }
-
-//     resetRound();
-
-//     log(LogTag.SmartContract, 'Round Ended. Current bets cleared');
-//   });
-
-//   doodleService.on('roundNumber', (roundNumber: bigint) => {
-//     round.update(($round) => ({ ...$round, number: roundNumber }));
-//     log(LogTag.SmartContract, `Round number: ${roundNumber}`);
-//   });
-
-//   doodleService.on('winningNumber', (winningNumber: bigint) => {
-//     round.update(($round) => ({ ...$round, winningNumber }));
-//     showWinningNumber.set(true);
-
-//     log(LogTag.SmartContract, 'The winning number was decided');
-//     log(LogTag.SmartContract, `${winningNumber} is the winning number!`);
-//   });
-
-//   doodleService.on('betPlaced', (bet: Bet) => {
-//     placingBet.set(false);
-//     round.update(($round) => {
-//       if (bet.better === get(address)) {
-//         $round.betPlaced = true;
-//         $round.betAmount = 0n;
-//         log(LogTag.SmartContract, 'Your number and betting amounts are saved');
-//         void updateFunds();
-//       }
-//       $round.players.push({
-//         address: bet.better,
-//         bet: bet.amount,
-//         number: bet.betNumber,
-//       });
-//       return $round;
-//     });
-//   });
-
-//   doodleService.on('payout', (bet: Bet) => {
-//     round.update(($round) => {
-//       $round.winners += 1;
-//       return $round;
-//     });
-
-//     if (bet.better === get(address) || get(addressesHistory).includes(bet.better)) {
-//       showNotification({
-//         type: Notification.Win,
-//         message: `Congratulations! You just won the round. You received ${bet.amount} iotas.`,
-//         timeout: DEFAULT_AUTODISMISS_TOAST_TIME,
-//       });
-//       showWinnerAnimation();
-//       void updateFunds();
-//     }
-//     log(LogTag.SmartContract, `Payout for ${bet.better} with ${bet.amount}i`);
-//   });
+  doodleService.on('gameStarted', (msg : GameStarted) => {
+    log(LogTag.SmartContract, "gameStarted: " +  msg.paidBigBlindTableSeatNumber + " " + msg.paidSmallBlindTableSeatNumber + " " +msg.tableNumber);
+  });
+  doodleService.on('gameEnded', (msg : GameEnded) => {
+    log(LogTag.SmartContract,  "gameEnded: " + msg.tableNumber);
+  });
+  doodleService.on('playerLeft', (msg : PlayerLeft) => {
+    log(LogTag.SmartContract,  "playerLeft: " + msg.tableNumber + " " + msg.tableSeatNumber);
+  });
  }
 
 export function isWealthy(balance: bigint): boolean {
