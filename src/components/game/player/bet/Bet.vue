@@ -1,7 +1,7 @@
 <template>
     <div class="bet">
         <div class="bet-value">{{ chipCount }}</div>
-        <ChipStack :totalChipCount="chipCount"/>
+        <ChipStack :totalChipCount="chipCount" />
     </div>
 </template>
 
@@ -11,19 +11,19 @@ import { Options, Vue } from 'vue-class-component';
 import ChipStack from '../../chipStack/ChipStack.vue';
 
 @Options({
-  props: {
-    chipCount : Number
-  },
-  components : { ChipStack }
+    props: {
+        chipCount: Number,
+    },
+    components: { ChipStack },
 })
-export default class Bet extends Vue { }
+export default class Bet extends Vue {}
 </script>
 
-<style scoped lang="less" >
-  @import '../../table/currency.less';
-  @import 'bet.less';
+<style scoped lang="less">
+@import '../../table/currency.less';
+@import 'bet.less';
 </style>
 
 <style lang="less">
-  @import 'betChipsPositions.less';
+@import 'betChipsPositions.less';
 </style>

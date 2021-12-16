@@ -1,4 +1,4 @@
 export default interface IChipStack {
-    Denomination : number;
-    Count : number;
+    Denomination: number;
+    Count: number;
 }
