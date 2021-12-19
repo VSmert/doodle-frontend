@@ -18,6 +18,9 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 
+import * as doodleClient from '../../../lib/doodleclient/doodle'
+doodleClient.Initialize()
+
 import ICard from '../../models/ICard';
 import Card from '../card/Card.vue';
 import Player from '../player/Player.vue';

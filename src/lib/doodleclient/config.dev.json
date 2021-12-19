@@ -1,0 +1,6 @@
+{
+    "seed": null,
+    "waspWebSocketUrl": "ws://wasp.shawkyz.info:9090/chain/%chainId/ws",
+    "waspApiUrl": "http://wasp.shawkyz.info:9090",
+    "goShimmerApiUrl": "http://wasp.shawkyz.info:8080"
+}
