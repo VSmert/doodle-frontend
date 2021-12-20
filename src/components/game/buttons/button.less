@@ -1,0 +1,62 @@
+.button {
+    float: left;
+    border-radius: 10%;
+
+    &.is-pressed {
+        margin-top: 0.3%;
+    }
+
+    .body {
+        width: 11vw;
+        height: 60px;
+        border-radius: 10%;
+        position: relative;
+        box-shadow: 2px 10px 0px rgba(0, 0, 0, 0.4);
+        z-index: 20;
+        &:after {
+            content: '';
+            width: 10.5vw;
+            height: 50px;
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.1);
+            top: 50%;
+            left: 50%;
+            transform: translatex(-50%) translatey(-50%);
+            border-radius: 10%;
+            box-shadow: 0px 5px 0px rgba(0, 0, 0, 0.2);
+        }
+    }
+    .text {
+        font-family: 'Houschka Rounded';
+        text-align: center;
+        color: #d5e2d5;
+        padding: 20px 0;
+        margin-left: auto;
+        margin-right: auto;
+        box-sizing: border-box;
+        font-size: 20px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    &.red {
+        background-color: rgb(196, 92, 92);
+        &.is-pressed {
+            background-color: rgb(216, 92, 92) !important;
+        }
+    }
+
+    &.green {
+        background-color: rgb(84, 158, 55);
+        &.is-pressed {
+            background-color: rgb(84, 178, 55) !important;
+        }
+    }
+
+    &.purple {
+        background-color: rgb(91, 85, 151);
+        &.is-pressed {
+            background-color: rgb(91, 85, 171) !important;
+        }
+    }
+}
