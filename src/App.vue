@@ -1,33 +1,28 @@
 <template>
-    <div class="bg" @contextmenu.prevent>
-        <div id="app">
-            <Table />
-            <ButtonGroup class="left">
-                <Button class="purple">Request play IOTA</Button>
-            </ButtonGroup>
-            <ButtonGroup class="right">
-                <Button class="red">Leave table</Button>
-                <Button class="green">Join next hand</Button>
-                <Button class="green">Join next big blind</Button>
-            </ButtonGroup>
-        </div>
+    <div v-if="isDevelopment">
+        <Game />
     </div>
+    <div v-else>
+        <Game @contextmenu.prevent/>
+    </div>
+
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Table from './components/game/table/Table.vue';
-import ButtonGroup from './components/game/buttons/ButtonGroup.vue';
-import Button from './components/game/buttons/Button.vue';
+import Game from './components/game/Game.vue';
 
 @Options({
     components: {
-        Table,
-        ButtonGroup,
-        Button
+        Game
     },
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+    isDevelopment = false;
+    mounted() {
+        this.isDevelopment = process.env.NODE_ENV === "development"
+    }
+}
 </script>
 
 <style lang="less">
