@@ -28,7 +28,7 @@ export async function Initialize(): Promise<void> {
     Log(LogTag.SmartContract, 'table count: ' + tableCount);
 
     initialized = true;
-    Log(LogTag.Site, 'Initialization complete');
+    Log(LogTag.Site, 'Initialization complete!');
 }
 
 export function onDoodleGameEnded(event: events.EventGameEnded): void {
