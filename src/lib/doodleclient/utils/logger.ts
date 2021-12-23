@@ -6,5 +6,5 @@ export enum LogTag {
 }
 
 export function Log(tag: LogTag, description: string): void {
-    console.log(tag.toString(), description);
+    console.log(`| ${tag.toString()} | - ${description}`);
 }
