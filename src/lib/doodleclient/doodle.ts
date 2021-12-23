@@ -3,7 +3,6 @@
 
 import * as events from './events';
 import * as service from './service';
-import * as waspClient from './wasp_client';
 
 import { LogTag, Log } from './utils/logger';
 import * as waspHelper from './utils/wasp_helper';
@@ -11,7 +10,7 @@ import { Configuration } from './utils/configuration';
 import configJson from './config.dev.json';
 
 let doodleService: service.DoodleService;
-let walletService: waspClient.WalletService;
+let walletService: waspHelper.WalletService;
 
 let initialized: boolean = false;
 export async function Initialize(): Promise<void> {
@@ -22,7 +21,7 @@ export async function Initialize(): Promise<void> {
     Log(LogTag.Site, 'Configuration loaded: ' + config);
 
     const basicClient = waspHelper.GetBasicClient(config);
-    walletService = new waspClient.WalletService(basicClient);
+    walletService = new waspHelper.WalletService(basicClient);
     Log(LogTag.Site, 'Wallet service initialized');
 
     config.chainId = await waspHelper.GetChainId(config);

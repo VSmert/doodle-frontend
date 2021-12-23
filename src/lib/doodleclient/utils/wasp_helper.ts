@@ -1,5 +1,9 @@
 import { BasicClientConfiguration, BasicClient } from '../wasp_client';
+
 import { Configuration } from './configuration';
+
+export * as waspClient from '../wasp_client';
+export { WalletService } from '../wasp_client';
 
 export function GetBasicClient(configuration: Configuration): BasicClient {
     const basicClientConfiguration = getBasicClientConfiguration(configuration);
