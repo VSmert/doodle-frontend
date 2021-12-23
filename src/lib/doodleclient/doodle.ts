@@ -3,6 +3,7 @@
 
 import * as events from './events';
 import * as service from './service';
+import * as waspClient from './wasp_client';
 
 import { LogTag, Log } from './utils/logger';
 import * as waspHelper from './utils/wasp_helper';
@@ -10,6 +11,7 @@ import { Configuration } from './utils/configuration';
 import configJson from './config.dev.json';
 
 let doodleService: service.DoodleService;
+let walletService: waspClient.WalletService;
 
 let initialized: boolean = false;
 export async function Initialize(): Promise<void> {
@@ -19,16 +21,19 @@ export async function Initialize(): Promise<void> {
     const config: Configuration = new Configuration(configJson);
     Log(LogTag.Site, 'Configuration loaded: ' + config);
 
+    const basicClient = waspHelper.GetBasicClient(config);
+    walletService = new waspClient.WalletService(basicClient);
+    Log(LogTag.Site, 'Wallet service initialized');
+
     config.chainId = await waspHelper.GetChainId(config);
     Log(LogTag.Site, 'Using chain ' + config.chainId);
 
-    const basicClient = waspHelper.GetBasicClient(config);
     doodleService = new service.DoodleService(basicClient, config.chainId);
     const tableCount = (await doodleService.getTableCount().call()).tableCount();
     Log(LogTag.SmartContract, 'table count: ' + tableCount);
 
     initialized = true;
-    Log(LogTag.Site, 'Initialization complete!');
+    Log(LogTag.Site, 'Initialization complete');
 }
 
 export function onDoodleGameEnded(event: events.EventGameEnded): void {

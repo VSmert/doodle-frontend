@@ -1,12 +1,11 @@
 // Copyright 2020 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-import * as wasp from '../../wasp_client';
-import { Buffer, Colors, IOffLedger, OffLedger } from '../../wasp_client';
+import { Buffer, Colors, IOffLedger, OffLedger, BasicClient } from '../../wasp_client';
 import * as client from './index';
 import configJson from '../../config.dev.json';
 
-export type ServiceClient = wasp.BasicClient;
+export type ServiceClient = BasicClient;
 
 export type EventHandlers = { [key: string]: (message: string[]) => void };
 type ParameterResult = { [key: string]: Buffer };
@@ -29,7 +28,6 @@ export class ViewResults {
 
 export class Service {
     private client: ServiceClient;
-    private walletService: wasp.WalletService;
     private webSocket: WebSocket;
     private eventHandlers: EventHandlers;
     public chainId: string;
@@ -40,7 +38,6 @@ export class Service {
         this.chainId = chainId;
         this.scHname = scHname;
         this.eventHandlers = eventHandlers;
-        this.walletService = new wasp.WalletService(client);
         this.webSocket = this.connectWebSocket();
     }
 
@@ -75,8 +72,8 @@ export class Service {
         const response = await this.client.callView(this.chainId, this.scHname.toString(16), viewName);
         if (response.Items) {
             for (const item of response.Items) {
-                const key = wasp.Buffer.from(item.Key, 'base64').toString();
-                const value = wasp.Buffer.from(item.Value, 'base64');
+                const key = Buffer.from(item.Key, 'base64').toString();
+                const value = Buffer.from(item.Value, 'base64');
                 results.res.set(key, value);
             }
         }
