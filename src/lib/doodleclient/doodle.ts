@@ -11,14 +11,19 @@ import configJson from './config.dev.json';
 
 let doodleService: service.DoodleService;
 let walletService: waspHelper.WalletService;
+export let userWalletPrivKey: string;
+export let userWalletAddress: string;
 
 let initialized: boolean = false;
-export async function Initialize(): Promise<void> {
+export async function Initialize(userBase58PrivateKey?: string, userAddress?: string): Promise<void> {
     if (initialized) return;
     Log(LogTag.Site, 'Initializing');
 
     const config: Configuration = new Configuration(configJson);
     Log(LogTag.Site, 'Configuration loaded: ' + config);
+
+    generateKeyAndAddress(userBase58PrivateKey, userAddress);
+    Log(LogTag.Site, `Using private key '${userWalletPrivKey}' Address: '${userWalletAddress}'`);
 
     const basicClient = waspHelper.GetBasicClient(config);
     walletService = new waspHelper.WalletService(basicClient);
@@ -33,6 +38,19 @@ export async function Initialize(): Promise<void> {
 
     initialized = true;
     Log(LogTag.Site, 'Initialization complete');
+}
+
+function generateKeyAndAddress(userBase58PrivateKey: string | undefined, userAddress: string | undefined) {
+    if (userBase58PrivateKey === undefined || userAddress == undefined) {
+        const [generatedUserPrivateKey, generatedUserAddress] = waspHelper.generatePrivateKeyAndAddress();
+        userWalletPrivKey = generatedUserPrivateKey;
+        userWalletAddress = generatedUserAddress;
+        Log(LogTag.Site, `Key pair generated.`);
+    } else {
+        // TODO: validate private key and address passed by the user
+        userWalletPrivKey = userBase58PrivateKey;
+        userWalletAddress = userAddress;
+    }
 }
 
 export function onDoodleGameEnded(event: events.EventGameEnded): void {
