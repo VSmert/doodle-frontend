@@ -33,20 +33,25 @@ import Player from '../player/Player.vue';
 })
 export default class Table extends Vue {
     async mounted() {
-        await this.loadUserPrivateKeyAndAddress();
+        await this.loadUserKeyPairAndAddress();
     }
 
-    private async loadUserPrivateKeyAndAddress(){
+    private async loadUserKeyPairAndAddress(): Promise<void> {
         const userBase58PrivateKeyStorage = useStorage('user-base58-private-key', "")
-        let userBase58PrivateKey = userBase58PrivateKeyStorage.value;
+        const userBase58PublicKeyStorage = useStorage('user-base58-public-key', "")
         const userAddressStorage = useStorage('user-address', "");
-        let userAddress =userAddressStorage.value;
-        const arePrivatekeyAndAddressDefined = userBase58PrivateKey !== "" && userAddress !== "";
 
-        const success = await doodleClient.Initialize(userBase58PrivateKey, userAddress)
-        if(success && !arePrivatekeyAndAddressDefined)
-        {
+        let userBase58PrivateKey = userBase58PrivateKeyStorage.value;
+        let userBase58PublicKey = userBase58PublicKeyStorage.value;
+        let userAddress = userAddressStorage.value;
+
+        const success = await doodleClient.Initialize(userBase58PrivateKey, userBase58PublicKey, userAddress)
+        if(!success) return;
+
+        const arePrivatekeyAndAddressDefined = userBase58PrivateKey !== "" && userBase58PublicKey !== "" && userAddress !== "";
+        if(!arePrivatekeyAndAddressDefined) {
             userBase58PrivateKeyStorage.value = doodleClient.userWalletPrivKey;
+            userBase58PublicKeyStorage.value = doodleClient.userWalletPubKey;
             userAddressStorage.value = doodleClient.userWalletAddress;
         }
     }

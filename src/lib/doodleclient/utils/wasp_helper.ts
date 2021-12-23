@@ -27,11 +27,12 @@ export async function GetChainId(configuration: Configuration): Promise<string> 
     return data[0].ChainID;
 }
 
-export function generatePrivateKeyAndAddress(): [privateKey: string, address: string] {
+export function generatePrivateKeyAndAddress(): [privateKey: string, publicKey: string, address: string] {
     const seedBuffer = waspClientSeed.generate();
     const addressIndex = 0;
-    const { secretKey } = waspClientSeed.generateKeyPair(seedBuffer, addressIndex);
+    const { secretKey, publicKey } = waspClientSeed.generateKeyPair(seedBuffer, addressIndex);
     const generatedAddress = waspClientSeed.generateAddress(seedBuffer, addressIndex);
     const base58PrivateKey = Base58.encode(secretKey);
-    return [base58PrivateKey, generatedAddress];
+    const base58PuplicKey = Base58.encode(publicKey);
+    return [base58PrivateKey, base58PuplicKey, generatedAddress];
 }

@@ -12,17 +12,22 @@ import configJson from './config.dev.json';
 let doodleService: service.DoodleService;
 let walletService: waspHelper.WalletService;
 export let userWalletPrivKey: string;
+export let userWalletPubKey: string;
 export let userWalletAddress: string;
 
 let initialized: boolean;
-export async function Initialize(userBase58PrivateKey: string, userAddress: string): Promise<boolean> {
+export async function Initialize(
+    userBase58PrivateKey: string,
+    userBase58PublicKey: string,
+    userAddress: string
+): Promise<boolean> {
     if (initialized) return initialized;
     Log(LogTag.Site, 'Initializing');
 
     const config: Configuration = new Configuration(configJson);
     Log(LogTag.Site, 'Configuration loaded: ' + config);
 
-    generateKeyAndAddress(userBase58PrivateKey, userAddress);
+    generateKeyPairAndAddress(userBase58PrivateKey, userBase58PublicKey, userAddress);
     Log(LogTag.Site, `Using private key '${userWalletPrivKey}' Address: '${userWalletAddress}'`);
 
     const basicClient = waspHelper.GetBasicClient(config);
@@ -42,15 +47,18 @@ export async function Initialize(userBase58PrivateKey: string, userAddress: stri
     return true;
 }
 
-function generateKeyAndAddress(userBase58PrivateKey: string, userAddress: string) {
+function generateKeyPairAndAddress(userBase58PrivateKey: string, userBase58PublicKey: string, userAddress: string) {
     if (userBase58PrivateKey === '' || userAddress === '') {
-        const [generatedUserPrivateKey, generatedUserAddress] = waspHelper.generatePrivateKeyAndAddress();
+        const [generatedUserPrivateKey, generatedUserPublicKey, generatedUserAddress] =
+            waspHelper.generatePrivateKeyAndAddress();
         userWalletPrivKey = generatedUserPrivateKey;
+        userWalletPubKey = generatedUserPublicKey;
         userWalletAddress = generatedUserAddress;
         Log(LogTag.Site, `Key pair generated.`);
     } else {
         // TODO: validate private key and address passed by the user
         userWalletPrivKey = userBase58PrivateKey;
+        userWalletPubKey = userBase58PublicKey;
         userWalletAddress = userAddress;
     }
 }
