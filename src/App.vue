@@ -1,11 +1,5 @@
 <template>
-    <div v-if="isDevelopment">
-        <Game />
-    </div>
-    <div v-else>
-        <Game @contextmenu.prevent/>
-    </div>
-
+    <Game @contextmenu.prevent />
 </template>
 
 <script lang="ts">
