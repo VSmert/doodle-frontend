@@ -14,9 +14,9 @@ let walletService: waspHelper.WalletService;
 export let userWalletPrivKey: string;
 export let userWalletAddress: string;
 
-let initialized: boolean = false;
-export async function Initialize(userBase58PrivateKey?: string, userAddress?: string): Promise<void> {
-    if (initialized) return;
+let initialized: boolean;
+export async function Initialize(userBase58PrivateKey: string, userAddress: string): Promise<boolean> {
+    if (initialized) return initialized;
     Log(LogTag.Site, 'Initializing');
 
     const config: Configuration = new Configuration(configJson);
@@ -38,10 +38,12 @@ export async function Initialize(userBase58PrivateKey?: string, userAddress?: st
 
     initialized = true;
     Log(LogTag.Site, 'Initialization complete');
+
+    return true;
 }
 
-function generateKeyAndAddress(userBase58PrivateKey: string | undefined, userAddress: string | undefined) {
-    if (userBase58PrivateKey === undefined || userAddress == undefined) {
+function generateKeyAndAddress(userBase58PrivateKey: string, userAddress: string) {
+    if (userBase58PrivateKey === '' || userAddress === '') {
         const [generatedUserPrivateKey, generatedUserAddress] = waspHelper.generatePrivateKeyAndAddress();
         userWalletPrivKey = generatedUserPrivateKey;
         userWalletAddress = generatedUserAddress;
