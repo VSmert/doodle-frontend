@@ -11,6 +11,7 @@ import configJson from './config.dev.json';
 
 let doodleService: service.DoodleService;
 let walletService: waspHelper.WalletService;
+
 export let userWalletPrivKey: string;
 export let userWalletPubKey: string;
 export let userWalletAddress: string;
@@ -64,6 +65,11 @@ function generateKeyPairAndAddress(userBase58PrivateKey: string, userBase58Publi
         userWalletPubKey = userBase58PublicKey;
         userWalletAddress = userAddress;
     }
+}
+
+export async function getIOTABalance(address: string): Promise<bigint> {
+    const iotaBalance = await walletService.getFunds(address, waspHelper.Colors.IOTA_COLOR_STRING);
+    return iotaBalance;
 }
 
 export function onDoodleGameEnded(event: events.EventGameEnded): void {

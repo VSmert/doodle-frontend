@@ -5,7 +5,7 @@ import { Seed as waspClientSeed } from '../wasp_client/crypto/seed';
 import { Configuration } from './configuration';
 
 export * as waspClient from '../wasp_client';
-export { WalletService } from '../wasp_client';
+export { WalletService, Colors } from '../wasp_client';
 
 export function GetBasicClient(configuration: Configuration): BasicClient {
     const basicClientConfiguration = getBasicClientConfiguration(configuration);
