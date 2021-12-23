@@ -28,7 +28,10 @@ export async function Initialize(
     Log(LogTag.Site, 'Configuration loaded: ' + config);
 
     generateKeyPairAndAddress(userBase58PrivateKey, userBase58PublicKey, userAddress);
-    Log(LogTag.Site, `Using private key '${userWalletPrivKey}' Address: '${userWalletAddress}'`);
+    Log(
+        LogTag.Site,
+        `Using private key '${userWalletPrivKey}' public key '${userBase58PublicKey}' address '${userWalletAddress}'`
+    );
 
     const basicClient = waspHelper.GetBasicClient(config);
     walletService = new waspHelper.WalletService(basicClient);

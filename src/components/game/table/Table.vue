@@ -17,9 +17,6 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import { useStorage } from '@vueuse/core'
-
-import * as doodleClient from '../../../lib/doodleclient/doodle'
 
 import ICard from '../../models/ICard';
 import Card from '../card/Card.vue';
@@ -32,30 +29,6 @@ import Player from '../player/Player.vue';
     },
 })
 export default class Table extends Vue {
-    async mounted() {
-        await this.loadUserKeyPairAndAddress();
-    }
-
-    private async loadUserKeyPairAndAddress(): Promise<void> {
-        const userBase58PrivateKeyStorage = useStorage('user-base58-private-key', "")
-        const userBase58PublicKeyStorage = useStorage('user-base58-public-key', "")
-        const userAddressStorage = useStorage('user-address', "");
-
-        let userBase58PrivateKey = userBase58PrivateKeyStorage.value;
-        let userBase58PublicKey = userBase58PublicKeyStorage.value;
-        let userAddress = userAddressStorage.value;
-
-        const success = await doodleClient.Initialize(userBase58PrivateKey, userBase58PublicKey, userAddress)
-        if(!success) return;
-
-        const arePrivatekeyAndAddressDefined = userBase58PrivateKey !== "" && userBase58PublicKey !== "" && userAddress !== "";
-        if(!arePrivatekeyAndAddressDefined) {
-            userBase58PrivateKeyStorage.value = doodleClient.userWalletPrivKey;
-            userBase58PublicKeyStorage.value = doodleClient.userWalletPubKey;
-            userAddressStorage.value = doodleClient.userWalletAddress;
-        }
-    }
-
     player_playing = 3;
     players = [
         { name: 'rivy33', bank: 16, onTable: 65, hasCards: false },
