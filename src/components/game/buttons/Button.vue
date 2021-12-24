@@ -10,23 +10,19 @@
 import { Options, Vue } from 'vue-class-component';
 
 @Options({
-    components: {
-    },
     props: {
-        isPressable: Boolean
-    },
-    watch: {
-        isPressable(value) {
-        this._isPressable = value;
+        isPressable: {
+            type: Boolean,
+            default: true
         }
     }
 })
 export default class Button extends Vue {
-    private _isPressable = false;
+    isPressable! : boolean;
     isPressed = false;
 
     setPressed(){
-        if(this._isPressable)
+        if(this.isPressable)
             this.isPressed = true;
     }
 

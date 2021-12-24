@@ -3,9 +3,9 @@
         <div id="game">
             <Table />
             <ButtonGroup class="left">
-                <Button class="purple" :isPressable="userData.balance > 0">
-                    <div v-if="userData.balance > 0">Balance: {{ userData.balance }} IOTA</div>
-                    <div v-else>Request play IOTA</div>
+                <Button class="purple" :isPressable="userData.balance == 0">
+                    <div v-if="userData.balance == 0">Request play IOTA</div>
+                    <div v-else>Balance: {{ userData.balance }} IOTA</div>
                 </Button>
             </ButtonGroup>
             <ButtonGroup class="right">
