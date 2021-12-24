@@ -51,7 +51,6 @@ export class BasicClient {
             'faucet',
             faucetRequest
         );
-
         return response;
     }
 
