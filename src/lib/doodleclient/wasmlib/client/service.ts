@@ -28,7 +28,6 @@ export class ViewResults {
 
 export class Service {
     private client: ServiceClient;
-    private webSocket: WebSocket;
     private eventHandlers: EventHandlers;
     public chainId: string;
     public scHname: client.Hname;
@@ -38,17 +37,18 @@ export class Service {
         this.chainId = chainId;
         this.scHname = scHname;
         this.eventHandlers = eventHandlers;
-        this.webSocket = this.connectWebSocket();
+        this.connectWebSocket();
     }
 
-    private connectWebSocket(): WebSocket {
+    private connectWebSocket(): void {
+        if (this.chainId == '') return;
+
         const webSocketUrl = configJson.waspWebSocketUrl.replace('%chainId', this.chainId);
         // eslint-disable-next-line no-console
         console.log(`Connecting to Websocket => ${webSocketUrl}`);
         const webSocket = new WebSocket(webSocketUrl);
         webSocket.addEventListener('message', (x) => this.handleIncomingMessage(x));
         webSocket.addEventListener('close', () => setTimeout(this.connectWebSocket.bind(this), 1000));
-        return webSocket;
     }
 
     private handleIncomingMessage(message: MessageEvent<string>): void {
