@@ -11,6 +11,7 @@ import configJson from './config.dev.json';
 
 let doodleService: service.DoodleService;
 let walletService: waspHelper.WalletService;
+let basicClient: waspHelper.waspClient.BasicClient;
 
 export let userWalletPrivKey: string;
 export let userWalletPubKey: string;
@@ -34,7 +35,7 @@ export async function Initialize(
         `Using private key '${userWalletPrivKey}' public key '${userBase58PublicKey}' address '${userWalletAddress}'`
     );
 
-    const basicClient = waspHelper.GetBasicClient(config);
+    basicClient = waspHelper.GetBasicClient(config);
     walletService = new waspHelper.WalletService(basicClient);
     Log(LogTag.Site, 'Wallet service initialized');
 
