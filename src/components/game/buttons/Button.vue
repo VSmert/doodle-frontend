@@ -12,11 +12,22 @@ import { Options, Vue } from 'vue-class-component';
 @Options({
     components: {
     },
+    props: {
+        isPressable: Boolean
+    },
+    watch: {
+        isPressable(value) {
+        this._isPressable = value;
+        }
+    }
 })
 export default class Button extends Vue {
+    private _isPressable = false;
     isPressed = false;
+
     setPressed(){
-        this.isPressed = true;
+        if(this._isPressable)
+            this.isPressed = true;
     }
 
     reset(){

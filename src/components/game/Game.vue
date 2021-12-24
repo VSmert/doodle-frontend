@@ -3,7 +3,10 @@
         <div id="game">
             <Table />
             <ButtonGroup class="left">
-                <Button class="purple">Request play IOTA</Button>
+                <Button class="purple" :isPressable="userData.balance > 0">
+                    <div v-if="userData.balance > 0">Balance: {{ userData.balance }} IOTA</div>
+                    <div v-else>Request play IOTA</div>
+                </Button>
             </ButtonGroup>
             <ButtonGroup class="right">
                 <Button class="red">Leave table</Button>
@@ -32,11 +35,13 @@ import Button from './buttons/Button.vue';
     },
 })
 export default class Game extends Vue {
+    userData : UserData = new UserData("", "", "", 0n);
+
     async mounted() {
-        await this.loadUserKeyPairAndAddress();
+        this.userData = await this.loadUserKeyPairAndAddress();
     }
 
-    private async loadUserKeyPairAndAddress(): Promise<void> {
+    private async loadUserKeyPairAndAddress(): Promise<UserData> {
         const userBase58PrivateKeyStorage = useStorage('user-base58-private-key', "")
         const userBase58PublicKeyStorage = useStorage('user-base58-public-key', "")
         const userAddressStorage = useStorage('user-address', "");
@@ -46,7 +51,7 @@ export default class Game extends Vue {
         let userAddress = userAddressStorage.value;
 
         const success = await doodleClient.Initialize(userBase58PrivateKey, userBase58PublicKey, userAddress)
-        if(!success) return;
+        if(!success) throw new Error("Could not initialize doodle client");
 
         const arePrivatekeyAndAddressDefined = userBase58PrivateKey !== "" && userBase58PublicKey !== "" && userAddress !== "";
         if(!arePrivatekeyAndAddressDefined) {
@@ -54,6 +59,23 @@ export default class Game extends Vue {
             userBase58PublicKeyStorage.value = doodleClient.userWalletPubKey;
             userAddressStorage.value = doodleClient.userWalletAddress;
         }
+        const userBalance = await doodleClient.getIOTABalance(userAddressStorage.value);
+        let userData = new UserData(userBase58PrivateKeyStorage.value, userBase58PublicKeyStorage.value, userAddressStorage.value, userBalance);
+        return userData
+    }
+}
+
+class UserData {
+    privateKey : string;
+    publicKey : string;
+    address : string;
+    balance : bigint;
+
+    constructor(privateKey : string, publicKey : string, address : string, balance : bigint) {
+        this.privateKey = privateKey;
+        this.publicKey = publicKey
+        this.address = address;
+        this.balance = balance;
     }
 }
 </script>
