@@ -6,5 +6,11 @@ export enum LogTag {
 }
 
 export function Log(tag: LogTag, description: string): void {
-    console.log(`| ${tag.toString()} | - ${description}`);
+    const logMessage = `| ${tag.toString()} | - ${description}`;
+    if (tag == LogTag.Error) {
+        console.error(logMessage);
+        //alert(logMessage);
+    } else {
+        console.log(logMessage);
+    }
 }
