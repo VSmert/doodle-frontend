@@ -16,10 +16,10 @@ export interface PowWorkerResponse {
 }
 
 export class PoWWorkerManager {
-    private powWorker: Worker | null = null;
+    private powWorker: Worker;
 
-    public load(url: string): void {
-        this.powWorker = new Worker(url);
+    constructor(pathToWorker: string) {
+        this.powWorker = new Worker(pathToWorker);
     }
 
     public requestProofOfWork(difficulty: number, data: Buffer): Promise<number> {

@@ -8,6 +8,7 @@ import { Base58 } from './crypto';
 import type { IKeyPair, ISendTransactionResponse } from './models';
 import type { ITransaction } from './models/ITransaction';
 import { Transaction } from './transaction';
+import { PoWWorkerManager } from '.';
 
 export interface IFaucetRequestContext {
     faucetRequest: IFaucetRequest;
@@ -16,6 +17,7 @@ export interface IFaucetRequestContext {
 
 export class WalletService {
     private readonly client: BasicClient;
+    private readonly powManager: PoWWorkerManager = new PoWWorkerManager('');
 
     constructor(basicClient: BasicClient) {
         this.client = basicClient;
@@ -51,6 +53,8 @@ export class WalletService {
         };
 
         const poWBuffer = Faucet.ToBuffer(body);
+
+        body.nonce = await this.powManager.requestProofOfWork(12, poWBuffer);
 
         const result: IFaucetRequestContext = {
             poWBuffer: poWBuffer,

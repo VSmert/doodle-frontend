@@ -22,6 +22,7 @@ import { Options, Vue } from 'vue-class-component';
 import { useStorage } from '@vueuse/core'
 
 import * as doodleClient from '../../lib/doodleclient/doodle'
+import { Log, LogTag } from '../../lib/doodleclient/utils/logger';
 
 import Table from './table/Table.vue';
 import ButtonGroup from './buttons/ButtonGroup.vue';
@@ -65,6 +66,23 @@ export default class Game extends Vue {
     }
 
     async requestFunds () : Promise<void>{
+        let userBalance = await doodleClient.getIOTABalance(this.userData.address);
+        if(userBalance > 0n) {
+            this.userData.balance = userBalance;
+            Log(LogTag.Funds, `Funds available: ${{userBalance}} IOTA`)
+            return;
+        }
+
+        Log(LogTag.Funds, "Requesting funds")
+        await doodleClient.requestFunds(this.userData.address);
+
+        // TODO: Check this with retry and delay
+        if(userBalance == 0n) {
+            const couldNotGetFundsError = "Could not request dummy IOTA from faucet.";
+            Log(LogTag.Error, couldNotGetFundsError);
+        }
+
+        this.userData.balance = userBalance;
     }
 }
 
