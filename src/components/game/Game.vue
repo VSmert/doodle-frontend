@@ -3,7 +3,7 @@
         <div id="game">
             <Table />
             <ButtonGroup class="left">
-                <Button class="purple" :isPressable="userData.balance == 0">
+                <Button class="purple" :isPressable="userData.balance == 0" @button-pressed="requestFunds">
                     <div v-if="userData.balance == 0">Request play IOTA</div>
                     <div v-else>Balance: {{ userData.balance }} IOTA</div>
                 </Button>
@@ -62,6 +62,9 @@ export default class Game extends Vue {
         const userBalance = await doodleClient.getIOTABalance(userAddressStorage.value);
         let userData = new UserData(userBase58PrivateKeyStorage.value, userBase58PublicKeyStorage.value, userAddressStorage.value, userBalance);
         return userData
+    }
+
+    async requestFunds () : Promise<void>{
     }
 }
 

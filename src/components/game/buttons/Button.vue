@@ -23,7 +23,10 @@ export default class Button extends Vue {
 
     setPressed(){
         if(this.isPressable)
+        {
             this.isPressed = true;
+            this.$emit('button-pressed')
+        }
     }
 
     reset(){
