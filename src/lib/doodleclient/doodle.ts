@@ -68,6 +68,19 @@ function generateKeyPairAndAddress(userBase58PrivateKey: string, userBase58Publi
     }
 }
 
+export async function requestFunds(address: string): Promise<boolean> {
+    try {
+        const faucetRequestContext = await walletService.getFaucetRequest(address);
+        const response = await basicClient.sendFaucetRequest(faucetRequestContext.faucetRequest);
+        const success = response.error === undefined && response.id !== undefined;
+        return success;
+    } catch (ex: unknown) {
+        const error = ex as Error;
+        Log(LogTag.Error, error.message);
+        return false;
+    }
+}
+
 export async function getIOTABalance(address: string): Promise<bigint> {
     const iotaBalance = await walletService.getFunds(address, waspHelper.Colors.IOTA_COLOR_STRING);
     return iotaBalance;
