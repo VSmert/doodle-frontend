@@ -14,7 +14,7 @@ ctx.onmessage = (e) => {
 
     let nonce = -1;
 
-    Log(LogTag.Funds, `[${message.uuid}] Starting PoW!`);
+    Log(LogTag.Site, `[${message.uuid}] Starting PoW!`);
 
     try {
         nonce = ProofOfWork.calculateProofOfWork(message.difficulty, message.data);
@@ -24,7 +24,7 @@ ctx.onmessage = (e) => {
         return;
     }
 
-    Log(LogTag.Funds, `[${message.uuid}] PoW Done!`);
+    Log(LogTag.Site, `[${message.uuid}] PoW Done!`);
 
     const response: PowWorkerResponse = { type: 'pow_response', data: nonce, uuid: message.uuid };
 
