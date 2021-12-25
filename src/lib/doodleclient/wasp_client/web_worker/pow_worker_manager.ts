@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import type { Buffer } from '../buffer';
+import Worker from 'worker-loader!./pow.worker.ts';
 
 export interface PowWorkerRequest {
     type: string;
@@ -16,11 +17,7 @@ export interface PowWorkerResponse {
 }
 
 export class PoWWorkerManager {
-    private powWorker: Worker;
-
-    constructor(pathToWorker: string) {
-        this.powWorker = new Worker(pathToWorker);
-    }
+    private powWorker: Worker = new Worker();
 
     public requestProofOfWork(difficulty: number, data: Buffer): Promise<number> {
         return new Promise((resolve, reject) => {

@@ -17,7 +17,7 @@ export interface IFaucetRequestContext {
 
 export class WalletService {
     private readonly client: BasicClient;
-    private readonly powManager: PoWWorkerManager = new PoWWorkerManager('');
+    private readonly powManager: PoWWorkerManager = new PoWWorkerManager();
 
     constructor(basicClient: BasicClient) {
         this.client = basicClient;

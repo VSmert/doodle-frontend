@@ -23,6 +23,7 @@ import { useStorage } from '@vueuse/core'
 
 import * as doodleClient from '../../lib/doodleclient/doodle'
 import { Log, LogTag } from '../../lib/doodleclient/utils/logger';
+import * as miscUtils from '../../lib/doodleclient/utils/misc';
 
 import Table from './table/Table.vue';
 import ButtonGroup from './buttons/ButtonGroup.vue';
@@ -61,27 +62,34 @@ export default class Game extends Vue {
             userAddressStorage.value = doodleClient.userWalletAddress;
         }
         const userBalance = await doodleClient.getIOTABalance(userAddressStorage.value);
+        if(userBalance > 0n) {
+            Log(LogTag.Funds, `Funds available: ${userBalance} IOTA`)
+        }
         let userData = new UserData(userBase58PrivateKeyStorage.value, userBase58PublicKeyStorage.value, userAddressStorage.value, userBalance);
         return userData
     }
 
     async requestFunds () : Promise<void>{
         let userBalance = await doodleClient.getIOTABalance(this.userData.address);
-        if(userBalance > 0n) {
-            this.userData.balance = userBalance;
-            Log(LogTag.Funds, `Funds available: ${{userBalance}} IOTA`)
-            return;
-        }
-
-        Log(LogTag.Funds, "Requesting funds")
-        await doodleClient.requestFunds(this.userData.address);
-
-        // TODO: Check this with retry and delay
         if(userBalance == 0n) {
-            const couldNotGetFundsError = "Could not request dummy IOTA from faucet.";
-            Log(LogTag.Error, couldNotGetFundsError);
+            Log(LogTag.Funds, "Requesting funds")
+            const success = await doodleClient.requestFunds(this.userData.address);
+
+            if(!success) {
+                const couldNotGetFundsError = "Could not request dummy IOTA from faucet.";
+                Log(LogTag.Error, couldNotGetFundsError);
+                return;
+            }
+
+            miscUtils.delay(1000);
+            for (let tryNumber = 1; tryNumber <= 5 ; tryNumber++) {
+                userBalance = await doodleClient.getIOTABalance(this.userData.address);
+                if(userBalance > 0n) break;
+                miscUtils.delay(1000);
+            }
         }
 
+        Log(LogTag.Funds, `Funds available: ${userBalance} IOTA`)
         this.userData.balance = userBalance;
     }
 }

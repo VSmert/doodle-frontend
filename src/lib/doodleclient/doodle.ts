@@ -68,13 +68,16 @@ function generateKeyPairAndAddress(userBase58PrivateKey: string, userBase58Publi
     }
 }
 
-export async function requestFunds(address: string): Promise<void> {
+export async function requestFunds(address: string): Promise<boolean> {
     try {
         const faucetRequestContext = await walletService.getFaucetRequest(address);
-        await basicClient.sendFaucetRequest(faucetRequestContext.faucetRequest);
+        const response = await basicClient.sendFaucetRequest(faucetRequestContext.faucetRequest);
+        const success = response.error === undefined && response.id !== undefined;
+        return success;
     } catch (ex: unknown) {
         const error = ex as Error;
         Log(LogTag.Error, error.message);
+        return false;
     }
 }
 
