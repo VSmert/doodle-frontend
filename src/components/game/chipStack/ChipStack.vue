@@ -23,7 +23,7 @@ import IChipStack from '../../models/IChipStack';
     components: { Chip },
 })
 export default class Bet extends Vue {
-    private totalChipCount = 0;
+    totalChipCount! : number;
 
     get chipDenominations(): number[] {
         return ChipHelper.Denominations;
