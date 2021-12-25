@@ -4,6 +4,7 @@
 import { Buffer, Colors, IOffLedger, OffLedger, BasicClient } from '../../wasp_client';
 import * as client from './index';
 import configJson from '../../config.dev.json';
+import { Log, LogTag } from '../../utils/logger';
 
 export type ServiceClient = BasicClient;
 
@@ -44,8 +45,7 @@ export class Service {
         if (this.chainId == '') return;
 
         const webSocketUrl = configJson.waspWebSocketUrl.replace('%chainId', this.chainId);
-        // eslint-disable-next-line no-console
-        console.log(`Connecting to Websocket => ${webSocketUrl}`);
+        Log(LogTag.Site, `Connecting to Websocket => ${webSocketUrl}`);
         const webSocket = new WebSocket(webSocketUrl);
         webSocket.addEventListener('message', (x) => this.handleIncomingMessage(x));
         webSocket.addEventListener('close', () => setTimeout(this.connectWebSocket.bind(this), 1000));
