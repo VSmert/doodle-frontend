@@ -8,7 +8,7 @@ import { Base58 } from './crypto';
 import type { IKeyPair, ISendTransactionResponse } from './models';
 import type { ITransaction } from './models/ITransaction';
 import { Transaction } from './transaction';
-import { PoWWorkerManager } from '.';
+import { PoWWorkerManager } from './web_worker/pow_worker_manager';
 
 export interface IFaucetRequestContext {
     faucetRequest: IFaucetRequest;
