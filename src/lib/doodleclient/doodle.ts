@@ -8,6 +8,7 @@ import { LogTag, Log } from './utils/logger';
 import * as waspHelper from './utils/wasp_helper';
 import { Configuration } from './utils/configuration';
 import configJson from './config.dev.json';
+import { Buffer } from './wasmlib/client/buffer';
 
 let doodleService: service.DoodleService;
 let walletService: waspHelper.WalletService;
@@ -17,6 +18,8 @@ export let userWalletPrivKey: string;
 export let userWalletPubKey: string;
 export let userWalletAddress: string;
 
+let userSecretKey : Buffer;
+let userPublicKey : Buffer;
 let initialized: boolean;
 export async function Initialize(
     userBase58PrivateKey: string,
@@ -42,7 +45,7 @@ export async function Initialize(
     config.chainId = await waspHelper.GetChainId(config);
     Log(LogTag.Site, 'Using chain ' + config.chainId);
 
-    doodleService = new service.DoodleService(basicClient, config.chainId);
+    doodleService = new service.DoodleService(basicClient, walletService, config.chainId);
     const tableCount = (await doodleService.getTableCount().call()).tableCount();
     Log(LogTag.SmartContract, 'table count: ' + tableCount);
 
@@ -53,18 +56,35 @@ export async function Initialize(
 }
 
 function generateKeyPairAndAddress(userBase58PrivateKey: string, userBase58PublicKey: string, userAddress: string) {
-    if (userBase58PrivateKey === '' || userAddress === '') {
-        const [generatedUserPrivateKey, generatedUserPublicKey, generatedUserAddress] =
+    if (userBase58PrivateKey === '' || userAddress === '' || !userSecretKey) {
+        const [generatedUserPrivateKey, generatedUserPublicKey, generatedUserAddress, secretKey, publicKey] =
             waspHelper.generatePrivateKeyAndAddress();
         userWalletPrivKey = generatedUserPrivateKey;
         userWalletPubKey = generatedUserPublicKey;
         userWalletAddress = generatedUserAddress;
+        userPublicKey = publicKey;
+        userSecretKey = secretKey;
         Log(LogTag.Site, `Key pair generated.`);
     } else {
         // TODO: validate private key and address passed by the user
         userWalletPrivKey = userBase58PrivateKey;
         userWalletPubKey = userBase58PublicKey;
         userWalletAddress = userAddress;
+    }
+}
+
+export async function joinNextHand(tableNumber: number, tableSeatNumber: number): Promise<boolean> {
+    try {
+        Log(LogTag.Site, "Executing join next hand")
+        const joinNextHandFunc = doodleService.joinNextHand();
+        joinNextHandFunc.tableNumber(tableNumber);
+        joinNextHandFunc.tableSeatNumber(tableSeatNumber);
+        await joinNextHandFunc.post(userSecretKey, userPublicKey, userWalletAddress);
+        return true;
+    } catch (ex: unknown) {
+        const error = ex as Error;
+        Log(LogTag.Error, error.message);
+        return false;
     }
 }
 

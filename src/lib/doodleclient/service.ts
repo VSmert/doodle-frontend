@@ -1,5 +1,7 @@
 import * as client from './wasmlib/client';
+import { Base58, IKeyPair, OffLedgerArgument, WalletService } from './wasp_client';
 import * as events from './events';
+import { Buffer } from './wasmlib/client/buffer';
 
 const ArgPotNumber = 'potNumber';
 const ArgTableNumber = 'tableNumber';
@@ -59,10 +61,18 @@ export class JoinNextHandFunc extends client.FuncObject {
         this.args.setUint16(ArgTableSeatNumber, v);
     }
 
-    public async post(): Promise<void> {
+    public async post(privateKey: Buffer, publicKey: Buffer, address: string): Promise<void> {
         this.args.mandatory(ArgTableNumber);
         this.args.mandatory(ArgTableSeatNumber);
-        //this.svc.postRequest('joinNextHand', this.args);
+        const keypair : IKeyPair = {
+            secretKey: privateKey,
+            publicKey: publicKey
+        };
+        const offLedgerArgs : OffLedgerArgument[] = [];
+        // TODO: Send correct args
+        // const offLedgerArgs : OffLedgerArgument[] = [{key: ArgTableNumber, value: this.args.args.get(ArgTableNumber)},
+        //     {key: ArgTableSeatNumber, value: this.args.args.get(ArgTableSeatNumber)}];
+        await this.svc.postRequest('joinNextHand', BigInt(200n), keypair, address, offLedgerArgs);
     }
 }
 
@@ -203,8 +213,8 @@ export class GetTableSeatResults extends client.ViewResults {
 ///////////////////////////// DoodleService /////////////////////////////
 
 export class DoodleService extends client.Service {
-    constructor(cl: client.ServiceClient, chainID: string) {
-        super(cl, chainID, 0xb40a047a, events.eventHandlers);
+    constructor(cl: client.ServiceClient, walletService: WalletService, chainID: string) {
+        super(cl, walletService, chainID, 0xb40a047a, events.eventHandlers);
     }
 
     public init(): InitFunc {

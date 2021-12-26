@@ -125,7 +125,7 @@ export class BasicWallet {
     const t = outputsByColor[destinationAddress][Colors.IOTA_COLOR_STRING];
     outputsByColor[destinationAddress][Colors.IOTA_COLOR_STRING] += iotas;
 
-    consumedFunds[Colors.IOTA_COLOR_STRING] -= iotas;
+    consumedFunds[Colors.IOTA_COLOR_STRING] = BigInt(consumedFunds[Colors.IOTA_COLOR_STRING] ?? 0n) - iotas;
     if (consumedFunds[Colors.IOTA_COLOR_STRING] === 0n) {
       delete consumedFunds[Colors.IOTA_COLOR_STRING];
     }

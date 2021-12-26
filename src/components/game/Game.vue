@@ -10,7 +10,7 @@
             </ButtonGroup>
             <ButtonGroup class="right">
                 <Button class="red">Leave table</Button>
-                <Button class="green">Join next hand</Button>
+                <Button class="green" @button-pressed="joinNextHand">Join next hand</Button>
                 <Button class="green">Join next big blind</Button>
             </ButtonGroup>
         </div>
@@ -91,6 +91,10 @@ export default class Game extends Vue {
 
         Log(LogTag.Funds, `Funds available: ${userBalance} IOTA`)
         this.userData.balance = userBalance;
+    }
+    async joinNextHand (): Promise<void>{
+        // TODO: Pass table and table seat number
+        await doodleClient.joinNextHand(1,1);
     }
 }
 
