@@ -83,31 +83,35 @@ export class Service {
         return results;
     }
 
-    //posts off-tangle request
-    public async postRequest(funcName: string, take: bigint, keyPair: IKeyPair, address: string, args: OffLedgerArgument[]): Promise<void> {
-        // TODO: Change this to send an Off-ledger request
-        
-        // let request: IOffLedger = {
-        //     requestType: 1,
-        //     noonce: BigInt(performance.now() + performance.timeOrigin * 10000000),
-        //     contract: this.scHname,
-        //     entrypoint: HName.HashAsNumber(funcName),
-        //     arguments: args,
-        //     balances: [{ balance: take, color: Colors.IOTA_COLOR_BYTES }],
-        // };
+    public async postRequest(funcName: string, take: bigint, keyPair: IKeyPair, address: string, args: any, isOffLedger: boolean = true): Promise<void> {
+        if(isOffLedger)
+            return await this.postRequestOffLedger(funcName, take, keyPair, args);
+        return await this.postRequestOnLedger(funcName, take, keyPair,address, args);
+    }
 
+    public async postRequestOffLedger(funcName: string, take: bigint, keyPair: IKeyPair, args: OffLedgerArgument[]): Promise<void> {
+        let request: IOffLedger = {
+            requestType: 2,
+            noonce: BigInt(performance.now() + performance.timeOrigin * 10000000),
+            contract: this.scHname,
+            entrypoint: HName.HashAsNumber(funcName),
+            arguments: args,
+            balances: [{ balance: take, color: Colors.IOTA_COLOR_BYTES }],
+        };
+        request = OffLedger.Sign(request, keyPair);
+        console.log(request);
+        console.log("Before sending offledger: "+funcName);
+        await this.client.sendOffLedgerRequest(this.chainId, request);
+        console.log("Before executing offledger: "+funcName);
+        await this.client.sendExecutionRequest(this.chainId, OffLedger.GetRequestId(request));
+    }
+
+    public async postRequestOnLedger(funcName: string, take: bigint, keyPair: IKeyPair, address: string, args: OffLedgerArgument[]): Promise<void> {
         const request: IOnLedger = {
             contract: this.scHname,
             entrypoint: HName.HashAsNumber(funcName),
             arguments: args,
         };
-        //request = OffLedger.Sign(request, keyPair);
-        //console.log(request);
-        //console.log("Before sending offledger: "+funcName);
-        //await this.client.sendOffLedgerRequest(this.chainId, request);
-        //console.log("Before executing offledger: "+funcName);
-
-        //await this.client.sendExecutionRequest(this.chainId, OffLedger.GetRequestId(request));
         await this.walletService.sendOnLedgerRequest(keyPair, address, this.chainId, request, take);
     }
 }
