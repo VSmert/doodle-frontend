@@ -72,7 +72,7 @@ export class JoinNextHandFunc extends client.FuncObject {
         // TODO: Send correct args
         // const offLedgerArgs : OffLedgerArgument[] = [{key: ArgTableNumber, value: this.args.args.get(ArgTableNumber)},
         //     {key: ArgTableSeatNumber, value: this.args.args.get(ArgTableSeatNumber)}];
-        await this.svc.postRequest('joinNextHand', BigInt(200n), keypair, address, args, true);
+        await this.svc.postRequest('joinNextHand', BigInt(200n), keypair, address, args, false);
     }
 }
 
