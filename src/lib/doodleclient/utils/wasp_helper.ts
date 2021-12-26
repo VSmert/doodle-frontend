@@ -1,3 +1,4 @@
+import { Buffer } from '../wasmlib/client/buffer';
 import { BasicClientConfiguration, BasicClient } from '../wasp_client';
 import { Base58 } from '../wasp_client/crypto/base58';
 import { Seed as waspClientSeed } from '../wasp_client/crypto/seed';
@@ -27,12 +28,12 @@ export async function GetChainId(configuration: Configuration): Promise<string> 
     return data[0].ChainID;
 }
 
-export function generatePrivateKeyAndAddress(): [privateKey: string, publicKey: string, address: string] {
+export function generatePrivateKeyAndAddress(): [privateKey: string, publicKey: string, address: string, privateKey: Buffer, publicKey: Buffer] {
     const seedBuffer = waspClientSeed.generate();
     const addressIndex = 0;
     const { secretKey, publicKey } = waspClientSeed.generateKeyPair(seedBuffer, addressIndex);
     const base58GeneratedAddress = waspClientSeed.generateAddress(seedBuffer, addressIndex);
     const base58PrivateKey = Base58.encode(secretKey);
     const base58PuplicKey = Base58.encode(publicKey);
-    return [base58PrivateKey, base58PuplicKey, base58GeneratedAddress];
+    return [base58PrivateKey, base58PuplicKey, base58GeneratedAddress, secretKey, publicKey];
 }

@@ -1,7 +1,8 @@
 // Copyright 2020 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-import { Buffer, Colors, IOffLedger, OffLedger, BasicClient } from '../../wasp_client';
+import { Buffer, Colors, IOffLedger,IOnLedger, OffLedger, BasicClient, IKeyPair, OffLedgerArgument, WalletService } from '../../wasp_client';
+import { HName } from '../../wasp_client/crypto/hname';
 import * as client from './index';
 import configJson from '../../config.dev.json';
 import { Log, LogTag } from '../../utils/logger';
@@ -29,15 +30,17 @@ export class ViewResults {
 
 export class Service {
     private client: ServiceClient;
+    private walletService: WalletService;
     private eventHandlers: EventHandlers;
     public chainId: string;
     public scHname: client.Hname;
 
-    constructor(client: ServiceClient, chainId: string, scHname: client.Hname, eventHandlers: EventHandlers) {
+    constructor(client: ServiceClient, walletService: WalletService, chainId: string, scHname: client.Hname, eventHandlers: EventHandlers) {
         this.client = client;
         this.chainId = chainId;
         this.scHname = scHname;
         this.eventHandlers = eventHandlers;
+        this.walletService = walletService;
         this.connectWebSocket();
     }
 
@@ -81,19 +84,30 @@ export class Service {
     }
 
     //posts off-tangle request
-    // public async postRequest(funcName: string, args: client.Arguments | null): Promise<void> {
-    //     let request: IOffLedger = {
-    //         requestType: 1,
-    //         noonce: BigInt(performance.now() + performance.timeOrigin * 10000000),
-    //         contract: this.scHname,
-    //         entrypoint: hFunc,
-    //         arguments: [{ key: '-number', value: betNumber }],
-    //         balances: [{ balance: take, color: Colors.IOTA_COLOR_BYTES }],
-    //     };
+    public async postRequest(funcName: string, take: bigint, keyPair: IKeyPair, address: string, args: OffLedgerArgument[]): Promise<void> {
+        // TODO: Change this to send an Off-ledger request
+        
+        // let request: IOffLedger = {
+        //     requestType: 1,
+        //     noonce: BigInt(performance.now() + performance.timeOrigin * 10000000),
+        //     contract: this.scHname,
+        //     entrypoint: HName.HashAsNumber(funcName),
+        //     arguments: args,
+        //     balances: [{ balance: take, color: Colors.IOTA_COLOR_BYTES }],
+        // };
 
-    //     request = OffLedger.Sign(request, keyPair);
+        const request: IOnLedger = {
+            contract: this.scHname,
+            entrypoint: HName.HashAsNumber(funcName),
+            arguments: args,
+        };
+        //request = OffLedger.Sign(request, keyPair);
+        //console.log(request);
+        //console.log("Before sending offledger: "+funcName);
+        //await this.client.sendOffLedgerRequest(this.chainId, request);
+        //console.log("Before executing offledger: "+funcName);
 
-    //     await this.client.sendOffLedgerRequest(this.chainId, request);
-    //     await this.client.sendExecutionRequest(this.chainId, OffLedger.GetRequestId(request));
-    // }
+        //await this.client.sendExecutionRequest(this.chainId, OffLedger.GetRequestId(request));
+        await this.walletService.sendOnLedgerRequest(keyPair, address, this.chainId, request, take);
+    }
 }
