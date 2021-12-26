@@ -41,10 +41,15 @@ export class JoinNextBigBlindFunc extends client.FuncObject {
         this.args.setUint16(ArgTableSeatNumber, v);
     }
 
-    public async post(): Promise<void> {
+    public async post(privateKey: Buffer, publicKey: Buffer, address: string): Promise<void> {
         this.args.mandatory(ArgTableNumber);
         this.args.mandatory(ArgTableSeatNumber);
-        //this.svc.postRequest('joinNextBigBlind', this.args);
+        const keypair : IKeyPair = {
+            secretKey: privateKey,
+            publicKey: publicKey
+        };
+        const args : OffLedgerArgument[] = [];
+        this.svc.postRequest('joinNextBigBlind', BigInt(200n), keypair, address, args, false);
     }
 }
 

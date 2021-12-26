@@ -75,11 +75,26 @@ function generateKeyPairAndAddress(userBase58PrivateKey: string, userBase58Publi
 
 export async function joinNextHand(tableNumber: number, tableSeatNumber: number): Promise<boolean> {
     try {
-        Log(LogTag.Site, "Executing join next hand")
+        Log(LogTag.Site, "Executing joinNextHand")
         const joinNextHandFunc = doodleService.joinNextHand();
         joinNextHandFunc.tableNumber(tableNumber);
         joinNextHandFunc.tableSeatNumber(tableSeatNumber);
         await joinNextHandFunc.post(userSecretKey, userPublicKey, userWalletAddress);
+        return true;
+    } catch (ex: unknown) {
+        const error = ex as Error;
+        Log(LogTag.Error, error.message);
+        return false;
+    }
+}
+
+export async function joinNextBigBlind(tableNumber: number, tableSeatNumber: number): Promise<boolean> {
+    try {
+        Log(LogTag.Site, "Executing joinNextBigBlind")
+        const joinNextBigBlindFunc = doodleService.joinNextBigBlind();
+        joinNextBigBlindFunc.tableNumber(tableNumber);
+        joinNextBigBlindFunc.tableSeatNumber(tableSeatNumber);
+        await joinNextBigBlindFunc.post(userSecretKey, userPublicKey, userWalletAddress);
         return true;
     } catch (ex: unknown) {
         const error = ex as Error;
