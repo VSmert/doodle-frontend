@@ -1,14 +1,14 @@
-import { Base58 } from './base58';
-import { blake2b } from 'blakejs';
-import { Buffer } from '../buffer';
-import { ED25519 } from './ed25519';
-import type { IKeyPair } from '../../../wasp_client/models';
+import {Base58} from './base58';
+import {Buffer} from '../buffer';
+import {ED25519, IKeyPair} from './ed25519';
+import {Hash} from "./hash";
 
 export class Seed {
     /**
      * SeedSize is the size, in bytes, of private key seeds. These are the private key representations used by RFC 8032.
      */
     public static SEED_SIZE: number = 32;
+
     /**
      * Generate a new seed.
      * @returns The random seed.
@@ -31,11 +31,8 @@ export class Seed {
     public static subseed(seed: Buffer, index: number): Buffer {
         const indexBytes = Buffer.alloc(8);
         indexBytes.writeBigUInt64LE(BigInt(index), 0);
-
-        const hashOfPaddedBuffer = blake2b(indexBytes, undefined, 32 /* Blake256 */);
-
         const subseed = Buffer.alloc(this.SEED_SIZE);
-        Seed.xorBytes(seed, Buffer.from(hashOfPaddedBuffer), subseed);
+        Seed.xorBytes(seed, Hash.from(indexBytes), subseed);
         return subseed;
     }
 
@@ -72,13 +69,13 @@ export class Seed {
      * @returns The generated address.
      */
     public static generateAddress(seed: Buffer, index: number): string {
-        const { publicKey } = Seed.generateKeyPair(seed, index);
+        const {publicKey} = Seed.generateKeyPair(seed, index);
 
-        const digest = blake2b(publicKey, undefined, 32);
+        const digest = Hash.from(publicKey);
 
         const buffer = Buffer.alloc(Seed.SEED_SIZE + 1);
         buffer[0] = ED25519.VERSION;
-        Buffer.from(digest).copy(buffer, 1);
+        digest.copy(buffer, 1);
 
         return Base58.encode(buffer);
     }

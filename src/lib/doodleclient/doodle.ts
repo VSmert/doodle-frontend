@@ -8,10 +8,13 @@ import { LogTag, Log } from './utils/logger';
 import * as waspHelper from './utils/wasp_helper';
 import { Configuration } from './utils/configuration';
 import configJson from './config.dev.json';
-import { Buffer } from './wasmlib/client/buffer';
+import { Buffer } from './wasmclient/buffer';
+import { ServiceClient } from './wasmclient';
+import { IKeyPair } from './wasmclient/crypto';
 
 let doodleService: service.DoodleService;
 let walletService: waspHelper.WalletService;
+let serviceClient: ServiceClient;
 let basicClient: waspHelper.waspClient.BasicClient;
 
 export let userWalletPrivKey: string;
@@ -44,8 +47,14 @@ export async function Initialize(
 
     config.chainId = await waspHelper.GetChainId(config);
     Log(LogTag.Site, 'Using chain ' + config.chainId);
-
-    doodleService = new service.DoodleService(basicClient, walletService, config.chainId);
+    
+    serviceClient = new ServiceClient(config);
+    doodleService = new service.DoodleService(serviceClient);
+    const keypair : IKeyPair = {
+        publicKey: userPublicKey,
+        secretKey: userSecretKey
+    };
+    doodleService.keyPair = keypair;
     const tableCount = (await doodleService.getTableCount().call()).tableCount();
     Log(LogTag.SmartContract, 'table count: ' + tableCount);
 
@@ -79,7 +88,7 @@ export async function joinNextHand(tableNumber: number, tableSeatNumber: number)
         const joinNextHandFunc = doodleService.joinNextHand();
         joinNextHandFunc.tableNumber(tableNumber);
         joinNextHandFunc.tableSeatNumber(tableSeatNumber);
-        await joinNextHandFunc.post(userSecretKey, userPublicKey, userWalletAddress);
+        await joinNextHandFunc.post();
         return true;
     } catch (ex: unknown) {
         const error = ex as Error;
@@ -94,7 +103,7 @@ export async function joinNextBigBlind(tableNumber: number, tableSeatNumber: num
         const joinNextBigBlindFunc = doodleService.joinNextBigBlind();
         joinNextBigBlindFunc.tableNumber(tableNumber);
         joinNextBigBlindFunc.tableSeatNumber(tableSeatNumber);
-        await joinNextBigBlindFunc.post(userSecretKey, userPublicKey, userWalletAddress);
+        await joinNextBigBlindFunc.post();
         return true;
     } catch (ex: unknown) {
         const error = ex as Error;
