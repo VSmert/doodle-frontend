@@ -1,4 +1,4 @@
-import { Buffer } from '../wasmlib/client/buffer';
+import { Buffer } from '../wasmclient/buffer';
 import { BasicClientConfiguration, BasicClient } from '../wasp_client';
 import { Base58 } from '../wasp_client/crypto/base58';
 import { Seed as waspClientSeed } from '../wasp_client/crypto/seed';
