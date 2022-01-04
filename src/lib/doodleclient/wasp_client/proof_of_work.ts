@@ -1,6 +1,6 @@
 import { blake2b } from 'blakejs';
 import { Log, LogTag } from '../utils/logger';
-import { Buffer } from './buffer';
+import { Buffer } from '../wasmclient/buffer';
 
 export default class ProofOfWork {
     public static numberToUInt64LE(n: bigint): Buffer {

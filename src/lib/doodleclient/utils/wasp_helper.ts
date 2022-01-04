@@ -1,11 +1,11 @@
 import { Configuration } from '../wasmclient/configuration';
 import { Buffer } from '../wasmclient/buffer';
+import { Base58 } from '../wasmclient/crypto/base58';
+import { Seed } from '../wasmclient/crypto/seed';
 
 export * as waspClient from '../wasp_client';
 export { WalletService, Colors } from '../wasp_client';
 import { BasicClientConfiguration, BasicClient } from '../wasp_client';
-import { Base58 } from '../wasp_client/crypto/base58';
-import { Seed as waspClientSeed } from '../wasp_client/crypto/seed';
 
 export function GetBasicClient(configuration: Configuration): BasicClient {
     const basicClientConfiguration = getBasicClientConfiguration(configuration);
@@ -34,10 +34,10 @@ export function generatePrivateKeyAndAddress(): [
     privateKey: Buffer,
     publicKey: Buffer
 ] {
-    const seedBuffer = waspClientSeed.generate();
+    const seedBuffer = Seed.generate();
     const addressIndex = 0;
-    const { secretKey, publicKey } = waspClientSeed.generateKeyPair(seedBuffer, addressIndex);
-    const base58GeneratedAddress = waspClientSeed.generateAddress(seedBuffer, addressIndex);
+    const { secretKey, publicKey } = Seed.generateKeyPair(seedBuffer, addressIndex);
+    const base58GeneratedAddress = Seed.generateAddress(seedBuffer, addressIndex);
     const base58PrivateKey = Base58.encode(secretKey);
     const base58PuplicKey = Base58.encode(publicKey);
     return [base58PrivateKey, base58PuplicKey, base58GeneratedAddress, secretKey, publicKey];

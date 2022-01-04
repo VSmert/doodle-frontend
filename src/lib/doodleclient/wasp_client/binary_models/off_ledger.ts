@@ -1,8 +1,7 @@
-import { Base58, ED25519 } from '../crypto';
+import { Buffer } from '../../wasmclient/buffer';
+import { Base58, ED25519, IKeyPair } from '../../wasmclient/crypto';
 import { blake2b } from 'blakejs';
-import { Buffer } from '../buffer';
 import { SimpleBufferCursor } from '../simple_buffer_cursor';
-import type { IKeyPair } from '../models';
 import type { Balance, IOffLedger, OffLedgerArgument } from './IOffLedger';
 
 export class OffLedger {

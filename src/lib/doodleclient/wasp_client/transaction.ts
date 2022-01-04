@@ -1,10 +1,9 @@
-import { Base58 } from './crypto/base58';
-import { Buffer } from './buffer';
+import { Buffer } from '../wasmclient/buffer';
+import { Base58, IKeyPair, ED25519 } from '../wasmclient/crypto';
 import { Colors } from './colors';
-import { ED25519 } from './crypto/ed25519';
+
 import { SimpleBufferCursor } from './simple_buffer_cursor';
 import type { ITransaction } from './models/ITransaction';
-import type { IKeyPair } from './models';
 
 /**
  * Class to help with transactions.
