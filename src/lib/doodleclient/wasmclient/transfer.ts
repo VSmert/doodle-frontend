@@ -41,11 +41,16 @@ export class Transfer {
         }
         keys.sort((lhs, rhs) => lhs.compare(rhs));
 
-        let buf = Buffer.alloc(0);
+        let buf = Buffer.alloc(4);
         buf.writeUInt32LE(keys.length, 0);
         for (const key of keys) {
-            buf = Buffer.concat([buf, key]);
-            buf.writeBigUInt64LE(this.xfer.get(key), buf.length);
+            const val = this.xfer.get(key);
+            if (!val) {
+                throw new Error("Transfer.encode: missing amount");
+            }
+            const valBuf = Buffer.alloc(8);
+            valBuf.writeBigUInt64LE(val, 0);
+            buf = Buffer.concat([buf, key, valBuf]);
         }
         return buf;
     }

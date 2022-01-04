@@ -5,96 +5,91 @@
 // >>>> DO NOT CHANGE THIS FILE! <<<<
 // Change the json schema instead
 
-import * as wasmclient from "./wasmclient"
-import * as app from "./doodle"
+import * as wasmclient from './wasmclient';
+import * as app from './doodle';
 
 export const eventHandlers: wasmclient.EventHandlers = {
-	"doodle.gameEnded": onDoodleGameEndedThunk,
-	"doodle.gameStarted": onDoodleGameStartedThunk,
-	"doodle.playerJoinsNextBigBlind": onDoodlePlayerJoinsNextBigBlindThunk,
-	"doodle.playerJoinsNextHand": onDoodlePlayerJoinsNextHandThunk,
-	"doodle.playerLeft": onDoodlePlayerLeftThunk,
-	"doodle.playerWinsAllPots": onDoodlePlayerWinsAllPotsThunk,
+    'doodle.gameEnded': (msg: string[]) => app.onDoodleGameEnded(new EventGameEnded(msg)),
+    'doodle.gameStarted': (msg: string[]) => app.onDoodleGameStarted(new EventGameStarted(msg)),
+    'doodle.playerJoinsNextBigBlind': (msg: string[]) =>
+        app.onDoodlePlayerJoinsNextBigBlind(new EventPlayerJoinsNextBigBlind(msg)),
+    'doodle.playerJoinsNextHand': (msg: string[]) => app.onDoodlePlayerJoinsNextHand(new EventPlayerJoinsNextHand(msg)),
+    'doodle.playerLeft': (msg: string[]) => app.onDoodlePlayerLeft(new EventPlayerLeft(msg)),
+    'doodle.playerWinsAllPots': (msg: string[]) => app.onDoodlePlayerWinsAllPots(new EventPlayerWinsAllPots(msg)),
 };
 
 export class EventGameEnded extends wasmclient.Event {
-	public tableNumber: wasmclient.Uint32 | undefined;
-}
+    public readonly tableNumber: wasmclient.Uint32;
 
-function onDoodleGameEndedThunk(message: string[]) {
-	const e = new EventGameEnded(message);
-	e.tableNumber = e.nextUint32();
-	app.onDoodleGameEnded(e);
+    public constructor(msg: string[]) {
+        super(msg);
+        this.tableNumber = this.nextUint32();
+    }
 }
 
 export class EventGameStarted extends wasmclient.Event {
-	public paidBigBlindTableSeatNumber: wasmclient.Uint16 | undefined;
-	public paidSmallBlindTableSeatNumber: wasmclient.Uint16 | undefined;
-	public tableNumber: wasmclient.Uint32 | undefined;
-}
+    public readonly paidBigBlindTableSeatNumber: wasmclient.Uint16;
+    public readonly paidSmallBlindTableSeatNumber: wasmclient.Uint16;
+    public readonly tableNumber: wasmclient.Uint32;
 
-function onDoodleGameStartedThunk(message: string[]) {
-	const e = new EventGameStarted(message);
-	e.paidBigBlindTableSeatNumber = e.nextUint16();
-	e.paidSmallBlindTableSeatNumber = e.nextUint16();
-	e.tableNumber = e.nextUint32();
-	app.onDoodleGameStarted(e);
+    public constructor(msg: string[]) {
+        super(msg);
+        this.paidBigBlindTableSeatNumber = this.nextUint16();
+        this.paidSmallBlindTableSeatNumber = this.nextUint16();
+        this.tableNumber = this.nextUint32();
+    }
 }
 
 export class EventPlayerJoinsNextBigBlind extends wasmclient.Event {
-	public playerAgentId: wasmclient.AgentID | undefined;
-	public playersInitialChipCount: wasmclient.Uint64 | undefined;
-	public tableNumber: wasmclient.Uint32 | undefined;
-	public tableSeatNumber: wasmclient.Uint16 | undefined;
-}
+    public readonly playerAgentId: wasmclient.AgentID;
+    public readonly playersInitialChipCount: wasmclient.Uint64;
+    public readonly tableNumber: wasmclient.Uint32;
+    public readonly tableSeatNumber: wasmclient.Uint16;
 
-function onDoodlePlayerJoinsNextBigBlindThunk(message: string[]) {
-	const e = new EventPlayerJoinsNextBigBlind(message);
-	e.playerAgentId = e.nextAgentID();
-	e.playersInitialChipCount = e.nextUint64();
-	e.tableNumber = e.nextUint32();
-	e.tableSeatNumber = e.nextUint16();
-	app.onDoodlePlayerJoinsNextBigBlind(e);
+    public constructor(msg: string[]) {
+        super(msg);
+        this.playerAgentId = this.nextAgentID();
+        this.playersInitialChipCount = this.nextUint64();
+        this.tableNumber = this.nextUint32();
+        this.tableSeatNumber = this.nextUint16();
+    }
 }
 
 export class EventPlayerJoinsNextHand extends wasmclient.Event {
-	public playerAgentId: wasmclient.AgentID | undefined;
-	public playersInitialChipCount: wasmclient.Uint64 | undefined;
-	public tableNumber: wasmclient.Uint32 | undefined;
-	public tableSeatNumber: wasmclient.Uint16 | undefined;
-}
+    public readonly playerAgentId: wasmclient.AgentID;
+    public readonly playersInitialChipCount: wasmclient.Uint64;
+    public readonly tableNumber: wasmclient.Uint32;
+    public readonly tableSeatNumber: wasmclient.Uint16;
 
-function onDoodlePlayerJoinsNextHandThunk(message: string[]) {
-	const e = new EventPlayerJoinsNextHand(message);
-	e.playerAgentId = e.nextAgentID();
-	e.playersInitialChipCount = e.nextUint64();
-	e.tableNumber = e.nextUint32();
-	e.tableSeatNumber = e.nextUint16();
-	app.onDoodlePlayerJoinsNextHand(e);
+    public constructor(msg: string[]) {
+        super(msg);
+        this.playerAgentId = this.nextAgentID();
+        this.playersInitialChipCount = this.nextUint64();
+        this.tableNumber = this.nextUint32();
+        this.tableSeatNumber = this.nextUint16();
+    }
 }
 
 export class EventPlayerLeft extends wasmclient.Event {
-	public tableNumber: wasmclient.Uint32 | undefined;
-	public tableSeatNumber: wasmclient.Uint16 | undefined;
-}
+    public readonly tableNumber: wasmclient.Uint32;
+    public readonly tableSeatNumber: wasmclient.Uint16;
 
-function onDoodlePlayerLeftThunk(message: string[]) {
-	const e = new EventPlayerLeft(message);
-	e.tableNumber = e.nextUint32();
-	e.tableSeatNumber = e.nextUint16();
-	app.onDoodlePlayerLeft(e);
+    public constructor(msg: string[]) {
+        super(msg);
+        this.tableNumber = this.nextUint32();
+        this.tableSeatNumber = this.nextUint16();
+    }
 }
 
 export class EventPlayerWinsAllPots extends wasmclient.Event {
-	public tableNumber: wasmclient.Uint32 | undefined;
-	public tableSeatNumber: wasmclient.Uint16 | undefined;
-	public totalPotSize: wasmclient.Uint64 | undefined;
-}
+    public readonly tableNumber: wasmclient.Uint32;
+    public readonly tableSeatNumber: wasmclient.Uint16;
+    public readonly totalPotSize: wasmclient.Uint64;
 
-function onDoodlePlayerWinsAllPotsThunk(message: string[]) {
-	const e = new EventPlayerWinsAllPots(message);
-	e.tableNumber = e.nextUint32();
-	e.tableSeatNumber = e.nextUint16();
-	e.totalPotSize = e.nextUint64();
-	app.onDoodlePlayerWinsAllPots(e);
+    public constructor(msg: string[]) {
+        super(msg);
+        this.tableNumber = this.nextUint32();
+        this.tableSeatNumber = this.nextUint16();
+        this.totalPotSize = this.nextUint64();
+    }
 }
