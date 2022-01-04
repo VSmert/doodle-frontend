@@ -4,13 +4,14 @@
 import * as events from './events';
 import * as service from './service';
 
+import { ServiceClient } from './wasmclient';
+import { Configuration } from './wasmclient/configuration';
+import { IKeyPair } from './wasmclient/crypto';
+import { Buffer } from './wasmclient/buffer';
+
 import { LogTag, Log } from './utils/logger';
 import * as waspHelper from './utils/wasp_helper';
-import { Configuration } from './utils/configuration';
 import configJson from './config.dev.json';
-import { Buffer } from './wasmclient/buffer';
-import { ServiceClient } from './wasmclient';
-import { IKeyPair } from './wasmclient/crypto';
 
 let doodleService: service.DoodleService;
 let walletService: waspHelper.WalletService;
@@ -21,8 +22,8 @@ export let userWalletPrivKey: string;
 export let userWalletPubKey: string;
 export let userWalletAddress: string;
 
-let userSecretKey : Buffer;
-let userPublicKey : Buffer;
+let userSecretKey: Buffer;
+let userPublicKey: Buffer;
 let initialized: boolean;
 export async function Initialize(
     userBase58PrivateKey: string,
@@ -47,12 +48,12 @@ export async function Initialize(
 
     config.chainId = await waspHelper.GetChainId(config);
     Log(LogTag.Site, 'Using chain ' + config.chainId);
-    
+
     serviceClient = new ServiceClient(config);
     doodleService = new service.DoodleService(serviceClient);
-    const keypair : IKeyPair = {
+    const keypair: IKeyPair = {
         publicKey: userPublicKey,
-        secretKey: userSecretKey
+        secretKey: userSecretKey,
     };
     doodleService.keyPair = keypair;
     const tableCount = (await doodleService.getTableCount().call()).tableCount();
@@ -84,7 +85,7 @@ function generateKeyPairAndAddress(userBase58PrivateKey: string, userBase58Publi
 
 export async function joinNextHand(tableNumber: number, tableSeatNumber: number): Promise<boolean> {
     try {
-        Log(LogTag.Site, "Executing joinNextHand")
+        Log(LogTag.Site, 'Executing joinNextHand');
         const joinNextHandFunc = doodleService.joinNextHand();
         joinNextHandFunc.tableNumber(tableNumber);
         joinNextHandFunc.tableSeatNumber(tableSeatNumber);
@@ -99,7 +100,7 @@ export async function joinNextHand(tableNumber: number, tableSeatNumber: number)
 
 export async function joinNextBigBlind(tableNumber: number, tableSeatNumber: number): Promise<boolean> {
     try {
-        Log(LogTag.Site, "Executing joinNextBigBlind")
+        Log(LogTag.Site, 'Executing joinNextBigBlind');
         const joinNextBigBlindFunc = doodleService.joinNextBigBlind();
         joinNextBigBlindFunc.tableNumber(tableNumber);
         joinNextBigBlindFunc.tableSeatNumber(tableSeatNumber);

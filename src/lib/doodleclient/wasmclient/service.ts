@@ -9,11 +9,11 @@ export type EventHandlers = { [key: string]: (message: string[]) => void };
 
 export class Service {
     private serviceClient: wasmclient.ServiceClient;
-    private webSocket: WebSocket;
-    public keyPair: IKeyPair;
-    private eventHandlers: EventHandlers;
+    private webSocket: WebSocket | null = null;
+    public keyPair: IKeyPair | null = null;
+    private eventHandlers: EventHandlers | null = null;
     public scHname: wasmclient.Hname;
-    private waspWebSocketUrl: string;
+    private waspWebSocketUrl: string = "";
 
     constructor(client: wasmclient.ServiceClient, scHname: wasmclient.Hname, eventHandlers: EventHandlers) {
         this.serviceClient = client;
@@ -33,13 +33,14 @@ export class Service {
     public async postRequest(hFuncName: wasmclient.Int32, args: wasmclient.Arguments, transfer: wasmclient.Transfer, keyPair: IKeyPair): Promise<wasmclient.RequestID> {
         // get request essence ready for signing
         let essence = Base58.decode(this.serviceClient.configuration.chainId);
-        essence.writeUInt32LE(this.scHname, essence.length);
-        essence.writeUInt32LE(hFuncName, essence.length);
-        essence = Buffer.concat([essence, args.encode(), keyPair.publicKey]);
-        essence.writeBigUInt64LE(BigInt(performance.now()), essence.length);
-        essence = Buffer.concat([essence, transfer.encode()]);
+        const hNames = Buffer.alloc(8)
+        hNames.writeUInt32LE(this.scHname, 0);
+        hNames.writeUInt32LE(hFuncName, 4);
+        const nonce = Buffer.alloc(8)
+        nonce.writeBigUInt64LE(BigInt(Math.trunc(performance.now())), 0);
+        essence = Buffer.concat([essence, hNames, args.encode(), keyPair.publicKey, nonce, transfer.encode()]);
 
-        let buf = Buffer.alloc(0);
+        let buf = Buffer.alloc(1);
         const requestTypeOffledger = 1;
         buf.writeUInt8(requestTypeOffledger, 0);
         buf = Buffer.concat([buf, essence, ED25519.privateSign(keyPair, essence)]);
@@ -61,6 +62,9 @@ export class Service {
             this.waspWebSocketUrl = this.serviceClient.configuration.waspWebSocketUrl;
         else
             this.waspWebSocketUrl = "ws://" + this.serviceClient.configuration.waspWebSocketUrl;
+
+        this.waspWebSocketUrl = this.waspWebSocketUrl.replace("%chainId", this.serviceClient.configuration.chainId);
+
         this.connectWebSocket();
     }
 
@@ -80,7 +84,7 @@ export class Service {
         }
         const topics = msg[3].split('|');
         const topic = topics[0];
-        if (this.eventHandlers[topic] != undefined) {
+        if (this.eventHandlers && this.eventHandlers[topic] != undefined) {
             this.eventHandlers[topic](msg.slice(1));
         }
     }
