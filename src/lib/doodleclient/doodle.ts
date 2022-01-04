@@ -5,9 +5,9 @@ import * as events from './events';
 import * as service from './service';
 
 import { ServiceClient } from './wasmclient';
+import { Buffer } from './wasmclient/buffer';
 import { Configuration } from './wasmclient/configuration';
 import { IKeyPair } from './wasmclient/crypto';
-import { Buffer } from './wasmclient/buffer';
 
 import { LogTag, Log } from './utils/logger';
 import * as waspHelper from './utils/wasp_helper';

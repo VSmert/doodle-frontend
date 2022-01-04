@@ -1,5 +1,5 @@
 import { IFaucetRequest, IOffLedger, OffLedger } from './binary_models';
-import type { Buffer } from './buffer';
+import type { Buffer } from '../wasmclient/buffer';
 
 import type {
     IAllowedManaPledgeResponse,
@@ -10,7 +10,6 @@ import type {
     IUnspentOutputsResponse,
     ISendTransactionRequest,
     ISendTransactionResponse,
-    IKeyPair,
     ISingleUnspentOutputResponse,
 } from './models';
 

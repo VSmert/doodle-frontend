@@ -1,7 +1,6 @@
 // @index('./*.ts', f => `export * from '${f.path}'`)
 export * from './IAllowedManaResponse';
 export * from './IFaucetResponse';
-export * from './IKeyPair';
 export * from './IOffLedgerRequest';
 export * from './IResponse';
 export * from './ISendTransactionRequest';

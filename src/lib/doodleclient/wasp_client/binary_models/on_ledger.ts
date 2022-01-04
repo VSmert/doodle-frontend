@@ -1,4 +1,4 @@
-import { Buffer } from '../buffer';
+import { Buffer } from '../../wasmclient/buffer';
 import { SimpleBufferCursor } from '../simple_buffer_cursor';
 import type { IOnLedger } from './IOnLedger';
 
