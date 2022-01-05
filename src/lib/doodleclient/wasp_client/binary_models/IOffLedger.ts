@@ -1,4 +1,4 @@
-import type { Buffer } from '../../wasmclient/buffer';
+import type { Buffer } from "../../wasmclient/buffer";
 
 export interface OffLedgerArgument {
     key: string;

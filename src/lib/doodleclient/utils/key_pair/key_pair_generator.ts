@@ -1,14 +1,8 @@
-import { Buffer } from '../../wasmclient/buffer';
-import { Base58 } from '../../wasmclient/crypto/base58';
-import { Seed } from '../../wasmclient/crypto/seed';
+import { Buffer } from "../../wasmclient/buffer";
+import { Base58 } from "../../wasmclient/crypto/base58";
+import { Seed } from "../../wasmclient/crypto/seed";
 
-export function generatePrivateKeyAndAddress(): [
-    privateKey: string,
-    publicKey: string,
-    address: string,
-    privateKey: Buffer,
-    publicKey: Buffer
-] {
+export function generatePrivateKeyAndAddress(): [privateKey: string, publicKey: string, address: string, privateKey: Buffer, publicKey: Buffer] {
     const seedBuffer = Seed.generate();
     const addressIndex = 0;
     const { secretKey, publicKey } = Seed.generateKeyPair(seedBuffer, addressIndex);

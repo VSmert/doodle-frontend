@@ -1,8 +1,8 @@
 // The Results struct is used to gather all arguments for a smart
 // contract function call and encode it into a deterministic byte array
 import * as wasmclient from "./index";
-import {Base58} from "./crypto";
-import {Buffer} from "./buffer";
+import { Base58 } from "./crypto";
+import { Buffer } from "./buffer";
 
 export class ViewResults {
     res: wasmclient.Results;
@@ -45,7 +45,7 @@ export class Results {
     }
 
     getBytes(key: string): wasmclient.Bytes {
-        return this.get(key, wasmclient.TYPE_BYTES)
+        return this.get(key, wasmclient.TYPE_BYTES);
     }
 
     getBool(key: string): wasmclient.Bool {
@@ -65,7 +65,7 @@ export class Results {
     }
 
     getHname(key: string): wasmclient.Hname {
-		return this.get(key, wasmclient.TYPE_HNAME).readUInt32LE(0);
+        return this.get(key, wasmclient.TYPE_HNAME).readUInt32LE(0);
     }
 
     getInt8(key: string): wasmclient.Int8 {
@@ -108,5 +108,5 @@ export class Results {
         return this.get(key, wasmclient.TYPE_INT64).readBigUInt64LE(0);
     }
 
-	// TODO Decode() from view call response into map
+    // TODO Decode() from view call response into map
 }

@@ -1,8 +1,8 @@
-import { Buffer } from '../../wasmclient/buffer';
-import { Base58, ED25519, IKeyPair } from '../../wasmclient/crypto';
-import { blake2b } from 'blakejs';
-import { SimpleBufferCursor } from '../simple_buffer_cursor';
-import type { Balance, IOffLedger, OffLedgerArgument } from './IOffLedger';
+import { Buffer } from "../../wasmclient/buffer";
+import { Base58, ED25519, IKeyPair } from "../../wasmclient/crypto";
+import { blake2b } from "blakejs";
+import { SimpleBufferCursor } from "../simple_buffer_cursor";
+import type { Balance, IOffLedger, OffLedgerArgument } from "./IOffLedger";
 
 export class OffLedger {
     public static ToStruct(buffer: Buffer): IOffLedger {

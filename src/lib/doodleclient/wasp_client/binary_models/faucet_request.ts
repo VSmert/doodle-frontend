@@ -1,6 +1,6 @@
-import { Base58 } from '../../wasmclient/crypto';
-import { Buffer } from '../../wasmclient/buffer';
-import type { IFaucetRequest } from './IFaucetRequest';
+import { Base58 } from "../../wasmclient/crypto";
+import { Buffer } from "../../wasmclient/buffer";
+import type { IFaucetRequest } from "./IFaucetRequest";
 
 export class Faucet {
     public static ToStruct(buffer: Buffer): IFaucetRequest | null {

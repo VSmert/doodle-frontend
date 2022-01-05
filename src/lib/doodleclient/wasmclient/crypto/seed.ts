@@ -1,7 +1,7 @@
-import { Base58 } from './base58';
-import { Buffer } from '../buffer';
-import { ED25519, IKeyPair } from './ed25519';
-import { Hash } from './hash';
+import { Base58 } from "./base58";
+import { Buffer } from "../buffer";
+import { ED25519, IKeyPair } from "./ed25519";
+import { Hash } from "./hash";
 
 export class Seed {
     /**
