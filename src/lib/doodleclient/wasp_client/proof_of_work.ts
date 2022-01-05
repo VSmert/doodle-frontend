@@ -3,13 +3,6 @@ import { Log, LogTag } from '../utils/logger';
 import { Buffer } from '../wasmclient/buffer';
 
 export default class ProofOfWork {
-    public static numberToUInt64LE(n: bigint): Buffer {
-        const buffer = Buffer.alloc(8);
-        buffer.writeBigUInt64LE(n, 0);
-
-        return buffer;
-    }
-
     public static calculateProofOfWork(target: number, message: Buffer): number {
         for (let nonce = 0; ; nonce++) {
             const nonceLE = this.numberToUInt64LE(BigInt(nonce));
@@ -30,5 +23,12 @@ export default class ProofOfWork {
                 return nonce;
             }
         }
+    }
+
+    private static numberToUInt64LE(n: bigint): Buffer {
+        const buffer = Buffer.alloc(8);
+        buffer.writeBigUInt64LE(n, 0);
+
+        return buffer;
     }
 }
