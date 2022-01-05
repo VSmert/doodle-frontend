@@ -14,9 +14,9 @@ import * as waspHelper from './utils/wasp_helper';
 import configJson from './config.dev.json';
 
 let doodleService: service.DoodleService;
-let walletService: waspHelper.WalletService;
 let serviceClient: ServiceClient;
-let basicClient: waspHelper.waspClient.BasicClient;
+let walletService: waspHelper.WalletService;
+let basicClient: waspHelper.BasicClient;
 
 export let userWalletPrivKey: string;
 export let userWalletPubKey: string;
