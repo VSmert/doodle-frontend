@@ -1,5 +1,5 @@
 import { Log, LogTag } from '../logger';
-import ProofOfWork from '../../wasp_client/proof_of_work';
+import ProofOfWork from './proof_of_work';
 import type { PowWorkerRequest, PowWorkerResponse } from './pow_worker_manager';
 
 const ctx: Worker = self as never;
