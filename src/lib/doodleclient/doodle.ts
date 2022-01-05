@@ -11,6 +11,7 @@ import { IKeyPair } from './wasmclient/crypto';
 
 import { LogTag, Log } from './utils/logger';
 import * as waspHelper from './utils/wasp_helper';
+import * as keyPairGenerator from './utils/key_pair/key_pair_generator';
 import configJson from './config.dev.json';
 
 let doodleService: service.DoodleService;
@@ -51,11 +52,10 @@ export async function Initialize(
 
     serviceClient = new ServiceClient(config);
     doodleService = new service.DoodleService(serviceClient);
-    const keypair: IKeyPair = {
+    doodleService.keyPair = {
         publicKey: userPublicKey,
         secretKey: userSecretKey,
     };
-    doodleService.keyPair = keypair;
     const tableCount = (await doodleService.getTableCount().call()).tableCount();
     Log(LogTag.SmartContract, 'table count: ' + tableCount);
 
@@ -68,7 +68,7 @@ export async function Initialize(
 function generateKeyPairAndAddress(userBase58PrivateKey: string, userBase58PublicKey: string, userAddress: string) {
     if (userBase58PrivateKey === '' || userAddress === '' || !userSecretKey) {
         const [generatedUserPrivateKey, generatedUserPublicKey, generatedUserAddress, secretKey, publicKey] =
-            waspHelper.generatePrivateKeyAndAddress();
+            keyPairGenerator.generatePrivateKeyAndAddress();
         userWalletPrivKey = generatedUserPrivateKey;
         userWalletPubKey = generatedUserPublicKey;
         userWalletAddress = generatedUserAddress;
