@@ -1,16 +1,9 @@
-import { Base58, IKeyPair } from '../wasmclient/crypto';
-import { Buffer } from '../wasmclient/buffer';
-import { ColorCollection, Colors } from '../wasmclient/colors';
-import { Transaction } from './transaction';
-import type { BasicClient } from './basic_client';
-import type {
-    ITransaction,
-    IUnlockBlock,
-    IUnspentOutputMap,
-    IUnspentOutputsResponse,
-    IWalletAddressOutput,
-    IWalletOutput,
-} from './models';
+import { Base58, IKeyPair } from "../wasmclient/crypto";
+import { Buffer } from "../wasmclient/buffer";
+import { ColorCollection, Colors } from "../wasmclient/colors";
+import { Transaction } from "./transaction";
+import type { BasicClient } from "./basic_client";
+import type { ITransaction, IUnlockBlock, IUnspentOutputMap, IUnspentOutputsResponse, IWalletAddressOutput, IWalletOutput } from "./models";
 
 export type BuiltOutputResult = {
     [address: string]: {
@@ -104,12 +97,7 @@ export class BasicWallet {
         return outputsToConsume;
     }
 
-    public buildOutputs(
-        remainderAddress: string,
-        destinationAddress: string,
-        iotas: bigint,
-        consumedFunds: ColorCollection
-    ): BuiltOutputResult {
+    public buildOutputs(remainderAddress: string, destinationAddress: string, iotas: bigint, consumedFunds: ColorCollection): BuiltOutputResult {
         const outputsByColor: { [address: string]: ColorCollection } = {};
 
         // build outputs for destinations
@@ -132,7 +120,7 @@ export class BasicWallet {
         // build outputs for remainder
         if (Object.keys(consumedFunds).length > 0) {
             if (!remainderAddress) {
-                throw new Error('No remainder address available');
+                throw new Error("No remainder address available");
             }
             if (!outputsByColor[remainderAddress]) {
                 outputsByColor[remainderAddress] = {};

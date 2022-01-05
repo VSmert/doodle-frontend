@@ -1,6 +1,6 @@
-import type { ColorCollection } from '../../wasmclient/colors';
-import type { IWalletOutputBalance } from './IWalletOutputBalance';
-import type { IWalletOutputInclusionState } from './IWalletOutputInclusionState';
+import type { ColorCollection } from "../../wasmclient/colors";
+import type { IWalletOutputBalance } from "./IWalletOutputBalance";
+import type { IWalletOutputInclusionState } from "./IWalletOutputInclusionState";
 
 export interface IWalletOutput {
     /**

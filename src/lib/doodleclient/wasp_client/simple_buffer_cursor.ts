@@ -1,4 +1,4 @@
-import { Buffer } from '../wasmclient/buffer';
+import { Buffer } from "../wasmclient/buffer";
 
 export class SimpleBufferCursor {
     private _buffer: Buffer;

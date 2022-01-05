@@ -5,17 +5,16 @@
 // >>>> DO NOT CHANGE THIS FILE! <<<<
 // Change the json schema instead
 
-import * as wasmclient from './wasmclient';
-import * as app from './doodle';
+import * as wasmclient from "./wasmclient";
+import * as app from "./doodle";
 
 export const eventHandlers: wasmclient.EventHandlers = {
-    'doodle.gameEnded': (msg: string[]) => app.onDoodleGameEnded(new EventGameEnded(msg)),
-    'doodle.gameStarted': (msg: string[]) => app.onDoodleGameStarted(new EventGameStarted(msg)),
-    'doodle.playerJoinsNextBigBlind': (msg: string[]) =>
-        app.onDoodlePlayerJoinsNextBigBlind(new EventPlayerJoinsNextBigBlind(msg)),
-    'doodle.playerJoinsNextHand': (msg: string[]) => app.onDoodlePlayerJoinsNextHand(new EventPlayerJoinsNextHand(msg)),
-    'doodle.playerLeft': (msg: string[]) => app.onDoodlePlayerLeft(new EventPlayerLeft(msg)),
-    'doodle.playerWinsAllPots': (msg: string[]) => app.onDoodlePlayerWinsAllPots(new EventPlayerWinsAllPots(msg)),
+    "doodle.gameEnded": (msg: string[]) => app.onDoodleGameEnded(new EventGameEnded(msg)),
+    "doodle.gameStarted": (msg: string[]) => app.onDoodleGameStarted(new EventGameStarted(msg)),
+    "doodle.playerJoinsNextBigBlind": (msg: string[]) => app.onDoodlePlayerJoinsNextBigBlind(new EventPlayerJoinsNextBigBlind(msg)),
+    "doodle.playerJoinsNextHand": (msg: string[]) => app.onDoodlePlayerJoinsNextHand(new EventPlayerJoinsNextHand(msg)),
+    "doodle.playerLeft": (msg: string[]) => app.onDoodlePlayerLeft(new EventPlayerLeft(msg)),
+    "doodle.playerWinsAllPots": (msg: string[]) => app.onDoodlePlayerWinsAllPots(new EventPlayerWinsAllPots(msg)),
 };
 
 export class EventGameEnded extends wasmclient.Event {

@@ -1,12 +1,12 @@
-import { IResponse, IExtendedResponse } from './response_models';
+import { IResponse, IExtendedResponse } from "./response_models";
 
 const headers: { [id: string]: string } = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
 };
 
 export async function sendRequest<T, U extends IResponse>(
     url: string,
-    verb: 'put' | 'post' | 'get' | 'delete',
+    verb: "put" | "post" | "get" | "delete",
     path: string,
     request?: T | undefined
 ): Promise<U> {
@@ -16,7 +16,7 @@ export async function sendRequest<T, U extends IResponse>(
 
 export async function sendRequestExt<T, U extends IResponse | null>(
     apiUrl: string,
-    verb: 'put' | 'post' | 'get' | 'delete',
+    verb: "put" | "post" | "get" | "delete",
     path: string,
     request?: T | undefined
 ): Promise<IExtendedResponse<U>> {
@@ -31,7 +31,7 @@ export async function sendRequestExt<T, U extends IResponse | null>(
         });
 
         if (!fetchResponse) {
-            throw new Error('No data was returned from the API');
+            throw new Error("No data was returned from the API");
         }
 
         try {
@@ -43,11 +43,11 @@ export async function sendRequestExt<T, U extends IResponse | null>(
                 throw new Error(error.message);
             } else {
                 const text = await fetchResponse.text();
-                throw new Error(error.message + '   ---   ' + text);
+                throw new Error(error.message + "   ---   " + text);
             }
         }
     } catch (err) {
         const error = err as Error;
-        throw new Error('sendRequest: ' + error.message);
+        throw new Error("sendRequest: " + error.message);
     }
 }

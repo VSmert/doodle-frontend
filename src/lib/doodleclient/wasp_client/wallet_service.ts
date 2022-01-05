@@ -1,14 +1,14 @@
-import type { BasicClient } from './basic_client';
-import { BasicWallet } from './basic_wallet';
-import { Faucet, IFaucetRequest } from './binary_models';
-import type { IOnLedger } from './binary_models/IOnLedger';
-import { OnLedger } from './binary_models/on_ledger';
-import { Buffer } from '../wasmclient/buffer';
-import { Base58, IKeyPair } from '../wasmclient/crypto';
-import type { ISendTransactionResponse } from './models';
-import type { ITransaction } from './models/ITransaction';
-import { Transaction } from './transaction';
-import { PoWWorkerManager } from '../wasmclient/goshimmer/pow_web_worker/pow_worker_manager';
+import type { BasicClient } from "./basic_client";
+import { BasicWallet } from "./basic_wallet";
+import { Faucet, IFaucetRequest } from "./binary_models";
+import type { IOnLedger } from "./binary_models/IOnLedger";
+import { OnLedger } from "./binary_models/on_ledger";
+import { Buffer } from "../wasmclient/buffer";
+import { Base58, IKeyPair } from "../wasmclient/crypto";
+import type { ISendTransactionResponse } from "./models";
+import type { ITransaction } from "./models/ITransaction";
+import { Transaction } from "./transaction";
+import { PoWWorkerManager } from "../wasmclient/goshimmer/pow_web_worker/pow_worker_manager";
 
 export interface IFaucetRequestContext {
     faucetRequest: IFaucetRequest;
@@ -30,8 +30,8 @@ export class WalletService {
         const balance = currentUnspent!.outputs
             .filter(
                 (o) =>
-                    ['ExtendedLockedOutputType', 'SigLockedColoredOutputType'].includes(o.output.type) &&
-                    typeof o.output.output.balances[color] != 'undefined'
+                    ["ExtendedLockedOutputType", "SigLockedColoredOutputType"].includes(o.output.type) &&
+                    typeof o.output.output.balances[color] != "undefined"
             )
             .map((uid) => uid.output.output.balances)
             .reduce((balance: bigint, output) => (balance += BigInt(output[color])), BigInt(0));
@@ -42,8 +42,8 @@ export class WalletService {
     public async getFaucetRequest(address: string): Promise<IFaucetRequestContext> {
         const manaPledge = await this.client.getAllowedManaPledge();
 
-        const allowedManagePledge = manaPledge.accessMana?.allowed ? manaPledge.accessMana.allowed[0] : '';
-        const consenseusManaPledge = manaPledge.consensusMana?.allowed ? manaPledge.consensusMana?.allowed[0] : '';
+        const allowedManagePledge = manaPledge.accessMana?.allowed ? manaPledge.accessMana.allowed[0] : "";
+        const consenseusManaPledge = manaPledge.consensusMana?.allowed ? manaPledge.consensusMana?.allowed[0] : "";
 
         const body: IFaucetRequest = {
             accessManaPledgeID: allowedManagePledge,
@@ -99,7 +99,7 @@ export class WalletService {
         const result = Transaction.bytes(tx);
 
         const response = await this.client.sendTransaction({
-            txn_bytes: result.toString('base64'),
+            txn_bytes: result.toString("base64"),
         });
 
         return response;

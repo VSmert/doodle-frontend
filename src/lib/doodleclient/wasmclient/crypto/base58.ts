@@ -1,7 +1,7 @@
-import { Buffer } from '../buffer';
+import { Buffer } from "../buffer";
 
 export class Base58 {
-    private static readonly ALPHABET: string = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+    private static readonly ALPHABET: string = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
     private static readonly ALPHABET_MAP: { [id: string]: number } = {};
 
     /**
@@ -11,7 +11,7 @@ export class Base58 {
      */
     public static encode(buffer: Buffer): string {
         if (!buffer || buffer.length == 0) {
-            return '';
+            return "";
         }
         let i = 0;
         let j;
@@ -48,7 +48,7 @@ export class Base58 {
             .map((digit) => {
                 return Base58.ALPHABET[digit];
             })
-            .join('');
+            .join("");
     }
 
     /**
@@ -58,7 +58,7 @@ export class Base58 {
      */
     public static decode(encoded: string): Buffer {
         if (!encoded || encoded.length == 0) {
-            return Buffer.from('');
+            return Buffer.from("");
         }
         Base58.buildMap();
         const bytes = [0];
@@ -89,7 +89,7 @@ export class Base58 {
             i++;
         }
         i = 0;
-        while (encoded[i] == '1' && i < encoded.length - 1) {
+        while (encoded[i] == "1" && i < encoded.length - 1) {
             bytes.push(0);
             i++;
         }

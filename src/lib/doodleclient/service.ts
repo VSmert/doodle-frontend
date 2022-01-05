@@ -5,25 +5,25 @@
 // >>>> DO NOT CHANGE THIS FILE! <<<<
 // Change the json schema instead
 
-import * as wasmclient from './wasmclient';
-import * as events from './events';
+import * as wasmclient from "./wasmclient";
+import * as events from "./events";
 
-const ArgPotNumber = 'potNumber';
-const ArgTableNumber = 'tableNumber';
-const ArgTableSeatNumber = 'tableSeatNumber';
+const ArgPotNumber = "potNumber";
+const ArgTableNumber = "tableNumber";
+const ArgTableSeatNumber = "tableSeatNumber";
 
-const ResAgentId = 'agentId';
-const ResBigBlindInSeatNumber = 'bigBlindInSeatNumber';
-const ResChipCount = 'chipCount';
-const ResHandInProgress = 'handInProgress';
-const ResIsInHand = 'isInHand';
-const ResJoiningNextBigBlind = 'joiningNextBigBlind';
-const ResJoiningNextHand = 'joiningNextHand';
-const ResPotSize = 'potSize';
-const ResPotsCount = 'potsCount';
-const ResSize = 'size';
-const ResSmallBlindInSeatNumber = 'smallBlindInSeatNumber';
-const ResTableCount = 'tableCount';
+const ResAgentId = "agentId";
+const ResBigBlindInSeatNumber = "bigBlindInSeatNumber";
+const ResChipCount = "chipCount";
+const ResHandInProgress = "handInProgress";
+const ResIsInHand = "isInHand";
+const ResJoiningNextBigBlind = "joiningNextBigBlind";
+const ResJoiningNextHand = "joiningNextHand";
+const ResPotSize = "potSize";
+const ResPotsCount = "potsCount";
+const ResSize = "size";
+const ResSmallBlindInSeatNumber = "smallBlindInSeatNumber";
+const ResTableCount = "tableCount";
 
 ///////////////////////////// init /////////////////////////////
 
@@ -100,7 +100,7 @@ export class GetPotInfoView extends wasmclient.ClientView {
     public async call(): Promise<GetPotInfoResults> {
         this.args.mandatory(ArgPotNumber);
         this.args.mandatory(ArgTableNumber);
-        return new GetPotInfoResults(await this.callView('getPotInfo', this.args));
+        return new GetPotInfoResults(await this.callView("getPotInfo", this.args));
     }
 }
 
@@ -114,7 +114,7 @@ export class GetPotInfoResults extends wasmclient.ViewResults {
 
 export class GetTableCountView extends wasmclient.ClientView {
     public async call(): Promise<GetTableCountResults> {
-        return new GetTableCountResults(await this.callView('getTableCount', null));
+        return new GetTableCountResults(await this.callView("getTableCount", null));
     }
 }
 
@@ -135,7 +135,7 @@ export class GetTableInfoView extends wasmclient.ClientView {
 
     public async call(): Promise<GetTableInfoResults> {
         this.args.mandatory(ArgTableNumber);
-        return new GetTableInfoResults(await this.callView('getTableInfo', this.args));
+        return new GetTableInfoResults(await this.callView("getTableInfo", this.args));
     }
 }
 
@@ -177,7 +177,7 @@ export class GetTableSeatView extends wasmclient.ClientView {
     public async call(): Promise<GetTableSeatResults> {
         this.args.mandatory(ArgTableNumber);
         this.args.mandatory(ArgTableSeatNumber);
-        return new GetTableSeatResults(await this.callView('getTableSeat', this.args));
+        return new GetTableSeatResults(await this.callView("getTableSeat", this.args));
     }
 }
 

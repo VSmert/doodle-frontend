@@ -1,5 +1,5 @@
-import type { ColorCollection } from '../../wasmclient/colors';
-import type { IResponse } from './IResponse';
+import type { ColorCollection } from "../../wasmclient/colors";
+import type { IResponse } from "./IResponse";
 
 export interface IUnspentOutput {
     outputID: {

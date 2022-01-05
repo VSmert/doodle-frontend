@@ -1,6 +1,6 @@
-import { blake2b } from 'blakejs';
-import { Log, LogTag } from '../../../utils/logger';
-import { Buffer } from '../../buffer';
+import { blake2b } from "blakejs";
+import { Log, LogTag } from "../../../utils/logger";
+import { Buffer } from "../../buffer";
 
 export default class ProofOfWork {
     public static calculateProofOfWork(target: number, message: Buffer): number {
@@ -19,7 +19,7 @@ export default class ProofOfWork {
 
             if (leadingZeros >= target) {
                 // eslint-disable-next-line no-console
-                Log(LogTag.Site, 'PoW Single Thread done');
+                Log(LogTag.Site, "PoW Single Thread done");
                 return nonce;
             }
         }

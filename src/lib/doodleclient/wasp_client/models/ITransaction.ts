@@ -1,6 +1,6 @@
-import type { IUnlockBlock } from './IUnlockBlock';
-import type { Buffer } from '../../wasmclient/buffer';
-import type { BuiltOutputResult } from '../basic_wallet';
+import type { IUnlockBlock } from "./IUnlockBlock";
+import type { Buffer } from "../../wasmclient/buffer";
+import type { BuiltOutputResult } from "../basic_wallet";
 export interface ITransaction {
     /**
      * The transaction's version.
