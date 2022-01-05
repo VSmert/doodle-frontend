@@ -1,21 +1,10 @@
 // Copyright 2020 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-import * as wasmclient from "./index"
-import {Buffer} from "./buffer";
-
-const headers: { [id: string]: string } = {
-    "Content-Type": "application/json",
-};
-
-interface IResponse {
-    error?: string;
-}
-
-interface IExtendedResponse<U> {
-    body: U;
-    response: Response;
-}
+import * as wasmclient from './index';
+import { Buffer } from './buffer';
+import { IResponse } from './api_common/response_models';
+import * as requestSender from './api_common/request_sender';
 
 interface ICallViewResponse extends IResponse {
     Items: [{ Key: string; Value: string }];
@@ -29,16 +18,20 @@ export class WaspClient {
     private waspAPI: string;
 
     constructor(waspAPI: string) {
-        if(waspAPI.startsWith("https://") || waspAPI.startsWith("http://"))
-            this.waspAPI = waspAPI;
-        else
-            this.waspAPI = "http://" + waspAPI;
+        if (waspAPI.startsWith('https://') || waspAPI.startsWith('http://')) this.waspAPI = waspAPI;
+        else this.waspAPI = 'http://' + waspAPI;
     }
 
-    public async callView(chainID: string, contractHName: string, entryPoint: string, args: Buffer): Promise<wasmclient.Results> {
-        const request = {Request: args.toString("base64")};
-        const result = await this.sendRequest<unknown, ICallViewResponse>(
-            "post",
+    public async callView(
+        chainID: string,
+        contractHName: string,
+        entryPoint: string,
+        args: Buffer
+    ): Promise<wasmclient.Results> {
+        const request = { Request: args.toString('base64') };
+        const result = await requestSender.sendRequestExt<unknown, ICallViewResponse>(
+            this.waspAPI,
+            'post',
             `/chain/${chainID}/contract/${contractHName}/callview/${entryPoint}`,
             request
         );
@@ -46,8 +39,8 @@ export class WaspClient {
 
         if (result?.body !== null && result.body.Items) {
             for (const item of result.body.Items) {
-                const key = Buffer.from(item.Key, "base64").toString();
-                const value = Buffer.from(item.Value, "base64");
+                const key = Buffer.from(item.Key, 'base64').toString();
+                const value = Buffer.from(item.Value, 'base64');
                 res.res.set(key, value);
             }
         }
@@ -55,55 +48,20 @@ export class WaspClient {
     }
 
     public async postRequest(chainID: string, offLedgerRequest: Buffer): Promise<void> {
-        const request = {Request: offLedgerRequest.toString("base64")};
-        await this.sendRequest<IOffLedgerRequest, null>(
-            "post",
+        const request = { Request: offLedgerRequest.toString('base64') };
+        await requestSender.sendRequestExt<IOffLedgerRequest, null>(
+            this.waspAPI,
+            'post',
             `/request/${chainID}`,
-            request,
+            request
         );
     }
 
     public async waitRequest(chainID: string, reqID: wasmclient.RequestID): Promise<void> {
-        await this.sendRequest<unknown, null>(
-            "get",
-            `/chain/${chainID}/request/${reqID}/wait`,
+        await requestSender.sendRequestExt<unknown, null>(
+            this.waspAPI,
+            'get',
+            `/chain/${chainID}/request/${reqID}/wait`
         );
-    }
-
-    private async sendRequest<T, U extends IResponse | null>(
-        verb: "put" | "post" | "get" | "delete",
-        path: string,
-        request?: T | undefined,
-    ): Promise<IExtendedResponse<U | null>> {
-        let response: U | null = null;
-        let fetchResponse: Response;
-
-        try {
-            const url = this.waspAPI + path;
-            fetchResponse = await fetch(url, {
-                method: verb,
-                headers,
-                body: JSON.stringify(request),
-            });
-
-            if (!fetchResponse) {
-                throw new Error("No data was returned from the API");
-            }
-
-            try {
-                response = await fetchResponse.json();
-            } catch (err) {
-                const error = err as Error;
-                if (!fetchResponse.ok) {
-                    const text = await fetchResponse.text();
-                    throw new Error(error.message + "   ---   " + text);
-                }
-            }
-        } catch (err) {
-            const error = err as Error;
-            throw new Error("sendRequest: " + error.message);
-        }
-
-        return {body: response, response: fetchResponse};
     }
 }

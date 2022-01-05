@@ -1,4 +1,4 @@
-import { Log, LogTag } from '../logger';
+import { Log, LogTag } from '../../../utils/logger';
 import ProofOfWork from './proof_of_work';
 import type { PowWorkerRequest, PowWorkerResponse } from './pow_worker_manager';
 

@@ -1,6 +1,6 @@
 import { blake2b } from 'blakejs';
-import { Log, LogTag } from '../logger';
-import { Buffer } from '../../wasmclient/buffer';
+import { Log, LogTag } from '../../../utils/logger';
+import { Buffer } from '../../buffer';
 
 export default class ProofOfWork {
     public static calculateProofOfWork(target: number, message: Buffer): number {

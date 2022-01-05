@@ -8,7 +8,7 @@ import { Base58, IKeyPair } from '../wasmclient/crypto';
 import type { ISendTransactionResponse } from './models';
 import type { ITransaction } from './models/ITransaction';
 import { Transaction } from './transaction';
-import { PoWWorkerManager } from '../utils/pow_web_worker/pow_worker_manager';
+import { PoWWorkerManager } from '../wasmclient/goshimmer/pow_web_worker/pow_worker_manager';
 
 export interface IFaucetRequestContext {
     faucetRequest: IFaucetRequest;
