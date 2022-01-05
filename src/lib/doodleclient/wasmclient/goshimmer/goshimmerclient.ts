@@ -1,23 +1,28 @@
-import { Log, LogTag } from '../../utils/logger';
-import { Buffer } from '../buffer';
-import { Configuration } from '../configuration';
+import { Log, LogTag } from "../../utils/logger";
+import { Buffer } from "../buffer";
+import { Configuration } from "../configuration";
 
-import { IFaucetRequest, IFaucetRequestContext, IFaucetResponse } from './faucet/faucet_models';
-import { FaucetHelper } from './faucet/faucet_helper';
+import { IFaucetRequest, IFaucetRequestContext, IFaucetResponse } from "./faucet/faucet_models";
+import { FaucetHelper } from "./faucet/faucet_helper";
 
-import { IUnspentOutputsRequest, IUnspentOutputsResponse } from './models/unspent_outputs';
-import { IAllowedManaPledgeResponse } from './models/mana';
+import { IUnspentOutputsRequest, IUnspentOutputsResponse } from "./models/unspent_outputs";
+import { IAllowedManaPledgeResponse } from "./models/mana";
 
-import { PoWWorkerManager } from './pow_web_worker/pow_worker_manager';
+import { PoWWorkerManager } from "./pow_web_worker/pow_worker_manager";
 
-import * as requestSender from '../api_common/request_sender';
+import * as requestSender from "../api_common/request_sender";
+
+import { Base58, IKeyPair } from "../crypto";
+
+import { IOnLedger, OnLedgerHelper } from "./models/on_ledger";
+import { ISendTransactionRequest, ISendTransactionResponse, ITransaction, Transaction } from "./models/transaction";
+import { BasicWallet } from "./wallet/basic_wallet";
+import { Colors } from "../colors";
 
 interface GoShimmerClientConfiguration {
     APIUrl: string;
     SeedUnsafe: Buffer | null;
 }
-
-const IOTA_COLOR: string = 'IOTA';
 
 export class GoShimmerClient {
     private readonly goShimmerConfiguration: GoShimmerClientConfiguration;
@@ -28,13 +33,13 @@ export class GoShimmerClient {
     }
 
     public async getIOTABalance(address: string): Promise<bigint> {
-        const iotaBalance = await this.getBalance(address, IOTA_COLOR);
+        const iotaBalance = await this.getBalance(address, Colors.IOTA_COLOR_STRING);
         return iotaBalance;
     }
 
     private async getBalance(address: string, color: string): Promise<bigint> {
-        if (color == IOTA_COLOR) {
-            color = '11111111111111111111111111111111';
+        if (color == Colors.IOTA_COLOR) {
+            color = Colors.IOTA_COLOR_STRING;
         }
 
         const unspents = await this.unspentOutputs({ addresses: [address] });
@@ -43,8 +48,8 @@ export class GoShimmerClient {
         const balance = currentUnspent!.outputs
             .filter(
                 (o) =>
-                    ['ExtendedLockedOutputType', 'SigLockedColoredOutputType'].includes(o.output.type) &&
-                    typeof o.output.output.balances[color] != 'undefined'
+                    ["ExtendedLockedOutputType", "SigLockedColoredOutputType"].includes(o.output.type) &&
+                    typeof o.output.output.balances[color] != "undefined"
             )
             .map((uid) => uid.output.output.balances)
             .reduce((balance: bigint, output) => (balance += BigInt(output[color])), BigInt(0));
@@ -52,11 +57,11 @@ export class GoShimmerClient {
         return balance;
     }
 
-    private async unspentOutputs(request: IUnspentOutputsRequest): Promise<IUnspentOutputsResponse> {
+    public async unspentOutputs(request: IUnspentOutputsRequest): Promise<IUnspentOutputsResponse> {
         return requestSender.sendRequest<IUnspentOutputsRequest, IUnspentOutputsResponse>(
             this.goShimmerConfiguration.APIUrl,
-            'post',
-            'ledgerstate/addresses/unspentOutputs',
+            "post",
+            "ledgerstate/addresses/unspentOutputs",
             request
         );
     }
@@ -77,8 +82,8 @@ export class GoShimmerClient {
     private async getFaucetRequest(address: string): Promise<IFaucetRequestContext> {
         const manaPledge = await this.getAllowedManaPledge();
 
-        const allowedManagePledge = manaPledge.accessMana?.allowed ? manaPledge.accessMana.allowed[0] : '';
-        const consenseusManaPledge = manaPledge.consensusMana?.allowed ? manaPledge.consensusMana?.allowed[0] : '';
+        const allowedManagePledge = manaPledge.accessMana?.allowed ? manaPledge.accessMana.allowed[0] : "";
+        const consenseusManaPledge = manaPledge.consensusMana?.allowed ? manaPledge.consensusMana?.allowed[0] : "";
 
         const body: IFaucetRequest = {
             accessManaPledgeID: allowedManagePledge,
@@ -100,20 +105,66 @@ export class GoShimmerClient {
     }
 
     private async getAllowedManaPledge(): Promise<IAllowedManaPledgeResponse> {
-        return requestSender.sendRequest<null, IAllowedManaPledgeResponse>(
-            this.goShimmerConfiguration.APIUrl,
-            'get',
-            'mana/allowedManaPledge'
-        );
+        return requestSender.sendRequest<null, IAllowedManaPledgeResponse>(this.goShimmerConfiguration.APIUrl, "get", "mana/allowedManaPledge");
     }
 
     private async sendFaucetRequest(faucetRequest: IFaucetRequest): Promise<IFaucetResponse> {
         const response = await requestSender.sendRequest<IFaucetRequest, IFaucetResponse>(
             this.goShimmerConfiguration.APIUrl,
-            'post',
-            'faucet',
+            "post",
+            "faucet",
             faucetRequest
         );
         return response;
+    }
+
+    public async sendOnLedgerRequest(
+        address: string,
+        chainId: string,
+        payload: IOnLedger,
+        transfer: bigint = 1n,
+        keyPair: IKeyPair
+    ): Promise<ISendTransactionResponse> {
+        if (transfer <= 0) {
+            transfer = 1n;
+        }
+
+        const wallet = new BasicWallet(this);
+
+        const unspents = await wallet.getUnspentOutputs(address);
+        const consumedOutputs = wallet.determineOutputsToConsume(unspents, transfer);
+        const { inputs, consumedFunds } = wallet.buildInputs(consumedOutputs);
+        const outputs = wallet.buildOutputs(address, chainId, transfer, consumedFunds);
+
+        const tx: ITransaction = {
+            version: 0,
+            timestamp: BigInt(Date.now()) * 1000000n,
+            aManaPledge: Base58.encode(Buffer.alloc(32)),
+            cManaPledge: Base58.encode(Buffer.alloc(32)),
+            inputs: inputs,
+            outputs: outputs,
+            chainId: chainId,
+            payload: OnLedgerHelper.ToBuffer(payload),
+            unlockBlocks: [],
+        };
+
+        tx.unlockBlocks = wallet.unlockBlocks(tx, keyPair, address, consumedOutputs, inputs);
+
+        const result = Transaction.bytes(tx);
+
+        const response = await this.sendTransaction({
+            txn_bytes: result.toString("base64"),
+        });
+
+        return response;
+    }
+
+    private async sendTransaction(request: ISendTransactionRequest): Promise<ISendTransactionResponse> {
+        return requestSender.sendRequest<ISendTransactionRequest, ISendTransactionResponse>(
+            this.goShimmerConfiguration.APIUrl,
+            "post",
+            "ledgerstate/transactions",
+            request
+        );
     }
 }
