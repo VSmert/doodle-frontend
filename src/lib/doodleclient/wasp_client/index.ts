@@ -2,7 +2,6 @@
 export * from './basic_client';
 export * from './basic_wallet';
 export * from './binary_models/index';
-export * from './colors';
 export * from './models/index';
 export * from './proof_of_work';
 export * from './simple_buffer_cursor';

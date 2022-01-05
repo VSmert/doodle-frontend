@@ -3,8 +3,9 @@ import { Buffer } from '../wasmclient/buffer';
 import { Base58 } from '../wasmclient/crypto/base58';
 import { Seed } from '../wasmclient/crypto/seed';
 
-export { BasicClient, WalletService, Colors } from '../wasp_client';
 import { BasicClientConfiguration, BasicClient } from '../wasp_client';
+
+export { BasicClient, WalletService } from '../wasp_client';
 
 export function GetBasicClient(configuration: Configuration): BasicClient {
     const basicClientConfiguration = getBasicClientConfiguration(configuration);

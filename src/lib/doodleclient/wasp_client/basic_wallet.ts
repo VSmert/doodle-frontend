@@ -1,6 +1,6 @@
 import { Base58, IKeyPair } from '../wasmclient/crypto';
 import { Buffer } from '../wasmclient/buffer';
-import { ColorCollection, Colors } from './colors';
+import { ColorCollection, Colors } from '../wasmclient/colors';
 import { Transaction } from './transaction';
 import type { BasicClient } from './basic_client';
 import type {
