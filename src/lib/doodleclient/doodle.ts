@@ -4,20 +4,17 @@
 import * as events from './events';
 import * as service from './service';
 
-import { ServiceClient, Colors } from './wasmclient';
+import { ServiceClient } from './wasmclient';
 import { Buffer } from './wasmclient/buffer';
 import { Configuration } from './wasmclient/configuration';
-import { IKeyPair } from './wasmclient/crypto';
 
 import { LogTag, Log } from './utils/logger';
-import * as waspHelper from './utils/wasp_helper';
+import * as chainHelper from './utils/chain_helper';
 import * as keyPairGenerator from './utils/key_pair/key_pair_generator';
 import configJson from './config.dev.json';
 
 let doodleService: service.DoodleService;
 let serviceClient: ServiceClient;
-let walletService: waspHelper.WalletService;
-let basicClient: waspHelper.BasicClient;
 
 export let userWalletPrivKey: string;
 export let userWalletPubKey: string;
@@ -43,11 +40,7 @@ export async function Initialize(
         `Using private key '${userWalletPrivKey}' public key '${userBase58PublicKey}' address '${userWalletAddress}'`
     );
 
-    basicClient = waspHelper.GetBasicClient(config);
-    walletService = new waspHelper.WalletService(basicClient);
-    Log(LogTag.Site, 'Wallet service initialized');
-
-    config.chainId = await waspHelper.GetChainId(config);
+    config.chainId = await chainHelper.GetChainId(config);
     Log(LogTag.Site, 'Using chain ' + config.chainId);
 
     serviceClient = new ServiceClient(config);
@@ -83,6 +76,18 @@ function generateKeyPairAndAddress(userBase58PrivateKey: string, userBase58Publi
     }
 }
 
+// -------------------------- GoShimmer client ----------------------------
+
+export async function getIOTABalance(address: string): Promise<bigint> {
+    return await serviceClient.goShimmerClient.getIOTABalance(address);
+}
+
+export async function requestFunds(address: string): Promise<boolean> {
+    return await serviceClient.goShimmerClient.requestFunds(address);
+}
+
+// ------------------------------------------------------------------------
+
 export async function joinNextHand(tableNumber: number, tableSeatNumber: number): Promise<boolean> {
     try {
         Log(LogTag.Site, 'Executing joinNextHand');
@@ -111,24 +116,6 @@ export async function joinNextBigBlind(tableNumber: number, tableSeatNumber: num
         Log(LogTag.Error, error.message);
         return false;
     }
-}
-
-export async function requestFunds(address: string): Promise<boolean> {
-    try {
-        const faucetRequestContext = await walletService.getFaucetRequest(address);
-        const response = await basicClient.sendFaucetRequest(faucetRequestContext.faucetRequest);
-        const success = response.error === undefined && response.id !== undefined;
-        return success;
-    } catch (ex: unknown) {
-        const error = ex as Error;
-        Log(LogTag.Error, error.message);
-        return false;
-    }
-}
-
-export async function getIOTABalance(address: string): Promise<bigint> {
-    const iotaBalance = await walletService.getFunds(address, Colors.IOTA_COLOR_STRING);
-    return iotaBalance;
 }
 
 export function onDoodleGameEnded(event: events.EventGameEnded): void {
