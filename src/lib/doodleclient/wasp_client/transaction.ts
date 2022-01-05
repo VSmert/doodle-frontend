@@ -1,6 +1,6 @@
 import { Buffer } from '../wasmclient/buffer';
 import { Base58, IKeyPair, ED25519 } from '../wasmclient/crypto';
-import { Colors } from './colors';
+import { Colors } from '../wasmclient/colors';
 
 import { SimpleBufferCursor } from './simple_buffer_cursor';
 import type { ITransaction } from './models/ITransaction';

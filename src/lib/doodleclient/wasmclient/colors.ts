@@ -1,4 +1,4 @@
-import { Buffer } from '../wasmclient/buffer';
+import { Buffer } from './buffer';
 
 export class Colors {
     public static readonly IOTA_COLOR_STRING: string = '11111111111111111111111111111111';

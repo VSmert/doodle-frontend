@@ -4,7 +4,7 @@
 import * as events from './events';
 import * as service from './service';
 
-import { ServiceClient } from './wasmclient';
+import { ServiceClient, Colors } from './wasmclient';
 import { Buffer } from './wasmclient/buffer';
 import { Configuration } from './wasmclient/configuration';
 import { IKeyPair } from './wasmclient/crypto';
@@ -127,7 +127,7 @@ export async function requestFunds(address: string): Promise<boolean> {
 }
 
 export async function getIOTABalance(address: string): Promise<bigint> {
-    const iotaBalance = await walletService.getFunds(address, waspHelper.Colors.IOTA_COLOR_STRING);
+    const iotaBalance = await walletService.getFunds(address, Colors.IOTA_COLOR_STRING);
     return iotaBalance;
 }
 
