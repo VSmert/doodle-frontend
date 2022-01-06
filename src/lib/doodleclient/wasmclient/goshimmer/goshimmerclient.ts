@@ -124,7 +124,7 @@ export class GoShimmerClient {
         payload: IOnLedger,
         transfer: bigint = 1n,
         keyPair: IKeyPair
-    ): Promise<ISendTransactionResponse> {
+    ): Promise<string> {
         if (transfer <= 0) {
             transfer = 1n;
         }
@@ -156,7 +156,8 @@ export class GoShimmerClient {
             txn_bytes: result.toString("base64"),
         });
 
-        return response;
+        if (!response || response.error != undefined) throw Error("Transaction error: " + response.error);
+        return response?.transaction_id ?? "";
     }
 
     private async sendTransaction(request: ISendTransactionRequest): Promise<ISendTransactionResponse> {
