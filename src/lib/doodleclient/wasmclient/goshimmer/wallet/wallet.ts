@@ -16,7 +16,7 @@ export type ConsumedOutputs = {
     [address: string]: { [outputID: string]: IWalletOutput };
 };
 
-export class BasicWallet {
+export class Wallet {
     private goShimmerClient: GoShimmerClient;
     constructor(client: GoShimmerClient) {
         this.goShimmerClient = client;

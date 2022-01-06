@@ -16,7 +16,7 @@ import { Base58, IKeyPair } from "../crypto";
 
 import { IOnLedger, OnLedgerHelper } from "./models/on_ledger";
 import { ISendTransactionRequest, ISendTransactionResponse, ITransaction, Transaction } from "./models/transaction";
-import { BasicWallet } from "./wallet/basic_wallet";
+import { Wallet } from "./wallet/wallet";
 import { Colors } from "../colors";
 
 interface GoShimmerClientConfiguration {
@@ -129,7 +129,7 @@ export class GoShimmerClient {
             transfer = 1n;
         }
 
-        const wallet = new BasicWallet(this);
+        const wallet = new Wallet(this);
 
         const unspents = await wallet.getUnspentOutputs(address);
         const consumedOutputs = wallet.determineOutputsToConsume(unspents, transfer);
