@@ -1,6 +1,5 @@
 import { Log, LogTag } from "../../utils/logger";
 import { Buffer } from "../buffer";
-import { Configuration } from "../configuration";
 
 import { IFaucetRequest, IFaucetRequestContext, IFaucetResponse } from "./faucet/faucet_models";
 import { FaucetHelper } from "./faucet/faucet_helper";
@@ -18,6 +17,9 @@ import { IOnLedger, OnLedgerHelper } from "./models/on_ledger";
 import { ISendTransactionRequest, ISendTransactionResponse, ITransaction, Transaction } from "./models/transaction";
 import { Wallet } from "./wallet/wallet";
 import { Colors } from "../colors";
+import { ServiceClient } from "../serviceclient";
+import { Transfer } from "..";
+import { AccountsService } from "../core_services/accounts_service";
 
 interface GoShimmerClientConfiguration {
     APIUrl: string;
@@ -25,11 +27,13 @@ interface GoShimmerClientConfiguration {
 }
 
 export class GoShimmerClient {
+    private accountsService: AccountsService;
     private readonly goShimmerConfiguration: GoShimmerClientConfiguration;
     private readonly powManager: PoWWorkerManager = new PoWWorkerManager();
 
-    constructor(configuration: Configuration) {
-        this.goShimmerConfiguration = { APIUrl: configuration.goShimmerApiUrl, SeedUnsafe: configuration.seed };
+    constructor(serviceClient: ServiceClient) {
+        this.accountsService = new AccountsService(serviceClient);
+        this.goShimmerConfiguration = { APIUrl: serviceClient.configuration.goShimmerApiUrl, SeedUnsafe: serviceClient.configuration.seed };
     }
 
     public async getIOTABalance(address: string): Promise<bigint> {
@@ -167,5 +171,13 @@ export class GoShimmerClient {
             "ledgerstate/transactions",
             request
         );
+    }
+
+    public async depositToAccountInChain(keypair: IKeyPair, destinationAddress: string, amount: bigint) {
+        const depositfunc = this.accountsService.deposit();
+        depositfunc.address(destinationAddress);
+        depositfunc.transfer(Transfer.iotas(amount));
+        depositfunc.sign(keypair);
+        depositfunc.post();
     }
 }

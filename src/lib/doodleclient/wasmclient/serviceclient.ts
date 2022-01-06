@@ -12,7 +12,7 @@ export class ServiceClient {
     constructor(configuration: Configuration) {
         this.configuration = configuration;
         this.waspClient = new wasmclient.WaspClient(configuration.waspApiUrl);
-        this.goShimmerClient = new wasmclient.GoShimmerClient(configuration);
+        this.goShimmerClient = new wasmclient.GoShimmerClient(this);
     }
 
     static default(): ServiceClient {

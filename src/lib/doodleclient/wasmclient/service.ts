@@ -36,33 +36,22 @@ export class Service {
         args: wasmclient.Arguments,
         transfer: wasmclient.Transfer,
         keyPair: IKeyPair,
-        offLedger: boolean,
-        address: string = ""
+        offLedger: boolean
     ): Promise<string> {
+        const chainId = this.serviceClient.configuration.chainId;
         if (offLedger) {
-            const requestID = await this.serviceClient.waspClient.postOffLedgerRequest(
-                this.serviceClient.configuration.chainId,
-                this.scHname,
-                hFuncName,
-                args,
-                transfer,
-                keyPair
-            );
+            const requestID = await this.serviceClient.waspClient.postOffLedgerRequest(chainId, this.scHname, hFuncName, args, transfer, keyPair);
             return requestID;
         } else {
+            const address = args.getString("address");
             const payload: IOnLedger = {
                 contract: this.scHname,
                 entrypoint: hFuncName,
                 //TODO: map args
                 //arguments : args
             };
-            const transactionID = await this.serviceClient.goShimmerClient.sendOnLedgerRequest(
-                address,
-                this.serviceClient.configuration.chainId,
-                payload,
-                transfer.get(Colors.IOTA_COLOR),
-                keyPair
-            );
+            const transferAmount = transfer.get(Colors.IOTA_COLOR);
+            const transactionID = await this.serviceClient.goShimmerClient.sendOnLedgerRequest(address, chainId, payload, transferAmount, keyPair);
             if (!transactionID) throw new Error("No transaction id");
             return transactionID;
         }
