@@ -37,13 +37,12 @@ export class Service {
         transfer: wasmclient.Transfer,
         keyPair: IKeyPair,
         offLedger: boolean,
-        address: string = "",
-        contractName: number = this.scHname,
+        address: string = ""
     ): Promise<string> {
         if (offLedger) {
             const requestID = await this.serviceClient.waspClient.postOffLedgerRequest(
                 this.serviceClient.configuration.chainId,
-                contractName,
+                this.scHname,
                 hFuncName,
                 args,
                 transfer,
@@ -51,28 +50,22 @@ export class Service {
             );
             return requestID;
         } else {
-            const transactionID = await this.postOnLedgerRequest(address, this.serviceClient.configuration.chainId, args, transfer, keyPair, contractName, hFuncName);
+            const payload: IOnLedger = {
+                contract: this.scHname,
+                entrypoint: hFuncName,
+                //TODO: map args
+                //arguments : args
+            };
+            const transactionID = await this.serviceClient.goShimmerClient.sendOnLedgerRequest(
+                address,
+                this.serviceClient.configuration.chainId,
+                payload,
+                transfer.get(Colors.IOTA_COLOR),
+                keyPair
+            );
+            if (!transactionID) throw new Error("No transaction id");
             return transactionID;
         }
-    }
-
-    private async postOnLedgerRequest(
-        address: string,
-        chainId: string,
-        args: wasmclient.Arguments,
-        transfer: wasmclient.Transfer,
-        keyPair: IKeyPair,
-        contractName: wasmclient.Int32,
-        hFuncName: wasmclient.Int32
-    ): Promise<string> {
-        const payload : IOnLedger = {
-            contract : contractName,
-            entrypoint: hFuncName
-            //TODO: map args
-        }
-        const result = await this.serviceClient.goShimmerClient.sendOnLedgerRequest(address, chainId, payload, transfer.get(Colors.IOTA_COLOR), keyPair);
-        if (!result.transaction_id) throw new Error("No transaction id");
-        return result.transaction_id;
     }
 
     public async waitRequest(reqID: wasmclient.RequestID): Promise<void> {
