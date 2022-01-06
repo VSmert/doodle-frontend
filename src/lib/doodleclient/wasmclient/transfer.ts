@@ -26,6 +26,15 @@ export class Transfer {
         this.xfer.set(Base58.decode(color), amount);
     }
 
+    get(color: string) : wasmclient.Uint64 {
+        if (color == Colors.IOTA_COLOR)
+            color = Colors.IOTA_COLOR_STRING;
+        if (color != Colors.IOTA_COLOR_STRING) 
+            throw new Error("Not Implemented for color other than IOTA");
+        const amount = this.xfer.get(Base58.decode(color));
+        return amount ?? 0n;
+    }
+
     // Encode returns a byte array that encodes the Transfer as follows:
     // Sort all nonzero transfers in ascending color order (very important,
     // because this data will be part of the data that will be signed,

@@ -2,7 +2,7 @@ import { Buffer } from "../../buffer";
 import { SimpleBufferCursor } from "../utils/simple_buffer_cursor";
 import { Base58, IKeyPair, ED25519 } from "../../crypto";
 
-import type { BuiltOutputResult } from "../wallet/basic_wallet";
+import type { BuiltOutputResult } from "../wallet/wallet";
 
 import { IResponse } from "../../api_common/response_models";
 import { Colors } from "../../colors";

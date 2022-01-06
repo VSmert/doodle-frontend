@@ -4,6 +4,7 @@
 import * as wasmclient from "./index";
 import { IKeyPair } from "./crypto";
 import { IOnLedger } from "./goshimmer/models/on_ledger";
+import { Colors } from "./colors";
 
 export type EventHandlers = { [key: string]: (message: string[]) => void };
 
@@ -35,12 +36,14 @@ export class Service {
         args: wasmclient.Arguments,
         transfer: wasmclient.Transfer,
         keyPair: IKeyPair,
-        offLedger: boolean
+        offLedger: boolean,
+        address: string = "",
+        contractName: number = this.scHname,
     ): Promise<string> {
         if (offLedger) {
             const requestID = await this.serviceClient.waspClient.postOffLedgerRequest(
                 this.serviceClient.configuration.chainId,
-                this.scHname,
+                contractName,
                 hFuncName,
                 args,
                 transfer,
@@ -48,7 +51,7 @@ export class Service {
             );
             return requestID;
         } else {
-            const transactionID = await this.postOnLedgerRequest(hFuncName, args, transfer, keyPair);
+            const transactionID = await this.postOnLedgerRequest(address, this.serviceClient.configuration.chainId, args, transfer, keyPair, contractName, hFuncName);
             return transactionID;
         }
     }
@@ -56,11 +59,18 @@ export class Service {
     private async postOnLedgerRequest(
         address: string,
         chainId: string,
-        payload: IOnLedger,
+        args: wasmclient.Arguments,
         transfer: wasmclient.Transfer,
-        keyPair: IKeyPair
+        keyPair: IKeyPair,
+        contractName: wasmclient.Int32,
+        hFuncName: wasmclient.Int32
     ): Promise<string> {
-        const result = await this.serviceClient.goShimmerClient.sendOnLedgerRequest(address, chainId, payload, transfer, keyPair);
+        const payload : IOnLedger = {
+            contract : contractName,
+            entrypoint: hFuncName
+            //TODO: map args
+        }
+        const result = await this.serviceClient.goShimmerClient.sendOnLedgerRequest(address, chainId, payload, transfer.get(Colors.IOTA_COLOR), keyPair);
         if (!result.transaction_id) throw new Error("No transaction id");
         return result.transaction_id;
     }
