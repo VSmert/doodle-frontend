@@ -8,14 +8,14 @@
 import * as wasmclient from "./wasmclient";
 import * as app from "./doodle";
 
-export const eventHandlers: wasmclient.EventHandlers = {
-    "doodle.gameEnded": (msg: string[]) => app.onDoodleGameEnded(new EventGameEnded(msg)),
-    "doodle.gameStarted": (msg: string[]) => app.onDoodleGameStarted(new EventGameStarted(msg)),
-    "doodle.playerJoinsNextBigBlind": (msg: string[]) => app.onDoodlePlayerJoinsNextBigBlind(new EventPlayerJoinsNextBigBlind(msg)),
-    "doodle.playerJoinsNextHand": (msg: string[]) => app.onDoodlePlayerJoinsNextHand(new EventPlayerJoinsNextHand(msg)),
-    "doodle.playerLeft": (msg: string[]) => app.onDoodlePlayerLeft(new EventPlayerLeft(msg)),
-    "doodle.playerWinsAllPots": (msg: string[]) => app.onDoodlePlayerWinsAllPots(new EventPlayerWinsAllPots(msg)),
-};
+export const eventHandlers: wasmclient.EventHandlers = new Map([
+    ["doodle.gameEnded", (msg: string[]) => app.onDoodleGameEnded(new EventGameEnded(msg))],
+    ["doodle.gameStarted", (msg: string[]) => app.onDoodleGameStarted(new EventGameStarted(msg))],
+    ["doodle.playerJoinsNextBigBlind", (msg: string[]) => app.onDoodlePlayerJoinsNextBigBlind(new EventPlayerJoinsNextBigBlind(msg))],
+    ["doodle.playerJoinsNextHand", (msg: string[]) => app.onDoodlePlayerJoinsNextHand(new EventPlayerJoinsNextHand(msg))],
+    ["doodle.playerLeft", (msg: string[]) => app.onDoodlePlayerLeft(new EventPlayerLeft(msg))],
+    ["doodle.playerWinsAllPots", (msg: string[]) => app.onDoodlePlayerWinsAllPots(new EventPlayerWinsAllPots(msg))],
+]);
 
 export class EventGameEnded extends wasmclient.Event {
     public readonly tableNumber: wasmclient.Uint32;
