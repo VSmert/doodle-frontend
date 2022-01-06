@@ -6,7 +6,7 @@ import { IKeyPair } from "./crypto";
 import { IOnLedger } from "./goshimmer/models/on_ledger";
 import { Colors } from "./colors";
 
-export type EventHandlers = { [key: string]: (message: string[]) => void };
+export type EventHandlers = Map<string, (message: string[]) => void>;
 
 export class Service {
     private serviceClient: wasmclient.ServiceClient;
@@ -84,7 +84,7 @@ export class Service {
 
         this.waspWebSocketUrl = this.waspWebSocketUrl.replace("%chainId", this.serviceClient.configuration.chainId);
 
-        this.connectWebSocket();
+        if (this.eventHandlers.size > 1) this.connectWebSocket();
     }
 
     private connectWebSocket(): void {
@@ -103,8 +103,10 @@ export class Service {
         }
         const topics = msg[3].split("|");
         const topic = topics[0];
-        if (this.eventHandlers && this.eventHandlers[topic] != undefined) {
-            this.eventHandlers[topic](msg.slice(1));
+        if (this.eventHandlers && this.eventHandlers.has(topic)) {
+            const eventHandler = this.eventHandlers.get(topic)!;
+            const eventHandlerMsg = msg.slice(1);
+            eventHandler(eventHandlerMsg);
         }
     }
 }
