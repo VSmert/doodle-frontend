@@ -25,7 +25,7 @@ export class DepositFunc extends wasmclient.ClientFunc {
     }
 
     public async post(): Promise<wasmclient.RequestID> {
-        return await super.post(0xbdc9102d, this.args, false);
+        return await super.post(0xbdc9102d, this.args);
     }
 }
 
