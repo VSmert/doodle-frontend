@@ -11,13 +11,13 @@ import { PoWWorkerManager } from "./pow_web_worker/pow_worker_manager";
 
 import * as requestSender from "../api_common/request_sender";
 
-import { Base58, IKeyPair } from "../crypto";
+import { Base58, getAddress, IKeyPair } from "../crypto";
 
 import { IOnLedger, OnLedgerHelper } from "./models/on_ledger";
 import { ISendTransactionRequest, ISendTransactionResponse, ITransaction, Transaction } from "./models/transaction";
 import { Wallet } from "./wallet/wallet";
 import { Colors } from "../colors";
-import { AgentID, Configuration, Transfer } from "..";
+import { Configuration, Transfer } from "..";
 import { CoreAccountsService } from "../coreaccounts/service";
 
 interface GoShimmerClientConfiguration {
@@ -121,19 +121,14 @@ export class GoShimmerClient {
         return response;
     }
 
-    public async sendOnLedgerRequest(
-        address: string,
-        chainId: string,
-        payload: IOnLedger,
-        transfer: bigint = 1n,
-        keyPair: IKeyPair
-    ): Promise<string> {
+    public async postOnLedgerRequest(chainId: string, payload: IOnLedger, transfer: bigint = 1n, keyPair: IKeyPair): Promise<string> {
         if (transfer <= 0) {
             transfer = 1n;
         }
 
         const wallet = new Wallet(this);
 
+        const address = getAddress(keyPair);
         const unspents = await wallet.getUnspentOutputs(address);
         const consumedOutputs = wallet.determineOutputsToConsume(unspents, transfer);
         const { inputs, consumedFunds } = wallet.buildInputs(consumedOutputs);
@@ -172,11 +167,11 @@ export class GoShimmerClient {
         );
     }
 
-    public async depositIOTAToAccountInChain(keypair: IKeyPair, destinationAgentID: AgentID, amount: bigint) {
+    public async depositIOTAToAccountInChain(keypair: IKeyPair, amount: bigint) {
         const depositfunc = this.coreAccountsService.deposit();
-        depositfunc.agentID(destinationAgentID);
+        //depositfunc.agentID(destinationAgentID);
         depositfunc.transfer(Transfer.iotas(amount));
         depositfunc.sign(keypair);
-        depositfunc.post();
+        await depositfunc.post();
     }
 }
