@@ -18,7 +18,6 @@ export default class ProofOfWork {
             const leadingZeros = Math.clz32(b.readUInt32BE(0));
 
             if (leadingZeros >= target) {
-                // eslint-disable-next-line no-console
                 Log(LogTag.Site, "PoW Single Thread done");
                 return nonce;
             }
