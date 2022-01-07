@@ -1,6 +1,6 @@
 import { Base58 } from "./base58";
 import { Buffer } from "../buffer";
-import { ED25519, IKeyPair } from "./ed25519";
+import { ED25519, getAddressFromPublicKeyBuffer, IKeyPair } from "./ed25519";
 import { Hash } from "./hash";
 
 export class Seed {
@@ -71,15 +71,8 @@ export class Seed {
      * @returns The generated address.
      */
     public static generateAddress(seed: Buffer, index: number): string {
-        const { publicKey } = Seed.generateKeyPair(seed, index);
-
-        const digest = Hash.from(publicKey);
-
-        const buffer = Buffer.alloc(Seed.SEED_SIZE + 1);
-        buffer[0] = ED25519.VERSION;
-        Buffer.from(digest).copy(buffer, 1);
-
-        return Base58.encode(buffer);
+        const { publicKey: publicKeyBuffer } = Seed.generateKeyPair(seed, index);
+        return getAddressFromPublicKeyBuffer(publicKeyBuffer);
     }
 
     /**
