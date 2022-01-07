@@ -3,6 +3,7 @@
 
 import * as wasmclient from "./index";
 import { Configuration, IConfiguration } from "./configuration";
+import { CoreAccountsService } from "./coreaccounts/service";
 
 export class ServiceClient {
     waspClient: wasmclient.WaspClient;
@@ -12,7 +13,8 @@ export class ServiceClient {
     constructor(configuration: Configuration) {
         this.configuration = configuration;
         this.waspClient = new wasmclient.WaspClient(configuration.waspApiUrl);
-        this.goShimmerClient = new wasmclient.GoShimmerClient(this);
+        const accountsService = new CoreAccountsService(this);
+        this.goShimmerClient = new wasmclient.GoShimmerClient(configuration, accountsService);
     }
 
     static default(): ServiceClient {
