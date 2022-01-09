@@ -64,7 +64,7 @@ export default class Game extends Vue {
         const userL1Balance = await doodleClient.getL1IOTABalance(userAddressStorage.value);
         Log(LogTag.Funds, `Funds available in L1: ${userL1Balance} IOTA`);
 
-        const userL2Balance = await doodleClient.getL2IOTABalance(userAddressStorage.value);
+        const userL2Balance = await doodleClient.getL2IOTABalance(userBase58PrivateKeyStorage.value, userBase58PublicKeyStorage.value);
         Log(LogTag.Funds, `Funds available in L2: ${userL2Balance} IOTA`);
 
         let userData = new UserData(userBase58PrivateKeyStorage.value, userBase58PublicKeyStorage.value, userAddressStorage.value, userL1Balance, userL2Balance);
@@ -119,7 +119,7 @@ export default class Game extends Vue {
             );
         }
 
-        const balanceInL2 = doodleClient.getL2IOTABalance(this.userData.address);
+        const balanceInL2 = doodleClient.getL2IOTABalance(this.userData.privateKey, this.userData.publicKey);
         return balanceInL2;
     }
 
