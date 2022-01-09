@@ -12,6 +12,7 @@ import { LogTag, Log } from "./utils/logger";
 import * as chainHelper from "./utils/chain_helper";
 import * as keyPairGenerator from "./utils/key_pair/key_pair_generator";
 import configJson from "./config.dev.json";
+import { getAgentId } from "./wasmclient/crypto";
 
 let doodleService: service.DoodleService;
 let serviceClient: ServiceClient;
@@ -83,14 +84,16 @@ export async function requestL1Funds(address: string): Promise<boolean> {
 
 export async function depositInL2(privateKey: string, publicKey: string, amount: bigint) {
     const keypair = keyPairGenerator.getIKeyPair(privateKey, publicKey);
-    // TODO: convert address to AgentID
-    return await serviceClient.goShimmerClient.depositIOTAToAccountInChain(keypair, amount);
+    const agentID = getAgentId(keypair);
+
+    return await serviceClient.goShimmerClient.depositIOTAToAccountInChain(keypair, agentID, amount);
 }
 
-export async function getL2IOTABalance(address: string) {
-    // TODO: convert to agentID
-    const agentId = address;
-    return await serviceClient.goShimmerClient.getIOTABalanceInChain(agentId);
+export async function getL2IOTABalance(privateKey: string, publicKey: string) {
+    const keypair = keyPairGenerator.getIKeyPair(privateKey, publicKey);
+    const agentID = getAgentId(keypair);
+
+    return await serviceClient.goShimmerClient.getIOTABalanceInChain(agentID);
 }
 
 // ------------------------- Doodle Service -------------------------------
