@@ -5,14 +5,13 @@ import * as events from "./events";
 import * as service from "./service";
 
 import { ServiceClient, Transfer } from "./wasmclient";
-import { Buffer } from "./wasmclient/buffer";
 import { Configuration } from "./wasmclient/configuration";
 
 import { LogTag, Log } from "./utils/logger";
 import * as chainHelper from "./utils/chain_helper";
 import * as keyPairGenerator from "./utils/key_pair/key_pair_generator";
 import configJson from "./config.dev.json";
-import { getAgentId } from "./wasmclient/crypto";
+import { Base58, getAgentId } from "./wasmclient/crypto";
 
 let doodleService: service.DoodleService;
 let serviceClient: ServiceClient;
@@ -21,8 +20,6 @@ export let userWalletPrivKey: string;
 export let userWalletPubKey: string;
 export let userWalletAddress: string;
 
-let userSecretKey: Buffer;
-let userPublicKey: Buffer;
 let initialized: boolean;
 export async function Initialize(userBase58PrivateKey: string, userBase58PublicKey: string, userAddress: string): Promise<boolean> {
     if (initialized) return initialized;
@@ -32,7 +29,7 @@ export async function Initialize(userBase58PrivateKey: string, userBase58PublicK
     Log(LogTag.Site, "Configuration loaded: " + config);
 
     generateKeyPairAndAddress(userBase58PrivateKey, userBase58PublicKey, userAddress);
-    Log(LogTag.Site, `Using private key '${userWalletPrivKey}' public key '${userBase58PublicKey}' address '${userWalletAddress}'`);
+    Log(LogTag.Site, `Using private key '${userWalletPrivKey}' public key '${userWalletPubKey}' address '${userWalletAddress}'`);
 
     config.chainId = await chainHelper.GetChainId(config);
     Log(LogTag.Site, "Using chain " + config.chainId);
@@ -40,8 +37,8 @@ export async function Initialize(userBase58PrivateKey: string, userBase58PublicK
     serviceClient = new ServiceClient(config);
     doodleService = new service.DoodleService(serviceClient);
     doodleService.keyPair = {
-        publicKey: userPublicKey,
-        secretKey: userSecretKey,
+        publicKey: Base58.decode(userWalletPubKey),
+        secretKey: Base58.decode(userWalletPrivKey),
     };
     const tableCount = (await doodleService.getTableCount().call()).tableCount();
     Log(LogTag.SmartContract, "table count: " + tableCount);
@@ -53,14 +50,12 @@ export async function Initialize(userBase58PrivateKey: string, userBase58PublicK
 }
 
 function generateKeyPairAndAddress(userBase58PrivateKey: string, userBase58PublicKey: string, userAddress: string) {
-    if (userBase58PrivateKey === "" || userAddress === "" || !userSecretKey) {
-        const [generatedUserPrivateKey, generatedUserPublicKey, generatedUserAddress, secretKey, publicKey] =
+    if (userBase58PrivateKey === "" || userAddress === "") {
+        const [generatedUserPrivateKey, generatedUserPublicKey, generatedUserAddress] =
             keyPairGenerator.generatePrivateKeyAndAddress();
         userWalletPrivKey = generatedUserPrivateKey;
         userWalletPubKey = generatedUserPublicKey;
         userWalletAddress = generatedUserAddress;
-        userPublicKey = publicKey;
-        userSecretKey = secretKey;
         Log(LogTag.Site, `Key pair generated.`);
     } else {
         // TODO: validate private key and address passed by the user
