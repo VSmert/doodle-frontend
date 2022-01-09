@@ -17,7 +17,7 @@ import { IOnLedger, OnLedgerHelper } from "./models/on_ledger";
 import { ISendTransactionRequest, ISendTransactionResponse, ITransaction, Transaction } from "./models/transaction";
 import { Wallet } from "./wallet/wallet";
 import { Colors } from "../colors";
-import { Configuration, Transfer } from "..";
+import { AgentID, Configuration, Transfer } from "..";
 import { CoreAccountsService } from "../coreaccounts/service";
 
 interface GoShimmerClientConfiguration {
@@ -174,5 +174,12 @@ export class GoShimmerClient {
         depositfunc.transfer(Transfer.iotas(amount));
         depositfunc.sign(keypair);
         await depositfunc.post();
+    }
+
+    public async getIOTABalanceInChain(agentID: AgentID): Promise<bigint> {
+        const balanceView = this.coreAccountsService.balance();
+        balanceView.agentID(agentID);
+        const balance = (await balanceView.call()).balances();
+        return balance;
     }
 }

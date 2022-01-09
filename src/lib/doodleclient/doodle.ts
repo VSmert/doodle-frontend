@@ -4,7 +4,7 @@
 import * as events from "./events";
 import * as service from "./service";
 
-import { ServiceClient } from "./wasmclient";
+import { ServiceClient, Transfer } from "./wasmclient";
 import { Buffer } from "./wasmclient/buffer";
 import { Configuration } from "./wasmclient/configuration";
 
@@ -71,23 +71,44 @@ function generateKeyPairAndAddress(userBase58PrivateKey: string, userBase58Publi
 
 // -------------------------- GoShimmer client ----------------------------
 
-export async function getIOTABalance(address: string): Promise<bigint> {
+export async function getL1IOTABalance(address: string): Promise<bigint> {
     return await serviceClient.goShimmerClient.getIOTABalance(address);
 }
 
-export async function requestFunds(address: string): Promise<boolean> {
+export async function requestL1Funds(address: string): Promise<boolean> {
     return await serviceClient.goShimmerClient.requestFunds(address);
 }
 
-// ------------------------------------------------------------------------
+// ------------------------- Accounts Service -----------------------------
 
-export async function joinNextHand(tableNumber: number, tableSeatNumber: number): Promise<boolean> {
+export async function depositInL2(privateKey: string, publicKey: string, amount: bigint) {
+    const keypair = keyPairGenerator.getIKeyPair(privateKey, publicKey);
+    // TODO: convert address to AgentID
+    return await serviceClient.goShimmerClient.depositIOTAToAccountInChain(keypair, amount);
+}
+
+export async function getL2IOTABalance(address: string) {
+    // TODO: convert to agentID
+    const agentId = address;
+    return await serviceClient.goShimmerClient.getIOTABalanceInChain(agentId);
+}
+
+// ------------------------- Doodle Service -------------------------------
+
+export async function joinNextHand(tableNumber: number, tableSeatNumber: number, initialChipCount: bigint): Promise<boolean> {
+    if (initialChipCount <= 0) return false;
+
     try {
         Log(LogTag.Site, "Executing joinNextHand");
         const joinNextHandFunc = doodleService.joinNextHand();
-        joinNextHandFunc.tableNumber(tableNumber);
-        joinNextHandFunc.tableSeatNumber(tableSeatNumber);
+
+        if (tableNumber > 0) joinNextHandFunc.tableNumber(tableNumber);
+        if (tableSeatNumber > 0) joinNextHandFunc.tableSeatNumber(tableSeatNumber);
+
+        joinNextHandFunc.transfer(Transfer.iotas(initialChipCount));
+        joinNextHandFunc.sign(doodleService.keyPair!);
         await joinNextHandFunc.post();
+
         return true;
     } catch (ex: unknown) {
         const error = ex as Error;
@@ -96,13 +117,20 @@ export async function joinNextHand(tableNumber: number, tableSeatNumber: number)
     }
 }
 
-export async function joinNextBigBlind(tableNumber: number, tableSeatNumber: number): Promise<boolean> {
+export async function joinNextBigBlind(tableNumber: number, tableSeatNumber: number, initialChipCount: bigint): Promise<boolean> {
+    if (initialChipCount <= 0) return false;
+
     try {
         Log(LogTag.Site, "Executing joinNextBigBlind");
         const joinNextBigBlindFunc = doodleService.joinNextBigBlind();
-        joinNextBigBlindFunc.tableNumber(tableNumber);
-        joinNextBigBlindFunc.tableSeatNumber(tableSeatNumber);
+
+        if (tableNumber > 0) joinNextBigBlindFunc.tableNumber(tableNumber);
+        if (tableSeatNumber > 0) joinNextBigBlindFunc.tableSeatNumber(tableSeatNumber);
+
+        joinNextBigBlindFunc.transfer(Transfer.iotas(initialChipCount));
+        joinNextBigBlindFunc.sign(doodleService.keyPair!);
         await joinNextBigBlindFunc.post();
+
         return true;
     } catch (ex: unknown) {
         const error = ex as Error;
