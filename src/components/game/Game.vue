@@ -3,9 +3,9 @@
         <div id="game">
             <Table />
             <ButtonGroup class="left">
-                <Button class="purple" :isPressable="userData.balance == 0" @button-pressed="requestFunds">
-                    <div v-if="userData.balance == 0">Request play IOTA</div>
-                    <div v-else>Balance: {{ userData.balance }} IOTA</div>
+                <Button class="purple" :isPressable="userData.l2Balance == 0" @button-pressed="requestFunds">
+                    <div v-if="userData.l2Balance == 0">Request play IOTA</div>
+                    <div v-else>L2 Balance: {{ userData.l2Balance }} IOTA</div>
                 </Button>
             </ButtonGroup>
             <ButtonGroup class="right">
@@ -18,105 +18,139 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import { useStorage } from '@vueuse/core'
+import { Options, Vue } from "vue-class-component";
+import { useStorage } from "@vueuse/core";
 
-import * as doodleClient from '../../lib/doodleclient/doodle'
-import { Log, LogTag } from '../../lib/doodleclient/utils/logger';
-import * as miscUtils from '../../lib/doodleclient/utils/misc';
+import * as doodleClient from "../../lib/doodleclient/doodle";
+import { Log, LogTag } from "../../lib/doodleclient/utils/logger";
+import * as miscUtils from "../../lib/doodleclient/utils/misc";
 
-import Table from './table/Table.vue';
-import ButtonGroup from './buttons/ButtonGroup.vue';
-import Button from './buttons/Button.vue';
+import Table from "./table/Table.vue";
+import ButtonGroup from "./buttons/ButtonGroup.vue";
+import Button from "./buttons/Button.vue";
 
 @Options({
     components: {
         Table,
         ButtonGroup,
-        Button
+        Button,
     },
 })
 export default class Game extends Vue {
-    userData : UserData = new UserData("", "", "", 0n);
+    userData: UserData = new UserData("", "", "", 0n, 0n);
 
     async mounted() {
         this.userData = await this.loadUserKeyPairAndAddress();
     }
 
     private async loadUserKeyPairAndAddress(): Promise<UserData> {
-        const userBase58PrivateKeyStorage = useStorage('user-base58-private-key', "")
-        const userBase58PublicKeyStorage = useStorage('user-base58-public-key', "")
-        const userAddressStorage = useStorage('user-address', "");
+        const userBase58PrivateKeyStorage = useStorage("user-base58-private-key", "");
+        const userBase58PublicKeyStorage = useStorage("user-base58-public-key", "");
+        const userAddressStorage = useStorage("user-address", "");
 
         let userBase58PrivateKey = userBase58PrivateKeyStorage.value;
         let userBase58PublicKey = userBase58PublicKeyStorage.value;
         let userAddress = userAddressStorage.value;
 
-        const success = await doodleClient.Initialize(userBase58PrivateKey, userBase58PublicKey, userAddress)
-        if(!success) throw new Error("Could not initialize doodle client");
+        const success = await doodleClient.Initialize(userBase58PrivateKey, userBase58PublicKey, userAddress);
+        if (!success) throw new Error("Could not initialize doodle client");
 
         const arePrivatekeyAndAddressDefined = userBase58PrivateKey !== "" && userBase58PublicKey !== "" && userAddress !== "";
-        if(!arePrivatekeyAndAddressDefined) {
+        if (!arePrivatekeyAndAddressDefined) {
             userBase58PrivateKeyStorage.value = doodleClient.userWalletPrivKey;
             userBase58PublicKeyStorage.value = doodleClient.userWalletPubKey;
             userAddressStorage.value = doodleClient.userWalletAddress;
         }
-        const userBalance = await doodleClient.getIOTABalance(userAddressStorage.value);
-        if(userBalance > 0n) {
-            Log(LogTag.Funds, `Funds available: ${userBalance} IOTA`)
-        }
-        let userData = new UserData(userBase58PrivateKeyStorage.value, userBase58PublicKeyStorage.value, userAddressStorage.value, userBalance);
-        return userData
+        const userL1Balance = await doodleClient.getL1IOTABalance(userAddressStorage.value);
+        Log(LogTag.Funds, `Funds available in L1: ${userL1Balance} IOTA`);
+
+        const userL2Balance = await doodleClient.getL2IOTABalance(userAddressStorage.value);
+        Log(LogTag.Funds, `Funds available in L2: ${userL2Balance} IOTA`);
+
+        let userData = new UserData(userBase58PrivateKeyStorage.value, userBase58PublicKeyStorage.value, userAddressStorage.value, userL1Balance, userL2Balance);
+        return userData;
     }
 
-    async requestFunds () : Promise<void>{
-        let userBalance = await doodleClient.getIOTABalance(this.userData.address);
-        if(userBalance == 0n) {
-            Log(LogTag.Funds, "Requesting funds")
-            const success = await doodleClient.requestFunds(this.userData.address);
+    async requestFunds(): Promise<void> {
+        this.userData.l1Balance = await this.requestL1Funds();
+        this.userData.l2Balance = await this.depositInL2(1000n);
 
-            if(!success) {
-                const couldNotGetFundsError = "Could not request dummy IOTA from faucet.";
-                Log(LogTag.Error, couldNotGetFundsError);
-                return;
-            }
+        Log(LogTag.Funds, `Funds available in L1: ${this.userData.l1Balance} IOTA`);
+        Log(LogTag.Funds, `Funds available in L2: ${this.userData.l2Balance} IOTA`);
+    }
 
+    private async requestL1Funds() : Promise<bigint> {
+        let userL1Balance = await doodleClient.getL1IOTABalance(this.userData.address);
+        if (userL1Balance > 0) return userL1Balance;
+
+        Log(LogTag.Funds, "Requesting funds");
+
+        const success = await doodleClient.requestL1Funds(this.userData.address);
+        const couldNotGetFundsError = "Could not request dummy IOTA from faucet.";
+
+        if (!success) {
+            Log(LogTag.Error, couldNotGetFundsError);
+            return 0n;
+        }
+
+        miscUtils.delay(1000);
+        for (let tryNumber = 1; tryNumber <= 5; tryNumber++) {
+            userL1Balance = await doodleClient.getL1IOTABalance(this.userData.address);
+            if (userL1Balance > 0n) break;
             miscUtils.delay(1000);
-            for (let tryNumber = 1; tryNumber <= 5 ; tryNumber++) {
-                userBalance = await doodleClient.getIOTABalance(this.userData.address);
-                if(userBalance > 0n) break;
-                miscUtils.delay(1000);
-            }
         }
 
-        Log(LogTag.Funds, `Funds available: ${userBalance} IOTA`)
-        this.userData.balance = userBalance;
+        if (userL1Balance > 0n) return userL1Balance;
+
+        Log(LogTag.Error, couldNotGetFundsError);
+        return 0n;
     }
-    async joinNextHand (): Promise<void>{
+
+    private async depositInL2(depositToChainAmount : bigint) : Promise<bigint> {
+        if (this.userData.l1Balance < depositToChainAmount) {
+            Log(LogTag.Error, `L1 balance of ${this.userData.l1Balance} is lower than ${depositToChainAmount}`);
+        }
+        else {
+            Log(LogTag.Funds, `Depositing ${depositToChainAmount} IOTA from L1 to L2. Recipient account: ${this.userData.address}`);
+            await doodleClient.depositInL2(
+                this.userData.privateKey,
+                this.userData.publicKey,
+                depositToChainAmount
+            );
+        }
+
+        const balanceInL2 = doodleClient.getL2IOTABalance(this.userData.address);
+        return balanceInL2;
+    }
+
+    async joinNextHand(): Promise<void> {
         // TODO: Pass table and table seat number
-        await doodleClient.joinNextHand(1,1);
+        await doodleClient.joinNextHand(1, 1, this.userData.l2Balance);
     }
-    async joinNextBigBlind(): Promise<void>{
-         // TODO: Pass table and table seat number
-        await doodleClient.joinNextBigBlind(1,1);
+    async joinNextBigBlind(): Promise<void> {
+        // TODO: Pass table and table seat number
+        await doodleClient.joinNextBigBlind(1, 1, this.userData.l2Balance);
     }
 }
 
 class UserData {
-    privateKey : string;
-    publicKey : string;
-    address : string;
-    balance : bigint;
+    privateKey: string;
+    publicKey: string;
+    address: string;
+    l1Balance: bigint;
+    l2Balance: bigint;
+    chainBalance: bigint = 0n;
 
-    constructor(privateKey : string, publicKey : string, address : string, balance : bigint) {
+    constructor(privateKey: string, publicKey: string, address: string, l1Balance: bigint, l2Balance : bigint) {
         this.privateKey = privateKey;
-        this.publicKey = publicKey
+        this.publicKey = publicKey;
         this.address = address;
-        this.balance = balance;
+        this.l1Balance = l1Balance;
+        this.l2Balance = l2Balance;
     }
 }
 </script>
 
 <style lang="less">
-@import 'game.less';
+@import "game.less";
 </style>
