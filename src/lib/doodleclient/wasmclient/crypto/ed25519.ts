@@ -1,4 +1,5 @@
 import nacl from "tweetnacl";
+import { AgentID } from "..";
 import { Buffer } from "../buffer";
 import { Base58 } from "./base58";
 import { Hash } from "./hash";
@@ -7,6 +8,21 @@ import { Seed } from "./seed";
 export interface IKeyPair {
     publicKey: Buffer;
     secretKey: Buffer;
+}
+
+
+/**
+ * Calculates the AgentID for the key pair's address.
+ * @param keyPair The key pair used to get the address and calculate the AgentID.
+ * @returns AgentID.
+ */
+ export function getAgentId(keyPair: IKeyPair) : AgentID {
+    const address = getAddress(keyPair);
+    const addressBuffer = Base58.decode(address);
+    const hNameBuffer = Buffer.alloc(4);
+    const agentIdBuffer = Buffer.concat([addressBuffer,hNameBuffer]);
+    const agentId = Base58.encode(agentIdBuffer);
+    return agentId;
 }
 
 /**
@@ -28,6 +44,8 @@ export function getAddressFromPublicKeyBuffer(publicKeyBuffer: Buffer): string {
 
     return Base58.encode(buffer);
 }
+
+
 
 /**
  * Class to help with ED25519 Signature scheme.
