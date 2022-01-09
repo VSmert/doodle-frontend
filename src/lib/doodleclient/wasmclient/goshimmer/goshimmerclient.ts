@@ -167,9 +167,9 @@ export class GoShimmerClient {
         );
     }
 
-    public async depositIOTAToAccountInChain(keypair: IKeyPair, amount: bigint) {
+    public async depositIOTAToAccountInChain(keypair: IKeyPair, destinationAgentID: AgentID, amount: bigint) {
         const depositfunc = this.coreAccountsService.deposit();
-        //depositfunc.agentID(destinationAgentID);
+        depositfunc.agentID(destinationAgentID);
         depositfunc.onLedgerRequest(true);
         depositfunc.transfer(Transfer.iotas(amount));
         depositfunc.sign(keypair);
