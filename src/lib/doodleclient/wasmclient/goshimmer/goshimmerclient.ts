@@ -167,13 +167,15 @@ export class GoShimmerClient {
         );
     }
 
-    public async depositIOTAToAccountInChain(keypair: IKeyPair, destinationAgentID: AgentID, amount: bigint) {
+    public async depositIOTAToAccountInChain(keypair: IKeyPair, destinationAgentID: AgentID, amount: bigint): Promise<boolean> {
         const depositfunc = this.coreAccountsService.deposit();
         depositfunc.agentID(destinationAgentID);
         depositfunc.onLedgerRequest(true);
         depositfunc.transfer(Transfer.iotas(amount));
         depositfunc.sign(keypair);
-        await depositfunc.post();
+        const depositRequestID = await depositfunc.post();
+        const success = depositRequestID.length > 0;
+        return success;
     }
 
     public async getIOTABalanceInChain(agentID: AgentID): Promise<bigint> {
