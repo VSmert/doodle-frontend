@@ -93,11 +93,11 @@ export default class Game extends Vue {
             return 0n;
         }
 
-        miscUtils.delay(1000);
+        await miscUtils.delay(3000);
         for (let tryNumber = 1; tryNumber <= 5; tryNumber++) {
             userL1Balance = await doodleClient.getL1IOTABalance(this.userData.address);
             if (userL1Balance > 0n) break;
-            miscUtils.delay(1000);
+            await miscUtils.delay(3000);
         }
 
         if (userL1Balance > 0n) return userL1Balance;
@@ -112,11 +112,37 @@ export default class Game extends Vue {
         }
         else {
             Log(LogTag.Funds, `Depositing ${depositToChainAmount} IOTA from L1 to L2. Recipient account: ${this.userData.address}`);
-            await doodleClient.depositInL2(
+            const success = await doodleClient.depositInL2(
                 this.userData.privateKey,
                 this.userData.publicKey,
                 depositToChainAmount
             );
+
+            const couldNotDepositToL2Error = "Could not deposit to L2.";
+
+            if (!success) {
+                Log(LogTag.Error, couldNotDepositToL2Error);
+                return 0n;
+            }
+
+            let userL2Balance : bigint = 0n;
+
+            await miscUtils.delay(2000);
+            for (let tryNumber = 1; tryNumber <= 5; tryNumber++) {
+                Log(LogTag.Funds, "Requesting L2 IOTA balance...")
+                userL2Balance = await doodleClient.getL2IOTABalance(this.userData.privateKey, this.userData.publicKey);
+                if (userL2Balance > 0n) break;
+                Log(LogTag.Funds, `Try #${tryNumber} -> Retrying...`)
+                await miscUtils.delay(2000);
+            }
+
+            if (userL2Balance > 0n) {
+                this.userData.l1Balance = await doodleClient.getL1IOTABalance(this.userData.address);
+                return userL2Balance;
+            }
+
+            Log(LogTag.Error, couldNotDepositToL2Error);
+            return 0n;
         }
 
         const balanceInL2 = doodleClient.getL2IOTABalance(this.userData.privateKey, this.userData.publicKey);

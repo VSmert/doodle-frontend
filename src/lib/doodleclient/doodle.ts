@@ -76,14 +76,14 @@ export async function requestL1Funds(address: string): Promise<boolean> {
 
 // ------------------------- Accounts Service -----------------------------
 
-export async function depositInL2(privateKey: string, publicKey: string, amount: bigint) {
+export async function depositInL2(privateKey: string, publicKey: string, amount: bigint): Promise<boolean> {
     const keypair = keyPairGenerator.getIKeyPair(privateKey, publicKey);
     const agentID = getAgentId(keypair);
 
     return await serviceClient.goShimmerClient.depositIOTAToAccountInChain(keypair, agentID, amount);
 }
 
-export async function getL2IOTABalance(privateKey: string, publicKey: string) {
+export async function getL2IOTABalance(privateKey: string, publicKey: string): Promise<bigint> {
     const keypair = keyPairGenerator.getIKeyPair(privateKey, publicKey);
     const agentID = getAgentId(keypair);
 
