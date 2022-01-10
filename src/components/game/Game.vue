@@ -75,11 +75,15 @@ export default class Game extends Vue {
 
     async requestFunds(): Promise<void> {
         this.requestingFunds = true;
+
         this.userData.l1Balance = await this.requestL1Funds();
+        this.logL1Balance();
+
         this.userData.l2Balance = await this.depositInL2(1000n);
 
         this.logL1Balance();
         this.logL2Balance();
+
         this.requestingFunds = false;
     }
 
