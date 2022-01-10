@@ -78,9 +78,17 @@ export default class Game extends Vue {
         this.userData.l1Balance = await this.requestL1Funds();
         this.userData.l2Balance = await this.depositInL2(1000n);
 
-        Log(LogTag.Funds, `Funds available in L1: ${this.userData.l1Balance} IOTA`);
-        Log(LogTag.Funds, `Funds available in L2: ${this.userData.l2Balance} IOTA`);
+        this.logL1Balance();
+        this.logL2Balance();
         this.requestingFunds = false;
+    }
+
+    private logL1Balance() {
+        Log(LogTag.Funds, `Funds available in L1: ${this.userData.l1Balance} IOTA`);
+    }
+
+    private logL2Balance() {
+        Log(LogTag.Funds, `Funds available in L2: ${this.userData.l2Balance} IOTA`);
     }
 
     private async requestL1Funds() : Promise<bigint> {
@@ -141,7 +149,7 @@ export default class Game extends Vue {
             }
 
             if (userL2Balance > 0n) {
-                this.userData.l1Balance = await doodleClient.getL1IOTABalance(this.userData.address);
+                await this.updateL1Balance();
                 return userL2Balance;
             }
 
@@ -149,17 +157,35 @@ export default class Game extends Vue {
             return 0n;
         }
 
-        const balanceInL2 = doodleClient.getL2IOTABalance(this.userData.privateKey, this.userData.publicKey);
+        const balanceInL2 = await doodleClient.getL2IOTABalance(this.userData.privateKey, this.userData.publicKey);
         return balanceInL2;
+    }
+
+    private async updateL1Balance() : Promise<void>{
+        this.userData.l1Balance = await doodleClient.getL1IOTABalance(this.userData.address);
+    }
+
+    private async updateL2Balance() : Promise<void>{
+        this.userData.l2Balance = await doodleClient.getL2IOTABalance(this.userData.privateKey, this.userData.publicKey);
     }
 
     async joinNextHand(): Promise<void> {
         // TODO: Pass table and table seat number
-        await doodleClient.joinNextHand(1, 1, this.userData.l2Balance);
+        const success = await doodleClient.joinNextHand(1, 1, 400n);
+        if(success) {
+            await miscUtils.delay(4000);
+            await this.updateL2Balance();
+            this.logL2Balance();
+        }
     }
     async joinNextBigBlind(): Promise<void> {
         // TODO: Pass table and table seat number
-        await doodleClient.joinNextBigBlind(1, 1, this.userData.l2Balance);
+        const success = await doodleClient.joinNextBigBlind(1, 1, 400n);
+        if(success) {
+            await miscUtils.delay(4000);
+            await this.updateL2Balance();
+            this.logL2Balance();
+        }
     }
 }
 
