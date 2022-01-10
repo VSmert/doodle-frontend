@@ -14,9 +14,16 @@ export class ViewResults {
 
 export class Results {
     res = new Map<string, wasmclient.Bytes>();
+    keys = new Map<string, wasmclient.Bytes>();
 
     exists(key: string): wasmclient.Bool {
         return this.res.has(key);
+    }
+
+    forEach(callbackfn: (base58Key: string, valueKey: string) => void): void {
+        this.keys.forEach((val, key) => {
+            callbackfn(Base58.encode(val), key);
+        });
     }
 
     private get(key: string, typeID: wasmclient.Int32): wasmclient.Bytes {
