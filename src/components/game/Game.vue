@@ -5,7 +5,7 @@
             <ButtonGroup class="left">
                 <Button class="purple" :isPressable="!requestingFunds && userData.l2Balance == 0" @button-pressed="requestFunds">
                     <div v-if="requestingFunds">Requesting...</div>
-                    <div v-else-if="!requestingFunds && userData.l2Balance == 0">Request play IOTA</div>
+                    <div v-else-if="userData.l2Balance == 0">Request play IOTA</div>
                     <div v-else>L2 Balance: {{ userData.l2Balance }} IOTA</div>
                 </Button>
             </ButtonGroup>
