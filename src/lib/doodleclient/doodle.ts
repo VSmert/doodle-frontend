@@ -96,7 +96,7 @@ export async function joinNextHand(tableNumber: number, tableSeatNumber: number,
     if (initialChipCount <= 0) return false;
 
     try {
-        Log(LogTag.SmartContract, "Executing joinNextHand");
+        Log(LogTag.SmartContract, `Joining next hand with ${initialChipCount} IOTA`);
         const joinNextHandFunc = doodleService.joinNextHand();
 
         if (tableNumber > 0) joinNextHandFunc.tableNumber(tableNumber);
@@ -118,7 +118,7 @@ export async function joinNextBigBlind(tableNumber: number, tableSeatNumber: num
     if (initialChipCount <= 0) return false;
 
     try {
-        Log(LogTag.SmartContract, "Executing joinNextBigBlind");
+        Log(LogTag.SmartContract, `Joining next big blind with ${initialChipCount} IOTA`);
         const joinNextBigBlindFunc = doodleService.joinNextBigBlind();
 
         if (tableNumber > 0) joinNextBigBlindFunc.tableNumber(tableNumber);
