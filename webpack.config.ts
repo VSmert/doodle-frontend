@@ -3,7 +3,7 @@ module.exports = {
         rules: [
             {
                 test: /\.worker\.ts$/,
-                use: { loader: 'worker-loader' },
+                use: { loader: "worker-loader" },
             },
         ],
     },
