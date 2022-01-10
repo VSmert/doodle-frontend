@@ -96,7 +96,7 @@ export async function joinNextHand(tableNumber: number, tableSeatNumber: number,
     if (initialChipCount <= 0) return false;
 
     try {
-        Log(LogTag.Site, "Executing joinNextHand");
+        Log(LogTag.SmartContract, "Executing joinNextHand");
         const joinNextHandFunc = doodleService.joinNextHand();
 
         if (tableNumber > 0) joinNextHandFunc.tableNumber(tableNumber);
@@ -118,7 +118,7 @@ export async function joinNextBigBlind(tableNumber: number, tableSeatNumber: num
     if (initialChipCount <= 0) return false;
 
     try {
-        Log(LogTag.Site, "Executing joinNextBigBlind");
+        Log(LogTag.SmartContract, "Executing joinNextBigBlind");
         const joinNextBigBlindFunc = doodleService.joinNextBigBlind();
 
         if (tableNumber > 0) joinNextBigBlindFunc.tableNumber(tableNumber);
