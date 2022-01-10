@@ -7,6 +7,20 @@ import { IResponse } from "./api_common/response_models";
 import * as requestSender from "./api_common/request_sender";
 import { Base58, ED25519, Hash, IKeyPair } from "./crypto";
 
+export class Item {
+    Key: string;
+    Value: string;
+
+    constructor(key: string, value: string) {
+        this.Key = key;
+        this.Value = value;
+    }
+}
+
+export class Items {
+    Items = new Array<Item>();
+}
+
 interface ICallViewResponse extends IResponse {
     Items: [{ Key: string; Value: string }];
 }
@@ -23,14 +37,14 @@ export class WaspClient {
         else this.waspAPI = "http://" + waspAPI;
     }
 
-    public async callView(chainID: string, contractHName: string, entryPoint: string, args: Buffer): Promise<wasmclient.Results> {
-        const request = { Request: args.toString("base64") };
+    public async callView(chainID: string, contractHName: string, entryPoint: string, args: Items): Promise<wasmclient.Results> {
         const result = await requestSender.sendRequestExt<unknown, ICallViewResponse>(
             this.waspAPI,
             "post",
             `/chain/${chainID}/contract/${contractHName}/callview/${entryPoint}`,
-            request
+            args
         );
+
         const res = new wasmclient.Results();
 
         if (result?.body !== null && result.body.Items) {

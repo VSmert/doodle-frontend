@@ -23,13 +23,13 @@ export async function sendRequestExt<T, U extends IResponse | null>(
     let fetchResponse: Response;
 
     try {
-        if(!path.startsWith("/"))
-            path = "/" + path;
+        if (!path.startsWith("/")) path = "/" + path;
         const url = `${apiUrl}${path}`;
+        const requestBody = JSON.stringify(request);
         fetchResponse = await fetch(url, {
             method: verb,
             headers,
-            body: JSON.stringify(request),
+            body: requestBody,
         });
 
         if (!fetchResponse) {
@@ -37,8 +37,7 @@ export async function sendRequestExt<T, U extends IResponse | null>(
         }
 
         try {
-            const response = await fetchResponse.text()
-                            .then((data)=> data ? JSON.parse(data) : {});
+            const response = await fetchResponse.text().then((data) => (data ? JSON.parse(data) : {}));
             return { body: response, response: fetchResponse };
         } catch (err) {
             const error = err as Error;
