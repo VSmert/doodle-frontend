@@ -3,8 +3,9 @@
         <div id="game">
             <Table />
             <ButtonGroup class="left">
-                <Button class="purple" :isPressable="userData.l2Balance == 0" @button-pressed="requestFunds">
-                    <div v-if="userData.l2Balance == 0">Request play IOTA</div>
+                <Button class="purple" :isPressable="!requestingFunds && userData.l2Balance == 0" @button-pressed="requestFunds">
+                    <div v-if="requestingFunds">Requesting...</div>
+                    <div v-else-if="!requestingFunds && userData.l2Balance == 0">Request play IOTA</div>
                     <div v-else>L2 Balance: {{ userData.l2Balance }} IOTA</div>
                 </Button>
             </ButtonGroup>
@@ -38,6 +39,7 @@ import Button from "./buttons/Button.vue";
 })
 export default class Game extends Vue {
     userData: UserData = new UserData("", "", "", 0n, 0n);
+    requestingFunds = false;
 
     async mounted() {
         this.userData = await this.loadUserKeyPairAndAddress();
@@ -72,11 +74,13 @@ export default class Game extends Vue {
     }
 
     async requestFunds(): Promise<void> {
+        this.requestingFunds = true;
         this.userData.l1Balance = await this.requestL1Funds();
         this.userData.l2Balance = await this.depositInL2(1000n);
 
         Log(LogTag.Funds, `Funds available in L1: ${this.userData.l1Balance} IOTA`);
         Log(LogTag.Funds, `Funds available in L2: ${this.userData.l2Balance} IOTA`);
+        this.requestingFunds = false;
     }
 
     private async requestL1Funds() : Promise<bigint> {
