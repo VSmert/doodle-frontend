@@ -179,7 +179,13 @@ export class GoShimmerClient {
     public async getIOTABalanceInChain(agentID: AgentID): Promise<bigint> {
         const balanceView = this.coreAccountsService.balance();
         balanceView.agentID(agentID);
-        const balance = (await balanceView.call()).balances();
-        return balance;
+        const result = await balanceView.call();
+        const balances = result.balances();
+        const iotaBalance = balances.has(Colors.IOTA_COLOR_STRING)
+            ? balances.get(Colors.IOTA_COLOR_STRING)!
+            : balances.has(Colors.IOTA_COLOR)
+            ? balances.get(Colors.IOTA_COLOR)!
+            : 0n;
+        return iotaBalance;
     }
 }

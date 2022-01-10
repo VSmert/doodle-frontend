@@ -125,7 +125,7 @@ export default class Game extends Vue {
 
     async joinNextHand(): Promise<void> {
         // TODO: Pass table and table seat number
-        await doodleClient.joinNextHand(1, 1, this.userData.l2Balance);
+        await doodleClient.joinNextHand(1, 1, 200n);
     }
     async joinNextBigBlind(): Promise<void> {
         // TODO: Pass table and table seat number
