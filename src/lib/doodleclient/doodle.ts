@@ -51,8 +51,7 @@ export async function Initialize(userBase58PrivateKey: string, userBase58PublicK
 
 function generateKeyPairAndAddress(userBase58PrivateKey: string, userBase58PublicKey: string, userAddress: string) {
     if (userBase58PrivateKey === "" || userAddress === "") {
-        const [generatedUserPrivateKey, generatedUserPublicKey, generatedUserAddress] =
-            keyPairGenerator.generatePrivateKeyAndAddress();
+        const [generatedUserPrivateKey, generatedUserPublicKey, generatedUserAddress] = keyPairGenerator.generatePrivateKeyAndAddress();
         userWalletPrivKey = generatedUserPrivateKey;
         userWalletPubKey = generatedUserPublicKey;
         userWalletAddress = generatedUserAddress;
