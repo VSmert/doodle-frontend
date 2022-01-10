@@ -145,7 +145,6 @@ export default class Game extends Vue {
 
             await miscUtils.delay(2000);
             for (let tryNumber = 1; tryNumber <= 5; tryNumber++) {
-                Log(LogTag.Funds, "Requesting L2 IOTA balance...")
                 userL2Balance = await doodleClient.getL2IOTABalance(this.userData.privateKey, this.userData.publicKey);
                 if (userL2Balance > 0n) break;
                 Log(LogTag.Funds, `Try #${tryNumber} -> Retrying...`)
