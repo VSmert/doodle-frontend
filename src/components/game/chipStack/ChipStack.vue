@@ -23,7 +23,7 @@ import IChipStack from '../../models/IChipStack';
     components: { Chip },
 })
 export default class Bet extends Vue {
-    totalChipCount! : number;
+    totalChipCount! : bigint;
 
     get chipDenominations(): number[] {
         return ChipHelper.Denominations;
@@ -31,15 +31,17 @@ export default class Bet extends Vue {
 
     get totalDenominationChipCount(): IChipStack[] {
         let totalDenominationChipCount: IChipStack[] = [];
-        let accountedForChips = 0;
+        let accountedForChips = 0n;
         this.chipDenominations.forEach((denomination) => {
             if (this.totalChipCount == accountedForChips) return;
 
-            let chipsInDenomination = Math.floor((this.totalChipCount - accountedForChips) / denomination);
+            const denominationBigInt = BigInt(denomination);
+            const chipsToEvaluate = BigInt(this.totalChipCount) - BigInt(accountedForChips);
+            let chipsInDenomination = Math.floor(Number(chipsToEvaluate /denominationBigInt));
             if (chipsInDenomination > 0) {
-                let chipStack = { Denomination: denomination, Count: chipsInDenomination };
+                let chipStack : IChipStack = { Denomination: denomination, Count: chipsInDenomination };
                 totalDenominationChipCount.push(chipStack);
-                accountedForChips += chipsInDenomination * denomination;
+                accountedForChips += BigInt(chipsInDenomination) * denominationBigInt;
             }
         });
         return totalDenominationChipCount;
