@@ -38,14 +38,14 @@ import Button from "./buttons/Button.vue";
     },
 })
 export default class Game extends Vue {
-    userData: UserData = new UserData("", "", "", 0n, 0n);
+    userData: UserData = new UserData("", "", "");
     requestingFunds = false;
 
     async mounted() {
-        this.userData = await this.loadUserKeyPairAndAddress();
+        await this.loadUserKeyPairAndAddress();
     }
 
-    private async loadUserKeyPairAndAddress(): Promise<UserData> {
+    private async loadUserKeyPairAndAddress(): Promise<void> {
         const userBase58PrivateKeyStorage = useStorage("user-base58-private-key", "");
         const userBase58PublicKeyStorage = useStorage("user-base58-public-key", "");
         const userAddressStorage = useStorage("user-address", "");
@@ -63,14 +63,12 @@ export default class Game extends Vue {
             userBase58PublicKeyStorage.value = doodleClient.userWalletPubKey;
             userAddressStorage.value = doodleClient.userWalletAddress;
         }
-        const userL1Balance = await doodleClient.getL1IOTABalance(userAddressStorage.value);
-        Log(LogTag.Funds, `Funds available in L1: ${userL1Balance} IOTA`);
 
-        const userL2Balance = await doodleClient.getL2IOTABalance(userBase58PrivateKeyStorage.value, userBase58PublicKeyStorage.value);
-        Log(LogTag.Funds, `Funds available in L2: ${userL2Balance} IOTA`);
-
-        let userData = new UserData(userBase58PrivateKeyStorage.value, userBase58PublicKeyStorage.value, userAddressStorage.value, userL1Balance, userL2Balance);
-        return userData;
+        this.userData = new UserData(userBase58PrivateKeyStorage.value, userBase58PublicKeyStorage.value, userAddressStorage.value);
+        await this.updateL1Balance();
+        await this.updateL2Balance();
+        this.logL1Balance();
+        this.logL2Balance();
     }
 
     async requestFunds(): Promise<void> {
@@ -88,10 +86,12 @@ export default class Game extends Vue {
     }
 
     private logL1Balance() {
+        if(!this.userData) return;
         Log(LogTag.Funds, `Funds available in L1: ${this.userData.l1Balance} IOTA`);
     }
 
     private logL2Balance() {
+        if(!this.userData) return;
         Log(LogTag.Funds, `Funds available in L2: ${this.userData.l2Balance} IOTA`);
     }
 
@@ -196,16 +196,14 @@ class UserData {
     privateKey: string;
     publicKey: string;
     address: string;
-    l1Balance: bigint;
-    l2Balance: bigint;
+    l1Balance: bigint = 0n;
+    l2Balance: bigint = 0n;
     chainBalance: bigint = 0n;
 
-    constructor(privateKey: string, publicKey: string, address: string, l1Balance: bigint, l2Balance : bigint) {
+    constructor(privateKey: string, publicKey: string, address: string) {
         this.privateKey = privateKey;
         this.publicKey = publicKey;
         this.address = address;
-        this.l1Balance = l1Balance;
-        this.l2Balance = l2Balance;
     }
 }
 </script>
