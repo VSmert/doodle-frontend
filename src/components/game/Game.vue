@@ -1,7 +1,7 @@
 <template>
     <div class="bg">
         <div id="game">
-            <Table />
+            <Table :tableNumber=currentTableNumber />
             <ButtonGroup class="left">
                 <Button class="purple" :isPressable="!requestingFunds && userData.l2Balance == 0" @button-pressed="requestFunds">
                     <div v-if="requestingFunds">Requesting...</div>
@@ -39,6 +39,7 @@ import Button from "./buttons/Button.vue";
 })
 export default class Game extends Vue {
     userData: UserData = new UserData("", "", "");
+    currentTableNumber : number = 1;
     requestingFunds = false;
 
     async mounted() {
@@ -174,7 +175,7 @@ export default class Game extends Vue {
 
     async joinNextHand(): Promise<void> {
         // TODO: Pass table and table seat number
-        const success = await doodleClient.joinNextHand(1, 1, 400n);
+        const success = await doodleClient.joinNextHand(this.currentTableNumber, 1, 400n);
         if(success) {
             await miscUtils.delay(4000);
             await this.updateL2Balance();
@@ -183,7 +184,7 @@ export default class Game extends Vue {
     }
     async joinNextBigBlind(): Promise<void> {
         // TODO: Pass table and table seat number
-        const success = await doodleClient.joinNextBigBlind(1, 1, 400n);
+        const success = await doodleClient.joinNextBigBlind(this.currentTableNumber, 1, 400n);
         if(success) {
             await miscUtils.delay(4000);
             await this.updateL2Balance();
