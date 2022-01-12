@@ -21,6 +21,7 @@ import { Options, Vue } from 'vue-class-component';
 import ICard from '../../models/ICard';
 import Card from '../card/Card.vue';
 import Player from '../player/Player.vue';
+import { IPlayer } from '../player/Player.vue';
 
 @Options({
     components: {
@@ -30,15 +31,15 @@ import Player from '../player/Player.vue';
 })
 export default class Table extends Vue {
     player_playing = 3;
-    players = [
-        { name: 'rivy33', bank: 16, onTable: 65, hasCards: false },
-        { name: 'kattar', color: 'cyan', bank: 80, onTable: 0, hasCards: false },
-        { name: 'mikelaire', color: 'lightcoral', bank: 77, onTable: 0, hasCards: false },
-        { name: 'tomtom', color: 'crimson', bank: 250, onTable: 0, hasCards: false },
-        { name: 'nana', color: '#444', bank: 45, onTable: 0, hasCards: false },
-        { name: 'ionion', color: 'forestgreen', bank: 125, onTable: 0, hasCards: false },
-        { name: 'link6996', color: 'goldenrod', bank: 13, onTable: 0, hasCards: false },
-        { name: 'gossboganon', color: 'gold', bank: 6, onTable: 0, hasCards: false },
+    players : IPlayer[] = [
+        { name: 'rivy33', color: "dodgerblue", bank: 16n, onTable: 65n, hasCards: false },
+        { name: 'kattar', color: 'cyan', bank: 80n, onTable: 0n, hasCards: false },
+        { name: 'mikelaire', color: 'lightcoral', bank: 77n, onTable: 0n, hasCards: false },
+        { name: 'tomtom', color: 'crimson', bank: 250n, onTable: 0n, hasCards: false },
+        { name: 'nana', color: '#444', bank: 45n, onTable: 0n, hasCards: false },
+        { name: 'ionion', color: 'forestgreen', bank: 125n, onTable: 0n, hasCards: false },
+        { name: 'link6996', color: 'goldenrod', bank: 13n, onTable: 0n, hasCards: false },
+        { name: 'gossboganon', color: 'gold', bank: 6n, onTable: 0n, hasCards: false },
     ];
     figures = ['S', 'H', 'C', 'D'];
     values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];

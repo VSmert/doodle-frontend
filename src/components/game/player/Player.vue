@@ -13,6 +13,14 @@ import { Options, Vue } from 'vue-class-component';
 import Bank from './bank/Bank.vue';
 import Bet from './bet/Bet.vue';
 
+export interface IPlayer {
+    name : string;
+    color: string;
+    bank : bigint;
+    onTable: bigint;
+    hasCards: boolean;
+}
+
 @Options({
     props: {
         player: Object,
