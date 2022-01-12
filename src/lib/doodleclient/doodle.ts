@@ -12,6 +12,7 @@ import * as chainHelper from "./utils/chain_helper";
 import * as keyPairGenerator from "./utils/key_pair/key_pair_generator";
 import configJson from "./config.dev.json";
 import { Base58, getAgentId } from "./wasmclient/crypto";
+import { ITableInfo, ITableSeat } from "./response_interfaces";
 
 let doodleService: service.DoodleService;
 let serviceClient: ServiceClient;
@@ -92,6 +93,83 @@ export async function getL2IOTABalance(privateKey: string, publicKey: string): P
 
 // ------------------------- Doodle Service -------------------------------
 
+export async function getTableInfo(tableNumber: number): Promise<ITableInfo> {
+    try {
+        Log(LogTag.SmartContract, `Getting info for table ${tableNumber}`);
+        const getTableInfoView = doodleService.getTableInfo();
+        getTableInfoView.tableNumber(tableNumber);
+        const getTableInfoResults = await getTableInfoView.call();
+
+        const tableInfo: ITableInfo = {
+            number: tableNumber,
+            size: getTableInfoResults.size(),
+            smallBlindInSeatNumber: getTableInfoResults.smallBlindInSeatNumber(),
+            bigBlindInSeatNumber: getTableInfoResults.bigBlindInSeatNumber(),
+            handInProgress: getTableInfoResults.handInProgress(),
+            potsCount: getTableInfoResults.potsCount(),
+        };
+        return tableInfo;
+    } catch (ex: unknown) {
+        const error = ex as Error;
+        Log(LogTag.Error, error.message);
+        throw ex;
+    }
+}
+
+export async function getTableSeats(tableInfo: ITableInfo, tableSeatNumbers?: number[]): Promise<ITableSeat[]> {
+    try {
+        Log(LogTag.SmartContract, `Getting seat infos for table ${tableInfo.number}`);
+        const emptyAgentID = "1111111111111111111111111111111111111";
+
+        const getTableSeatView = doodleService.getTableSeat();
+        getTableSeatView.tableNumber(tableInfo.number);
+
+        const tableSeats: ITableSeat[] = [];
+
+        if (!tableSeatNumbers || tableSeatNumbers.length == 0) {
+            for (let tableSeatNumber = 1; tableSeatNumber <= tableInfo.size; tableSeatNumber++) {
+                getTableSeatView.tableSeatNumber(tableSeatNumber);
+                const getTableSeatResult = await getTableSeatView.call();
+                const agentID = getTableSeatResult.agentId();
+                if (agentID == emptyAgentID) continue;
+
+                const tableSeat: ITableSeat = {
+                    number: tableSeatNumber,
+                    agentID: agentID,
+                    chipCount: getTableSeatResult.chipCount(),
+                    isInHand: getTableSeatResult.isInHand(),
+                    joiningNextHand: getTableSeatResult.joiningNextHand(),
+                    joiningNextBigBlind: getTableSeatResult.joiningNextBigBlind(),
+                };
+                tableSeats.push(tableSeat);
+            }
+        } else {
+            tableSeatNumbers.forEach(async (tableSeatNumber) => {
+                getTableSeatView.tableSeatNumber(tableSeatNumber);
+                const getTableSeatResult = await getTableSeatView.call();
+                const agentID = getTableSeatResult.agentId();
+                if (agentID != emptyAgentID) {
+                    const tableSeat: ITableSeat = {
+                        number: tableSeatNumber,
+                        agentID: agentID,
+                        chipCount: getTableSeatResult.chipCount(),
+                        isInHand: getTableSeatResult.isInHand(),
+                        joiningNextHand: getTableSeatResult.joiningNextHand(),
+                        joiningNextBigBlind: getTableSeatResult.joiningNextBigBlind(),
+                    };
+                    tableSeats.push(tableSeat);
+                }
+            });
+        }
+
+        return tableSeats;
+    } catch (ex: unknown) {
+        const error = ex as Error;
+        Log(LogTag.Error, error.message);
+        throw ex;
+    }
+}
+
 export async function joinNextHand(tableNumber: number, tableSeatNumber: number, initialChipCount: bigint): Promise<boolean> {
     if (initialChipCount <= 0) return false;
 
@@ -136,6 +214,22 @@ export async function joinNextBigBlind(tableNumber: number, tableSeatNumber: num
     }
 }
 
+export async function leaveTable(tableNumber: number): Promise<boolean> {
+    try {
+        Log(LogTag.SmartContract, `Leaving table ${tableNumber}`);
+        const leaveTableFunc = doodleService.leaveTable();
+        leaveTableFunc.tableNumber(tableNumber);
+        leaveTableFunc.sign(doodleService.keyPair!);
+        await leaveTableFunc.post();
+
+        return true;
+    } catch (ex: unknown) {
+        const error = ex as Error;
+        Log(LogTag.Error, error.message);
+        return false;
+    }
+}
+
 export function onDoodleGameEnded(event: events.EventGameEnded): void {
     Log(LogTag.SmartContract, `Event: EventGameEnded -> Table ${event.tableNumber}`);
 }
@@ -144,8 +238,19 @@ export function onDoodleGameStarted(event: events.EventGameStarted): void {
     Log(LogTag.SmartContract, "Event: EventGameStarted");
 }
 
+let onDoodlePlayerJoinsNextBigBlindHandler: (event: events.EventPlayerJoinsNextBigBlind) => void;
+export function setOnDoodlePlayerJoinsNextBigBlind(handler: (event: events.EventPlayerJoinsNextBigBlind) => void) {
+    onDoodlePlayerJoinsNextBigBlindHandler = handler;
+}
+
 export function onDoodlePlayerJoinsNextBigBlind(event: events.EventPlayerJoinsNextBigBlind): void {
     Log(LogTag.SmartContract, "Event: EventPlayerJoinsNextBigBlind");
+    onDoodlePlayerJoinsNextBigBlindHandler(event);
+}
+
+let onDoodlePlayerJoinsNextHandHandler: (event: events.EventPlayerJoinsNextHand) => void;
+export function setOnDoodlePlayerJoinsNextHand(handler: (event: events.EventPlayerJoinsNextHand) => void) {
+    onDoodlePlayerJoinsNextHandHandler = handler;
 }
 
 export function onDoodlePlayerJoinsNextHand(event: events.EventPlayerJoinsNextHand): void {
@@ -153,10 +258,17 @@ export function onDoodlePlayerJoinsNextHand(event: events.EventPlayerJoinsNextHa
         LogTag.SmartContract,
         `Event: EventPlayerJoinsNextHand -> Table ${event.tableNumber} Seat ${event.tableSeatNumber} Chip count: ${event.playersInitialChipCount}`
     );
+    onDoodlePlayerJoinsNextHandHandler(event);
+}
+
+let onDoodlePlayerLeftHandler: (event: events.EventPlayerLeft) => void;
+export function setOnDoodlePlayerLeftHandler(handler: (event: events.EventPlayerLeft) => void) {
+    onDoodlePlayerLeftHandler = handler;
 }
 
 export function onDoodlePlayerLeft(event: events.EventPlayerLeft): void {
     Log(LogTag.SmartContract, `Event: EventPlayerLeft -> Table ${event.tableNumber} Seat ${event.tableSeatNumber}`);
+    onDoodlePlayerLeftHandler(event);
 }
 
 export function onDoodlePlayerWinsAllPots(event: events.EventPlayerWinsAllPots): void {
