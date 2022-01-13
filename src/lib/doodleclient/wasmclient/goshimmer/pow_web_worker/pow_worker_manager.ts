@@ -1,6 +1,6 @@
-import { v4 as uuidv4 } from "uuid";
-import type { Buffer } from "../../buffer";
-import Worker from "worker-loader!./pow.worker.ts";
+import { v4 as uuidv4 } from 'uuid';
+import type { Buffer } from '../../buffer';
+import Worker from 'worker-loader!./pow.worker.ts';
 
 export interface PowWorkerRequest {
     type: string;
@@ -21,15 +21,15 @@ export class PoWWorkerManager {
 
     public requestProofOfWork(difficulty: number, data: Buffer): Promise<number> {
         return new Promise((resolve, reject) => {
-            if (this.powWorker == null) throw new Error("powWorker not defined");
+            if (this.powWorker == null) throw new Error('powWorker not defined');
 
             const requestId = uuidv4();
 
             const responseHandler = (e: MessageEvent) => {
                 const message: PowWorkerResponse = e.data;
 
-                if (message.type == "pow_response" && message.uuid == requestId) {
-                    this.powWorker!.removeEventListener("message", responseHandler);
+                if (message.type == 'pow_response' && message.uuid == requestId) {
+                    this.powWorker!.removeEventListener('message', responseHandler);
 
                     if (!message.error) {
                         resolve(message.data);
@@ -39,10 +39,10 @@ export class PoWWorkerManager {
                 }
             };
 
-            this.powWorker.addEventListener("message", responseHandler);
+            this.powWorker.addEventListener('message', responseHandler);
 
             const request: PowWorkerRequest = {
-                type: "pow_request",
+                type: 'pow_request',
                 data: data,
                 difficulty: difficulty,
                 uuid: requestId,

@@ -1,8 +1,8 @@
 // Copyright 2020 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-import * as wasmclient from "./index";
-import { Base58 } from "./crypto";
+import * as wasmclient from "./index"
+import {Base58} from "./crypto";
 
 export class Event {
     private index = 0;

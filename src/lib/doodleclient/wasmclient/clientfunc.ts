@@ -14,6 +14,7 @@ export class ClientFunc {
         this.svc = svc;
     }
 
+
     // onLedger can override the default off-ledger to on-ledger posting
     public onLedgerRequest(onLedger: boolean): void {
         this.onLedger = onLedger;

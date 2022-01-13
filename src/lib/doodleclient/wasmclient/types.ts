@@ -1,7 +1,7 @@
 // Copyright 2020 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-import { Buffer } from "./buffer";
+import {Buffer} from "./buffer";
 
 export const TYPE_ADDRESS = 1;
 export const TYPE_AGENT_ID = 2;
