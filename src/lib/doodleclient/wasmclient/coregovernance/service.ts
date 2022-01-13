@@ -5,7 +5,7 @@
 // >>>> DO NOT CHANGE THIS FILE! <<<<
 // Change the json schema instead
 
-import * as wasmclient from "../../wasmclient";
+import * as wasmclient from "../"
 
 const ArgChainOwner = "oi";
 const ArgFeeColor = "fc";
@@ -33,306 +33,323 @@ const ResValidatorFee = "vf";
 ///////////////////////////// addAllowedStateControllerAddress /////////////////////////////
 
 export class AddAllowedStateControllerAddressFunc extends wasmclient.ClientFunc {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
-
-    public chainOwner(v: wasmclient.AgentID): void {
-        this.args.setAgentID(ArgChainOwner, v);
-    }
-
-    public feeColor(v: wasmclient.Color): void {
-        this.args.setColor(ArgFeeColor, v);
-    }
-
-    public stateControllerAddress(v: wasmclient.Address): void {
-        this.args.setAddress(ArgStateControllerAddress, v);
-    }
-
-    public async post(): Promise<wasmclient.RequestID> {
-        this.args.mandatory(ArgChainOwner);
-        this.args.mandatory(ArgStateControllerAddress);
-        return await super.post(0x9469d567, this.args);
-    }
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public chainOwner(v: wasmclient.AgentID): void {
+		this.args.set(ArgChainOwner, this.args.fromAgentID(v));
+	}
+	
+	public feeColor(v: wasmclient.Color): void {
+		this.args.set(ArgFeeColor, this.args.fromColor(v));
+	}
+	
+	public stateControllerAddress(v: wasmclient.Address): void {
+		this.args.set(ArgStateControllerAddress, this.args.fromAddress(v));
+	}
+	
+	public async post(): Promise<wasmclient.RequestID> {
+		this.args.mandatory(ArgChainOwner);
+		this.args.mandatory(ArgStateControllerAddress);
+		return await super.post(0x9469d567, this.args);
+	}
 }
 
 ///////////////////////////// claimChainOwnership /////////////////////////////
 
 export class ClaimChainOwnershipFunc extends wasmclient.ClientFunc {
-    public async post(): Promise<wasmclient.RequestID> {
-        return await super.post(0x03ff0fc0, null);
-    }
+	
+	public async post(): Promise<wasmclient.RequestID> {
+		return await super.post(0x03ff0fc0, null);
+	}
 }
 
 ///////////////////////////// delegateChainOwnership /////////////////////////////
 
 export class DelegateChainOwnershipFunc extends wasmclient.ClientFunc {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
-
-    public chainOwner(v: wasmclient.AgentID): void {
-        this.args.setAgentID(ArgChainOwner, v);
-    }
-
-    public async post(): Promise<wasmclient.RequestID> {
-        this.args.mandatory(ArgChainOwner);
-        return await super.post(0x93ecb6ad, this.args);
-    }
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public chainOwner(v: wasmclient.AgentID): void {
+		this.args.set(ArgChainOwner, this.args.fromAgentID(v));
+	}
+	
+	public async post(): Promise<wasmclient.RequestID> {
+		this.args.mandatory(ArgChainOwner);
+		return await super.post(0x93ecb6ad, this.args);
+	}
 }
 
 ///////////////////////////// removeAllowedStateControllerAddress /////////////////////////////
 
 export class RemoveAllowedStateControllerAddressFunc extends wasmclient.ClientFunc {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
-
-    public stateControllerAddress(v: wasmclient.Address): void {
-        this.args.setAddress(ArgStateControllerAddress, v);
-    }
-
-    public async post(): Promise<wasmclient.RequestID> {
-        this.args.mandatory(ArgStateControllerAddress);
-        return await super.post(0x31f69447, this.args);
-    }
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public stateControllerAddress(v: wasmclient.Address): void {
+		this.args.set(ArgStateControllerAddress, this.args.fromAddress(v));
+	}
+	
+	public async post(): Promise<wasmclient.RequestID> {
+		this.args.mandatory(ArgStateControllerAddress);
+		return await super.post(0x31f69447, this.args);
+	}
 }
 
 ///////////////////////////// rotateStateController /////////////////////////////
 
 export class RotateStateControllerFunc extends wasmclient.ClientFunc {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
-
-    public stateControllerAddress(v: wasmclient.Address): void {
-        this.args.setAddress(ArgStateControllerAddress, v);
-    }
-
-    public async post(): Promise<wasmclient.RequestID> {
-        this.args.mandatory(ArgStateControllerAddress);
-        return await super.post(0x244d1038, this.args);
-    }
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public stateControllerAddress(v: wasmclient.Address): void {
+		this.args.set(ArgStateControllerAddress, this.args.fromAddress(v));
+	}
+	
+	public async post(): Promise<wasmclient.RequestID> {
+		this.args.mandatory(ArgStateControllerAddress);
+		return await super.post(0x244d1038, this.args);
+	}
 }
 
 ///////////////////////////// setChainInfo /////////////////////////////
 
 export class SetChainInfoFunc extends wasmclient.ClientFunc {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
-
-    public maxBlobSize(v: wasmclient.Int32): void {
-        this.args.setInt32(ArgMaxBlobSize, v);
-    }
-
-    public maxEventSize(v: wasmclient.Int16): void {
-        this.args.setInt16(ArgMaxEventSize, v);
-    }
-
-    public maxEventsPerReq(v: wasmclient.Int16): void {
-        this.args.setInt16(ArgMaxEventsPerReq, v);
-    }
-
-    public ownerFee(v: wasmclient.Int64): void {
-        this.args.setInt64(ArgOwnerFee, v);
-    }
-
-    public validatorFee(v: wasmclient.Int64): void {
-        this.args.setInt64(ArgValidatorFee, v);
-    }
-
-    public async post(): Promise<wasmclient.RequestID> {
-        return await super.post(0x702f5d2b, this.args);
-    }
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public maxBlobSize(v: wasmclient.Int32): void {
+		this.args.set(ArgMaxBlobSize, this.args.fromInt32(v));
+	}
+	
+	public maxEventSize(v: wasmclient.Int16): void {
+		this.args.set(ArgMaxEventSize, this.args.fromInt16(v));
+	}
+	
+	public maxEventsPerReq(v: wasmclient.Int16): void {
+		this.args.set(ArgMaxEventsPerReq, this.args.fromInt16(v));
+	}
+	
+	public ownerFee(v: wasmclient.Int64): void {
+		this.args.set(ArgOwnerFee, this.args.fromInt64(v));
+	}
+	
+	public validatorFee(v: wasmclient.Int64): void {
+		this.args.set(ArgValidatorFee, this.args.fromInt64(v));
+	}
+	
+	public async post(): Promise<wasmclient.RequestID> {
+		return await super.post(0x702f5d2b, this.args);
+	}
 }
 
 ///////////////////////////// setContractFee /////////////////////////////
 
 export class SetContractFeeFunc extends wasmclient.ClientFunc {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
-
-    public hname(v: wasmclient.Hname): void {
-        this.args.setHname(ArgHname, v);
-    }
-
-    public ownerFee(v: wasmclient.Int64): void {
-        this.args.setInt64(ArgOwnerFee, v);
-    }
-
-    public validatorFee(v: wasmclient.Int64): void {
-        this.args.setInt64(ArgValidatorFee, v);
-    }
-
-    public async post(): Promise<wasmclient.RequestID> {
-        this.args.mandatory(ArgHname);
-        return await super.post(0x8421a42b, this.args);
-    }
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public hname(v: wasmclient.Hname): void {
+		this.args.set(ArgHname, this.args.fromHname(v));
+	}
+	
+	public ownerFee(v: wasmclient.Int64): void {
+		this.args.set(ArgOwnerFee, this.args.fromInt64(v));
+	}
+	
+	public validatorFee(v: wasmclient.Int64): void {
+		this.args.set(ArgValidatorFee, this.args.fromInt64(v));
+	}
+	
+	public async post(): Promise<wasmclient.RequestID> {
+		this.args.mandatory(ArgHname);
+		return await super.post(0x8421a42b, this.args);
+	}
 }
 
 ///////////////////////////// setDefaultFee /////////////////////////////
 
 export class SetDefaultFeeFunc extends wasmclient.ClientFunc {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
-
-    public ownerFee(v: wasmclient.Int64): void {
-        this.args.setInt64(ArgOwnerFee, v);
-    }
-
-    public validatorFee(v: wasmclient.Int64): void {
-        this.args.setInt64(ArgValidatorFee, v);
-    }
-
-    public async post(): Promise<wasmclient.RequestID> {
-        return await super.post(0x3310ecd0, this.args);
-    }
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public ownerFee(v: wasmclient.Int64): void {
+		this.args.set(ArgOwnerFee, this.args.fromInt64(v));
+	}
+	
+	public validatorFee(v: wasmclient.Int64): void {
+		this.args.set(ArgValidatorFee, this.args.fromInt64(v));
+	}
+	
+	public async post(): Promise<wasmclient.RequestID> {
+		return await super.post(0x3310ecd0, this.args);
+	}
 }
 
 ///////////////////////////// getAllowedStateControllerAddresses /////////////////////////////
 
 export class GetAllowedStateControllerAddressesView extends wasmclient.ClientView {
-    public async call(): Promise<GetAllowedStateControllerAddressesResults> {
-        return new GetAllowedStateControllerAddressesResults(await this.callView("getAllowedStateControllerAddresses", null));
-    }
+
+	public async call(): Promise<GetAllowedStateControllerAddressesResults> {
+		const res = new GetAllowedStateControllerAddressesResults();
+		await this.callView("getAllowedStateControllerAddresses", null, res);
+		return res;
+	}
 }
 
-export class GetAllowedStateControllerAddressesResults extends wasmclient.ViewResults {
-    allowedStateControllerAddresses(): wasmclient.Bytes {
-        return this.res.getBytes(ResAllowedStateControllerAddresses);
-    }
+export class GetAllowedStateControllerAddressesResults extends wasmclient.Results {
+
+	allowedStateControllerAddresses(): wasmclient.Bytes {
+		return this.toBytes(this.get(ResAllowedStateControllerAddresses));
+	}
 }
 
 ///////////////////////////// getChainInfo /////////////////////////////
 
 export class GetChainInfoView extends wasmclient.ClientView {
-    public async call(): Promise<GetChainInfoResults> {
-        return new GetChainInfoResults(await this.callView("getChainInfo", null));
-    }
+
+	public async call(): Promise<GetChainInfoResults> {
+		const res = new GetChainInfoResults();
+		await this.callView("getChainInfo", null, res);
+		return res;
+	}
 }
 
-export class GetChainInfoResults extends wasmclient.ViewResults {
-    chainID(): wasmclient.ChainID {
-        return this.res.getChainID(ResChainID);
-    }
+export class GetChainInfoResults extends wasmclient.Results {
 
-    chainOwnerID(): wasmclient.AgentID {
-        return this.res.getAgentID(ResChainOwnerID);
-    }
+	chainID(): wasmclient.ChainID {
+		return this.toChainID(this.get(ResChainID));
+	}
 
-    defaultOwnerFee(): wasmclient.Int64 {
-        return this.res.getInt64(ResDefaultOwnerFee);
-    }
+	chainOwnerID(): wasmclient.AgentID {
+		return this.toAgentID(this.get(ResChainOwnerID));
+	}
 
-    defaultValidatorFee(): wasmclient.Int64 {
-        return this.res.getInt64(ResDefaultValidatorFee);
-    }
+	defaultOwnerFee(): wasmclient.Int64 {
+		return this.toInt64(this.get(ResDefaultOwnerFee));
+	}
 
-    description(): string {
-        return this.res.getString(ResDescription);
-    }
+	defaultValidatorFee(): wasmclient.Int64 {
+		return this.toInt64(this.get(ResDefaultValidatorFee));
+	}
 
-    feeColor(): wasmclient.Color {
-        return this.res.getColor(ResFeeColor);
-    }
+	description(): string {
+		return this.toString(this.get(ResDescription));
+	}
 
-    maxBlobSize(): wasmclient.Int32 {
-        return this.res.getInt32(ResMaxBlobSize);
-    }
+	feeColor(): wasmclient.Color {
+		return this.toColor(this.get(ResFeeColor));
+	}
 
-    maxEventSize(): wasmclient.Int16 {
-        return this.res.getInt16(ResMaxEventSize);
-    }
+	maxBlobSize(): wasmclient.Int32 {
+		return this.toInt32(this.get(ResMaxBlobSize));
+	}
 
-    maxEventsPerReq(): wasmclient.Int16 {
-        return this.res.getInt16(ResMaxEventsPerReq);
-    }
+	maxEventSize(): wasmclient.Int16 {
+		return this.toInt16(this.get(ResMaxEventSize));
+	}
+
+	maxEventsPerReq(): wasmclient.Int16 {
+		return this.toInt16(this.get(ResMaxEventsPerReq));
+	}
 }
 
 ///////////////////////////// getFeeInfo /////////////////////////////
 
 export class GetFeeInfoView extends wasmclient.ClientView {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public hname(v: wasmclient.Hname): void {
+		this.args.set(ArgHname, this.args.fromHname(v));
+	}
 
-    public hname(v: wasmclient.Hname): void {
-        this.args.setHname(ArgHname, v);
-    }
-
-    public async call(): Promise<GetFeeInfoResults> {
-        this.args.mandatory(ArgHname);
-        return new GetFeeInfoResults(await this.callView("getFeeInfo", this.args));
-    }
+	public async call(): Promise<GetFeeInfoResults> {
+		this.args.mandatory(ArgHname);
+		const res = new GetFeeInfoResults();
+		await this.callView("getFeeInfo", this.args, res);
+		return res;
+	}
 }
 
-export class GetFeeInfoResults extends wasmclient.ViewResults {
-    feeColor(): wasmclient.Color {
-        return this.res.getColor(ResFeeColor);
-    }
+export class GetFeeInfoResults extends wasmclient.Results {
 
-    ownerFee(): wasmclient.Int64 {
-        return this.res.getInt64(ResOwnerFee);
-    }
+	feeColor(): wasmclient.Color {
+		return this.toColor(this.get(ResFeeColor));
+	}
 
-    validatorFee(): wasmclient.Int64 {
-        return this.res.getInt64(ResValidatorFee);
-    }
+	ownerFee(): wasmclient.Int64 {
+		return this.toInt64(this.get(ResOwnerFee));
+	}
+
+	validatorFee(): wasmclient.Int64 {
+		return this.toInt64(this.get(ResValidatorFee));
+	}
 }
 
 ///////////////////////////// getMaxBlobSize /////////////////////////////
 
 export class GetMaxBlobSizeView extends wasmclient.ClientView {
-    public async call(): Promise<GetMaxBlobSizeResults> {
-        return new GetMaxBlobSizeResults(await this.callView("getMaxBlobSize", null));
-    }
+
+	public async call(): Promise<GetMaxBlobSizeResults> {
+		const res = new GetMaxBlobSizeResults();
+		await this.callView("getMaxBlobSize", null, res);
+		return res;
+	}
 }
 
-export class GetMaxBlobSizeResults extends wasmclient.ViewResults {
-    maxBlobSize(): wasmclient.Int32 {
-        return this.res.getInt32(ResMaxBlobSize);
-    }
+export class GetMaxBlobSizeResults extends wasmclient.Results {
+
+	maxBlobSize(): wasmclient.Int32 {
+		return this.toInt32(this.get(ResMaxBlobSize));
+	}
 }
 
 ///////////////////////////// CoreGovernanceService /////////////////////////////
 
 export class CoreGovernanceService extends wasmclient.Service {
-    public constructor(cl: wasmclient.ServiceClient) {
-        super(cl, 0x17cf909f, new Map());
-    }
 
-    public addAllowedStateControllerAddress(): AddAllowedStateControllerAddressFunc {
-        return new AddAllowedStateControllerAddressFunc(this);
-    }
+	public constructor(cl: wasmclient.ServiceClient) {
+		super(cl, 0x17cf909f, new Map());
+	}
 
-    public claimChainOwnership(): ClaimChainOwnershipFunc {
-        return new ClaimChainOwnershipFunc(this);
-    }
+	public addAllowedStateControllerAddress(): AddAllowedStateControllerAddressFunc {
+		return new AddAllowedStateControllerAddressFunc(this);
+	}
 
-    public delegateChainOwnership(): DelegateChainOwnershipFunc {
-        return new DelegateChainOwnershipFunc(this);
-    }
+	public claimChainOwnership(): ClaimChainOwnershipFunc {
+		return new ClaimChainOwnershipFunc(this);
+	}
 
-    public removeAllowedStateControllerAddress(): RemoveAllowedStateControllerAddressFunc {
-        return new RemoveAllowedStateControllerAddressFunc(this);
-    }
+	public delegateChainOwnership(): DelegateChainOwnershipFunc {
+		return new DelegateChainOwnershipFunc(this);
+	}
 
-    public rotateStateController(): RotateStateControllerFunc {
-        return new RotateStateControllerFunc(this);
-    }
+	public removeAllowedStateControllerAddress(): RemoveAllowedStateControllerAddressFunc {
+		return new RemoveAllowedStateControllerAddressFunc(this);
+	}
 
-    public setChainInfo(): SetChainInfoFunc {
-        return new SetChainInfoFunc(this);
-    }
+	public rotateStateController(): RotateStateControllerFunc {
+		return new RotateStateControllerFunc(this);
+	}
 
-    public setContractFee(): SetContractFeeFunc {
-        return new SetContractFeeFunc(this);
-    }
+	public setChainInfo(): SetChainInfoFunc {
+		return new SetChainInfoFunc(this);
+	}
 
-    public setDefaultFee(): SetDefaultFeeFunc {
-        return new SetDefaultFeeFunc(this);
-    }
+	public setContractFee(): SetContractFeeFunc {
+		return new SetContractFeeFunc(this);
+	}
 
-    public getAllowedStateControllerAddresses(): GetAllowedStateControllerAddressesView {
-        return new GetAllowedStateControllerAddressesView(this);
-    }
+	public setDefaultFee(): SetDefaultFeeFunc {
+		return new SetDefaultFeeFunc(this);
+	}
 
-    public getChainInfo(): GetChainInfoView {
-        return new GetChainInfoView(this);
-    }
+	public getAllowedStateControllerAddresses(): GetAllowedStateControllerAddressesView {
+		return new GetAllowedStateControllerAddressesView(this);
+	}
 
-    public getFeeInfo(): GetFeeInfoView {
-        return new GetFeeInfoView(this);
-    }
+	public getChainInfo(): GetChainInfoView {
+		return new GetChainInfoView(this);
+	}
 
-    public getMaxBlobSize(): GetMaxBlobSizeView {
-        return new GetMaxBlobSizeView(this);
-    }
+	public getFeeInfo(): GetFeeInfoView {
+		return new GetFeeInfoView(this);
+	}
+
+	public getMaxBlobSize(): GetMaxBlobSizeView {
+		return new GetMaxBlobSizeView(this);
+	}
 }

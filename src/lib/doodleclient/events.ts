@@ -5,90 +5,90 @@
 // >>>> DO NOT CHANGE THIS FILE! <<<<
 // Change the json schema instead
 
-import * as wasmclient from "./wasmclient";
-import * as app from "./doodle";
+import * as wasmclient from "./wasmclient"
+import * as app from "./doodle"
 
 export const eventHandlers: wasmclient.EventHandlers = new Map([
-    ["doodle.gameEnded", (msg: string[]) => app.onDoodleGameEnded(new EventGameEnded(msg))],
-    ["doodle.gameStarted", (msg: string[]) => app.onDoodleGameStarted(new EventGameStarted(msg))],
-    ["doodle.playerJoinsNextBigBlind", (msg: string[]) => app.onDoodlePlayerJoinsNextBigBlind(new EventPlayerJoinsNextBigBlind(msg))],
-    ["doodle.playerJoinsNextHand", (msg: string[]) => app.onDoodlePlayerJoinsNextHand(new EventPlayerJoinsNextHand(msg))],
-    ["doodle.playerLeft", (msg: string[]) => app.onDoodlePlayerLeft(new EventPlayerLeft(msg))],
-    ["doodle.playerWinsAllPots", (msg: string[]) => app.onDoodlePlayerWinsAllPots(new EventPlayerWinsAllPots(msg))],
+	["doodle.gameEnded", (msg: string[]) => app.onDoodleGameEnded(new EventGameEnded(msg))],
+	["doodle.gameStarted", (msg: string[]) => app.onDoodleGameStarted(new EventGameStarted(msg))],
+	["doodle.playerJoinsNextBigBlind", (msg: string[]) => app.onDoodlePlayerJoinsNextBigBlind(new EventPlayerJoinsNextBigBlind(msg))],
+	["doodle.playerJoinsNextHand", (msg: string[]) => app.onDoodlePlayerJoinsNextHand(new EventPlayerJoinsNextHand(msg))],
+	["doodle.playerLeft", (msg: string[]) => app.onDoodlePlayerLeft(new EventPlayerLeft(msg))],
+	["doodle.playerWinsAllPots", (msg: string[]) => app.onDoodlePlayerWinsAllPots(new EventPlayerWinsAllPots(msg))],
 ]);
 
 export class EventGameEnded extends wasmclient.Event {
-    public readonly tableNumber: wasmclient.Uint32;
-
-    public constructor(msg: string[]) {
-        super(msg);
-        this.tableNumber = this.nextUint32();
-    }
+	public readonly tableNumber: wasmclient.Uint32;
+	
+	public constructor(msg: string[]) {
+		super(msg)
+		this.tableNumber = this.nextUint32();
+	}
 }
 
 export class EventGameStarted extends wasmclient.Event {
-    public readonly paidBigBlindTableSeatNumber: wasmclient.Uint16;
-    public readonly paidSmallBlindTableSeatNumber: wasmclient.Uint16;
-    public readonly tableNumber: wasmclient.Uint32;
-
-    public constructor(msg: string[]) {
-        super(msg);
-        this.paidBigBlindTableSeatNumber = this.nextUint16();
-        this.paidSmallBlindTableSeatNumber = this.nextUint16();
-        this.tableNumber = this.nextUint32();
-    }
+	public readonly paidBigBlindTableSeatNumber: wasmclient.Uint16;
+	public readonly paidSmallBlindTableSeatNumber: wasmclient.Uint16;
+	public readonly tableNumber: wasmclient.Uint32;
+	
+	public constructor(msg: string[]) {
+		super(msg)
+		this.paidBigBlindTableSeatNumber = this.nextUint16();
+		this.paidSmallBlindTableSeatNumber = this.nextUint16();
+		this.tableNumber = this.nextUint32();
+	}
 }
 
 export class EventPlayerJoinsNextBigBlind extends wasmclient.Event {
-    public readonly playerAgentId: wasmclient.AgentID;
-    public readonly playersInitialChipCount: wasmclient.Uint64;
-    public readonly tableNumber: wasmclient.Uint32;
-    public readonly tableSeatNumber: wasmclient.Uint16;
-
-    public constructor(msg: string[]) {
-        super(msg);
-        this.playerAgentId = this.nextAgentID();
-        this.playersInitialChipCount = this.nextUint64();
-        this.tableNumber = this.nextUint32();
-        this.tableSeatNumber = this.nextUint16();
-    }
+	public readonly playerAgentId: wasmclient.AgentID;
+	public readonly playersInitialChipCount: wasmclient.Uint64;
+	public readonly tableNumber: wasmclient.Uint32;
+	public readonly tableSeatNumber: wasmclient.Uint16;
+	
+	public constructor(msg: string[]) {
+		super(msg)
+		this.playerAgentId = this.nextAgentID();
+		this.playersInitialChipCount = this.nextUint64();
+		this.tableNumber = this.nextUint32();
+		this.tableSeatNumber = this.nextUint16();
+	}
 }
 
 export class EventPlayerJoinsNextHand extends wasmclient.Event {
-    public readonly playerAgentId: wasmclient.AgentID;
-    public readonly playersInitialChipCount: wasmclient.Uint64;
-    public readonly tableNumber: wasmclient.Uint32;
-    public readonly tableSeatNumber: wasmclient.Uint16;
-
-    public constructor(msg: string[]) {
-        super(msg);
-        this.playerAgentId = this.nextAgentID();
-        this.playersInitialChipCount = this.nextUint64();
-        this.tableNumber = this.nextUint32();
-        this.tableSeatNumber = this.nextUint16();
-    }
+	public readonly playerAgentId: wasmclient.AgentID;
+	public readonly playersInitialChipCount: wasmclient.Uint64;
+	public readonly tableNumber: wasmclient.Uint32;
+	public readonly tableSeatNumber: wasmclient.Uint16;
+	
+	public constructor(msg: string[]) {
+		super(msg)
+		this.playerAgentId = this.nextAgentID();
+		this.playersInitialChipCount = this.nextUint64();
+		this.tableNumber = this.nextUint32();
+		this.tableSeatNumber = this.nextUint16();
+	}
 }
 
 export class EventPlayerLeft extends wasmclient.Event {
-    public readonly tableNumber: wasmclient.Uint32;
-    public readonly tableSeatNumber: wasmclient.Uint16;
-
-    public constructor(msg: string[]) {
-        super(msg);
-        this.tableNumber = this.nextUint32();
-        this.tableSeatNumber = this.nextUint16();
-    }
+	public readonly tableNumber: wasmclient.Uint32;
+	public readonly tableSeatNumber: wasmclient.Uint16;
+	
+	public constructor(msg: string[]) {
+		super(msg)
+		this.tableNumber = this.nextUint32();
+		this.tableSeatNumber = this.nextUint16();
+	}
 }
 
 export class EventPlayerWinsAllPots extends wasmclient.Event {
-    public readonly tableNumber: wasmclient.Uint32;
-    public readonly tableSeatNumber: wasmclient.Uint16;
-    public readonly totalPotSize: wasmclient.Uint64;
-
-    public constructor(msg: string[]) {
-        super(msg);
-        this.tableNumber = this.nextUint32();
-        this.tableSeatNumber = this.nextUint16();
-        this.totalPotSize = this.nextUint64();
-    }
+	public readonly tableNumber: wasmclient.Uint32;
+	public readonly tableSeatNumber: wasmclient.Uint16;
+	public readonly totalPotSize: wasmclient.Uint64;
+	
+	public constructor(msg: string[]) {
+		super(msg)
+		this.tableNumber = this.nextUint32();
+		this.tableSeatNumber = this.nextUint16();
+		this.totalPotSize = this.nextUint64();
+	}
 }
