@@ -28,8 +28,21 @@ import { IPlayer } from '../player/Player.vue';
         Card,
         Player,
     },
+    props: {
+        tableNumber: {
+            type: Number,
+            default: 0
+        }
+    }
 })
+
 export default class Table extends Vue {
+    tableNumber! : number;
+
+    mounted(){
+        console.log(`Table #${this.tableNumber}`);
+    }
+
     player_playing = 3;
     players : IPlayer[] = [
         { name: 'rivy33', color: "dodgerblue", bank: 16n, onTable: 65n, hasCards: false },
