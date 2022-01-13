@@ -1,4 +1,3 @@
-import { Log, LogTag } from "../../utils/logger";
 import { Buffer } from "../buffer";
 
 import { IFaucetRequest, IFaucetRequestContext, IFaucetResponse } from "./faucet/faucet_models";
@@ -30,7 +29,7 @@ export class GoShimmerClient {
     private readonly goShimmerConfiguration: GoShimmerClientConfiguration;
     private readonly powManager: PoWWorkerManager = new PoWWorkerManager();
 
-    constructor(configuration: Configuration, coreAccountsService: CoreAccountsService) {
+    constructor(configuration : Configuration, coreAccountsService: CoreAccountsService) {
         this.coreAccountsService = coreAccountsService;
         this.goShimmerConfiguration = { APIUrl: configuration.goShimmerApiUrl, SeedUnsafe: configuration.seed };
     }
@@ -77,7 +76,7 @@ export class GoShimmerClient {
             return success;
         } catch (ex: unknown) {
             const error = ex as Error;
-            Log(LogTag.Error, error.message);
+            console.error(error.message);
             return false;
         }
     }
@@ -121,7 +120,12 @@ export class GoShimmerClient {
         return response;
     }
 
-    public async postOnLedgerRequest(chainId: string, payload: IOnLedger, transfer: bigint = 1n, keyPair: IKeyPair): Promise<string> {
+    public async postOnLedgerRequest(
+        chainId: string,
+        payload: IOnLedger,
+        transfer: bigint = 1n,
+        keyPair: IKeyPair
+    ): Promise<string> {
         if (transfer <= 0) {
             transfer = 1n;
         }

@@ -1,5 +1,5 @@
-import { blake2b } from "blakejs";
-import { Buffer } from "../buffer";
+import {blake2b} from 'blakejs';
+import {Buffer} from '../buffer';
 
 export class Hash {
     public static from(bytes: Buffer): Buffer {

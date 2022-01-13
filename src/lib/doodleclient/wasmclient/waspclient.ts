@@ -7,6 +7,14 @@ import { IResponse } from "./api_common/response_models";
 import * as requestSender from "./api_common/request_sender";
 import { Base58, ED25519, Hash, IKeyPair } from "./crypto";
 
+interface ICallViewResponse extends IResponse {
+    Items: [{ Key: string; Value: string }];
+}
+
+interface IOffLedgerRequest {
+    Request: string;
+}
+
 export class Item {
     Key: string;
     Value: string;
@@ -21,14 +29,6 @@ export class Items {
     Items = new Array<Item>();
 }
 
-interface ICallViewResponse extends IResponse {
-    Items: [{ Key: string; Value: string }];
-}
-
-interface IOffLedgerRequest {
-    Request: string;
-}
-
 export class WaspClient {
     private waspAPI: string;
 
@@ -37,26 +37,20 @@ export class WaspClient {
         else this.waspAPI = "http://" + waspAPI;
     }
 
-    public async callView(chainID: string, contractHName: string, entryPoint: string, args: Items): Promise<wasmclient.Results> {
+    public async callView(chainID: string, contractHName: string, entryPoint: string, args: Items, res: wasmclient.Results): Promise<void> {
         const result = await requestSender.sendRequestExt<unknown, ICallViewResponse>(
             this.waspAPI,
             "post",
             `/chain/${chainID}/contract/${contractHName}/callview/${entryPoint}`,
             args
         );
-
-        const res = new wasmclient.Results();
-
         if (result?.body !== null && result.body.Items) {
             for (const item of result.body.Items) {
                 const key = Buffer.from(item.Key, "base64");
-                const value = Buffer.from(item.Value, "base64");
-                const stringKey = key.toString();
-                res.res.set(stringKey, value);
-                res.keys.set(stringKey, key);
+                const val = Buffer.from(item.Value, "base64");
+                res.set(key, val);
             }
         }
-        return res;
     }
 
     public async postRequest(chainID: string, offLedgerRequest: Buffer): Promise<void> {

@@ -5,7 +5,7 @@
 // >>>> DO NOT CHANGE THIS FILE! <<<<
 // Change the json schema instead
 
-import * as wasmclient from "../../wasmclient";
+import * as wasmclient from "../"
 
 const ArgBlockIndex = "n";
 const ArgContractHname = "h";
@@ -26,271 +26,304 @@ const ResStateControllerAddress = "s";
 ///////////////////////////// controlAddresses /////////////////////////////
 
 export class ControlAddressesView extends wasmclient.ClientView {
-    public async call(): Promise<ControlAddressesResults> {
-        return new ControlAddressesResults(await this.callView("controlAddresses", null));
-    }
+
+	public async call(): Promise<ControlAddressesResults> {
+		const res = new ControlAddressesResults();
+		await this.callView("controlAddresses", null, res);
+		return res;
+	}
 }
 
-export class ControlAddressesResults extends wasmclient.ViewResults {
-    blockIndex(): wasmclient.Int32 {
-        return this.res.getInt32(ResBlockIndex);
-    }
+export class ControlAddressesResults extends wasmclient.Results {
 
-    governingAddress(): wasmclient.Address {
-        return this.res.getAddress(ResGoverningAddress);
-    }
+	blockIndex(): wasmclient.Int32 {
+		return this.toInt32(this.get(ResBlockIndex));
+	}
 
-    stateControllerAddress(): wasmclient.Address {
-        return this.res.getAddress(ResStateControllerAddress);
-    }
+	governingAddress(): wasmclient.Address {
+		return this.toAddress(this.get(ResGoverningAddress));
+	}
+
+	stateControllerAddress(): wasmclient.Address {
+		return this.toAddress(this.get(ResStateControllerAddress));
+	}
 }
 
 ///////////////////////////// getBlockInfo /////////////////////////////
 
 export class GetBlockInfoView extends wasmclient.ClientView {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public blockIndex(v: wasmclient.Int32): void {
+		this.args.set(ArgBlockIndex, this.args.fromInt32(v));
+	}
 
-    public blockIndex(v: wasmclient.Int32): void {
-        this.args.setInt32(ArgBlockIndex, v);
-    }
-
-    public async call(): Promise<GetBlockInfoResults> {
-        this.args.mandatory(ArgBlockIndex);
-        return new GetBlockInfoResults(await this.callView("getBlockInfo", this.args));
-    }
+	public async call(): Promise<GetBlockInfoResults> {
+		this.args.mandatory(ArgBlockIndex);
+		const res = new GetBlockInfoResults();
+		await this.callView("getBlockInfo", this.args, res);
+		return res;
+	}
 }
 
-export class GetBlockInfoResults extends wasmclient.ViewResults {
-    blockInfo(): wasmclient.Bytes {
-        return this.res.getBytes(ResBlockInfo);
-    }
+export class GetBlockInfoResults extends wasmclient.Results {
+
+	blockInfo(): wasmclient.Bytes {
+		return this.toBytes(this.get(ResBlockInfo));
+	}
 }
 
 ///////////////////////////// getEventsForBlock /////////////////////////////
 
 export class GetEventsForBlockView extends wasmclient.ClientView {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public blockIndex(v: wasmclient.Int32): void {
+		this.args.set(ArgBlockIndex, this.args.fromInt32(v));
+	}
 
-    public blockIndex(v: wasmclient.Int32): void {
-        this.args.setInt32(ArgBlockIndex, v);
-    }
-
-    public async call(): Promise<GetEventsForBlockResults> {
-        this.args.mandatory(ArgBlockIndex);
-        return new GetEventsForBlockResults(await this.callView("getEventsForBlock", this.args));
-    }
+	public async call(): Promise<GetEventsForBlockResults> {
+		this.args.mandatory(ArgBlockIndex);
+		const res = new GetEventsForBlockResults();
+		await this.callView("getEventsForBlock", this.args, res);
+		return res;
+	}
 }
 
-export class GetEventsForBlockResults extends wasmclient.ViewResults {
-    event(): wasmclient.Bytes {
-        return this.res.getBytes(ResEvent);
-    }
+export class GetEventsForBlockResults extends wasmclient.Results {
+
+	event(): wasmclient.Bytes {
+		return this.toBytes(this.get(ResEvent));
+	}
 }
 
 ///////////////////////////// getEventsForContract /////////////////////////////
 
 export class GetEventsForContractView extends wasmclient.ClientView {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public contractHname(v: wasmclient.Hname): void {
+		this.args.set(ArgContractHname, this.args.fromHname(v));
+	}
+	
+	public fromBlock(v: wasmclient.Int32): void {
+		this.args.set(ArgFromBlock, this.args.fromInt32(v));
+	}
+	
+	public toBlock(v: wasmclient.Int32): void {
+		this.args.set(ArgToBlock, this.args.fromInt32(v));
+	}
 
-    public contractHname(v: wasmclient.Hname): void {
-        this.args.setHname(ArgContractHname, v);
-    }
-
-    public fromBlock(v: wasmclient.Int32): void {
-        this.args.setInt32(ArgFromBlock, v);
-    }
-
-    public toBlock(v: wasmclient.Int32): void {
-        this.args.setInt32(ArgToBlock, v);
-    }
-
-    public async call(): Promise<GetEventsForContractResults> {
-        this.args.mandatory(ArgContractHname);
-        return new GetEventsForContractResults(await this.callView("getEventsForContract", this.args));
-    }
+	public async call(): Promise<GetEventsForContractResults> {
+		this.args.mandatory(ArgContractHname);
+		const res = new GetEventsForContractResults();
+		await this.callView("getEventsForContract", this.args, res);
+		return res;
+	}
 }
 
-export class GetEventsForContractResults extends wasmclient.ViewResults {
-    event(): wasmclient.Bytes {
-        return this.res.getBytes(ResEvent);
-    }
+export class GetEventsForContractResults extends wasmclient.Results {
+
+	event(): wasmclient.Bytes {
+		return this.toBytes(this.get(ResEvent));
+	}
 }
 
 ///////////////////////////// getEventsForRequest /////////////////////////////
 
 export class GetEventsForRequestView extends wasmclient.ClientView {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public requestID(v: wasmclient.RequestID): void {
+		this.args.set(ArgRequestID, this.args.fromRequestID(v));
+	}
 
-    public requestID(v: wasmclient.RequestID): void {
-        this.args.setRequestID(ArgRequestID, v);
-    }
-
-    public async call(): Promise<GetEventsForRequestResults> {
-        this.args.mandatory(ArgRequestID);
-        return new GetEventsForRequestResults(await this.callView("getEventsForRequest", this.args));
-    }
+	public async call(): Promise<GetEventsForRequestResults> {
+		this.args.mandatory(ArgRequestID);
+		const res = new GetEventsForRequestResults();
+		await this.callView("getEventsForRequest", this.args, res);
+		return res;
+	}
 }
 
-export class GetEventsForRequestResults extends wasmclient.ViewResults {
-    event(): wasmclient.Bytes {
-        return this.res.getBytes(ResEvent);
-    }
+export class GetEventsForRequestResults extends wasmclient.Results {
+
+	event(): wasmclient.Bytes {
+		return this.toBytes(this.get(ResEvent));
+	}
 }
 
 ///////////////////////////// getLatestBlockInfo /////////////////////////////
 
 export class GetLatestBlockInfoView extends wasmclient.ClientView {
-    public async call(): Promise<GetLatestBlockInfoResults> {
-        return new GetLatestBlockInfoResults(await this.callView("getLatestBlockInfo", null));
-    }
+
+	public async call(): Promise<GetLatestBlockInfoResults> {
+		const res = new GetLatestBlockInfoResults();
+		await this.callView("getLatestBlockInfo", null, res);
+		return res;
+	}
 }
 
-export class GetLatestBlockInfoResults extends wasmclient.ViewResults {
-    blockIndex(): wasmclient.Int32 {
-        return this.res.getInt32(ResBlockIndex);
-    }
+export class GetLatestBlockInfoResults extends wasmclient.Results {
 
-    blockInfo(): wasmclient.Bytes {
-        return this.res.getBytes(ResBlockInfo);
-    }
+	blockIndex(): wasmclient.Int32 {
+		return this.toInt32(this.get(ResBlockIndex));
+	}
+
+	blockInfo(): wasmclient.Bytes {
+		return this.toBytes(this.get(ResBlockInfo));
+	}
 }
 
 ///////////////////////////// getRequestIDsForBlock /////////////////////////////
 
 export class GetRequestIDsForBlockView extends wasmclient.ClientView {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public blockIndex(v: wasmclient.Int32): void {
+		this.args.set(ArgBlockIndex, this.args.fromInt32(v));
+	}
 
-    public blockIndex(v: wasmclient.Int32): void {
-        this.args.setInt32(ArgBlockIndex, v);
-    }
-
-    public async call(): Promise<GetRequestIDsForBlockResults> {
-        this.args.mandatory(ArgBlockIndex);
-        return new GetRequestIDsForBlockResults(await this.callView("getRequestIDsForBlock", this.args));
-    }
+	public async call(): Promise<GetRequestIDsForBlockResults> {
+		this.args.mandatory(ArgBlockIndex);
+		const res = new GetRequestIDsForBlockResults();
+		await this.callView("getRequestIDsForBlock", this.args, res);
+		return res;
+	}
 }
 
-export class GetRequestIDsForBlockResults extends wasmclient.ViewResults {
-    requestID(): wasmclient.RequestID {
-        return this.res.getRequestID(ResRequestID);
-    }
+export class GetRequestIDsForBlockResults extends wasmclient.Results {
+
+	requestID(): wasmclient.RequestID {
+		return this.toRequestID(this.get(ResRequestID));
+	}
 }
 
 ///////////////////////////// getRequestReceipt /////////////////////////////
 
 export class GetRequestReceiptView extends wasmclient.ClientView {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public requestID(v: wasmclient.RequestID): void {
+		this.args.set(ArgRequestID, this.args.fromRequestID(v));
+	}
 
-    public requestID(v: wasmclient.RequestID): void {
-        this.args.setRequestID(ArgRequestID, v);
-    }
-
-    public async call(): Promise<GetRequestReceiptResults> {
-        this.args.mandatory(ArgRequestID);
-        return new GetRequestReceiptResults(await this.callView("getRequestReceipt", this.args));
-    }
+	public async call(): Promise<GetRequestReceiptResults> {
+		this.args.mandatory(ArgRequestID);
+		const res = new GetRequestReceiptResults();
+		await this.callView("getRequestReceipt", this.args, res);
+		return res;
+	}
 }
 
-export class GetRequestReceiptResults extends wasmclient.ViewResults {
-    blockIndex(): wasmclient.Int32 {
-        return this.res.getInt32(ResBlockIndex);
-    }
+export class GetRequestReceiptResults extends wasmclient.Results {
 
-    requestIndex(): wasmclient.Int16 {
-        return this.res.getInt16(ResRequestIndex);
-    }
+	blockIndex(): wasmclient.Int32 {
+		return this.toInt32(this.get(ResBlockIndex));
+	}
 
-    requestRecord(): wasmclient.Bytes {
-        return this.res.getBytes(ResRequestRecord);
-    }
+	requestIndex(): wasmclient.Int16 {
+		return this.toInt16(this.get(ResRequestIndex));
+	}
+
+	requestRecord(): wasmclient.Bytes {
+		return this.toBytes(this.get(ResRequestRecord));
+	}
 }
 
 ///////////////////////////// getRequestReceiptsForBlock /////////////////////////////
 
 export class GetRequestReceiptsForBlockView extends wasmclient.ClientView {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public blockIndex(v: wasmclient.Int32): void {
+		this.args.set(ArgBlockIndex, this.args.fromInt32(v));
+	}
 
-    public blockIndex(v: wasmclient.Int32): void {
-        this.args.setInt32(ArgBlockIndex, v);
-    }
-
-    public async call(): Promise<GetRequestReceiptsForBlockResults> {
-        this.args.mandatory(ArgBlockIndex);
-        return new GetRequestReceiptsForBlockResults(await this.callView("getRequestReceiptsForBlock", this.args));
-    }
+	public async call(): Promise<GetRequestReceiptsForBlockResults> {
+		this.args.mandatory(ArgBlockIndex);
+		const res = new GetRequestReceiptsForBlockResults();
+		await this.callView("getRequestReceiptsForBlock", this.args, res);
+		return res;
+	}
 }
 
-export class GetRequestReceiptsForBlockResults extends wasmclient.ViewResults {
-    requestRecord(): wasmclient.Bytes {
-        return this.res.getBytes(ResRequestRecord);
-    }
+export class GetRequestReceiptsForBlockResults extends wasmclient.Results {
+
+	requestRecord(): wasmclient.Bytes {
+		return this.toBytes(this.get(ResRequestRecord));
+	}
 }
 
 ///////////////////////////// isRequestProcessed /////////////////////////////
 
 export class IsRequestProcessedView extends wasmclient.ClientView {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public requestID(v: wasmclient.RequestID): void {
+		this.args.set(ArgRequestID, this.args.fromRequestID(v));
+	}
 
-    public requestID(v: wasmclient.RequestID): void {
-        this.args.setRequestID(ArgRequestID, v);
-    }
-
-    public async call(): Promise<IsRequestProcessedResults> {
-        this.args.mandatory(ArgRequestID);
-        return new IsRequestProcessedResults(await this.callView("isRequestProcessed", this.args));
-    }
+	public async call(): Promise<IsRequestProcessedResults> {
+		this.args.mandatory(ArgRequestID);
+		const res = new IsRequestProcessedResults();
+		await this.callView("isRequestProcessed", this.args, res);
+		return res;
+	}
 }
 
-export class IsRequestProcessedResults extends wasmclient.ViewResults {
-    requestProcessed(): string {
-        return this.res.getString(ResRequestProcessed);
-    }
+export class IsRequestProcessedResults extends wasmclient.Results {
+
+	requestProcessed(): string {
+		return this.toString(this.get(ResRequestProcessed));
+	}
 }
 
 ///////////////////////////// CoreBlockLogService /////////////////////////////
 
 export class CoreBlockLogService extends wasmclient.Service {
-    public constructor(cl: wasmclient.ServiceClient) {
-        super(cl, 0xf538ef2b, new Map());
-    }
 
-    public controlAddresses(): ControlAddressesView {
-        return new ControlAddressesView(this);
-    }
+	public constructor(cl: wasmclient.ServiceClient) {
+		super(cl, 0xf538ef2b, new Map());
+	}
 
-    public getBlockInfo(): GetBlockInfoView {
-        return new GetBlockInfoView(this);
-    }
+	public controlAddresses(): ControlAddressesView {
+		return new ControlAddressesView(this);
+	}
 
-    public getEventsForBlock(): GetEventsForBlockView {
-        return new GetEventsForBlockView(this);
-    }
+	public getBlockInfo(): GetBlockInfoView {
+		return new GetBlockInfoView(this);
+	}
 
-    public getEventsForContract(): GetEventsForContractView {
-        return new GetEventsForContractView(this);
-    }
+	public getEventsForBlock(): GetEventsForBlockView {
+		return new GetEventsForBlockView(this);
+	}
 
-    public getEventsForRequest(): GetEventsForRequestView {
-        return new GetEventsForRequestView(this);
-    }
+	public getEventsForContract(): GetEventsForContractView {
+		return new GetEventsForContractView(this);
+	}
 
-    public getLatestBlockInfo(): GetLatestBlockInfoView {
-        return new GetLatestBlockInfoView(this);
-    }
+	public getEventsForRequest(): GetEventsForRequestView {
+		return new GetEventsForRequestView(this);
+	}
 
-    public getRequestIDsForBlock(): GetRequestIDsForBlockView {
-        return new GetRequestIDsForBlockView(this);
-    }
+	public getLatestBlockInfo(): GetLatestBlockInfoView {
+		return new GetLatestBlockInfoView(this);
+	}
 
-    public getRequestReceipt(): GetRequestReceiptView {
-        return new GetRequestReceiptView(this);
-    }
+	public getRequestIDsForBlock(): GetRequestIDsForBlockView {
+		return new GetRequestIDsForBlockView(this);
+	}
 
-    public getRequestReceiptsForBlock(): GetRequestReceiptsForBlockView {
-        return new GetRequestReceiptsForBlockView(this);
-    }
+	public getRequestReceipt(): GetRequestReceiptView {
+		return new GetRequestReceiptView(this);
+	}
 
-    public isRequestProcessed(): IsRequestProcessedView {
-        return new IsRequestProcessedView(this);
-    }
+	public getRequestReceiptsForBlock(): GetRequestReceiptsForBlockView {
+		return new GetRequestReceiptsForBlockView(this);
+	}
+
+	public isRequestProcessed(): IsRequestProcessedView {
+		return new IsRequestProcessedView(this);
+	}
 }

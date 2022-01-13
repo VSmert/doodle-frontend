@@ -5,7 +5,7 @@
 // >>>> DO NOT CHANGE THIS FILE! <<<<
 // Change the json schema instead
 
-import * as wasmclient from "../../wasmclient";
+import * as wasmclient from "../"
 
 const ArgBlobs = "this";
 const ArgField = "field";
@@ -18,104 +18,124 @@ const ResHash = "hash";
 ///////////////////////////// storeBlob /////////////////////////////
 
 export class StoreBlobFunc extends wasmclient.ClientFunc {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
-
-    public blobs(v: wasmclient.Bytes): void {
-        this.args.setBytes(ArgBlobs, v);
-    }
-
-    public async post(): Promise<wasmclient.RequestID> {
-        return await super.post(0xddd4c281, this.args);
-    }
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public blobs(v: wasmclient.Bytes): void {
+		this.args.set(ArgBlobs, this.args.fromBytes(v));
+	}
+	
+	public async post(): Promise<wasmclient.RequestID> {
+		return await super.post(0xddd4c281, this.args);
+	}
 }
 
-export class StoreBlobResults extends wasmclient.ViewResults {
-    hash(): wasmclient.Hash {
-        return this.res.getHash(ResHash);
-    }
+export class StoreBlobResults extends wasmclient.Results {
+
+	hash(): wasmclient.Hash {
+		return this.toHash(this.get(ResHash));
+	}
 }
 
 ///////////////////////////// getBlobField /////////////////////////////
 
 export class GetBlobFieldView extends wasmclient.ClientView {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public field(v: string): void {
+		this.args.set(ArgField, this.args.fromString(v));
+	}
+	
+	public hash(v: wasmclient.Hash): void {
+		this.args.set(ArgHash, this.args.fromHash(v));
+	}
 
-    public field(v: string): void {
-        this.args.setString(ArgField, v);
-    }
-
-    public hash(v: wasmclient.Hash): void {
-        this.args.setHash(ArgHash, v);
-    }
-
-    public async call(): Promise<GetBlobFieldResults> {
-        this.args.mandatory(ArgField);
-        this.args.mandatory(ArgHash);
-        return new GetBlobFieldResults(await this.callView("getBlobField", this.args));
-    }
+	public async call(): Promise<GetBlobFieldResults> {
+		this.args.mandatory(ArgField);
+		this.args.mandatory(ArgHash);
+		const res = new GetBlobFieldResults();
+		await this.callView("getBlobField", this.args, res);
+		return res;
+	}
 }
 
-export class GetBlobFieldResults extends wasmclient.ViewResults {
-    bytes(): wasmclient.Bytes {
-        return this.res.getBytes(ResBytes);
-    }
+export class GetBlobFieldResults extends wasmclient.Results {
+
+	bytes(): wasmclient.Bytes {
+		return this.toBytes(this.get(ResBytes));
+	}
 }
 
 ///////////////////////////// getBlobInfo /////////////////////////////
 
 export class GetBlobInfoView extends wasmclient.ClientView {
-    private args: wasmclient.Arguments = new wasmclient.Arguments();
+	private args: wasmclient.Arguments = new wasmclient.Arguments();
+	
+	public hash(v: wasmclient.Hash): void {
+		this.args.set(ArgHash, this.args.fromHash(v));
+	}
 
-    public hash(v: wasmclient.Hash): void {
-        this.args.setHash(ArgHash, v);
-    }
-
-    public async call(): Promise<GetBlobInfoResults> {
-        this.args.mandatory(ArgHash);
-        return new GetBlobInfoResults(await this.callView("getBlobInfo", this.args));
-    }
+	public async call(): Promise<GetBlobInfoResults> {
+		this.args.mandatory(ArgHash);
+		const res = new GetBlobInfoResults();
+		await this.callView("getBlobInfo", this.args, res);
+		return res;
+	}
 }
 
-export class GetBlobInfoResults extends wasmclient.ViewResults {
-    blobSizes(): wasmclient.Int32 {
-        return this.res.getInt32(ResBlobSizes);
-    }
+export class GetBlobInfoResults extends wasmclient.Results {
+
+	blobSizes(): Map<string, wasmclient.Int32> {
+		const res = new Map<string, wasmclient.Int32>();
+		this.forEach((key, val) => {
+			res.set(this.toString(key), this.toInt32(val));
+		});
+		return res;
+	}
 }
 
 ///////////////////////////// listBlobs /////////////////////////////
 
 export class ListBlobsView extends wasmclient.ClientView {
-    public async call(): Promise<ListBlobsResults> {
-        return new ListBlobsResults(await this.callView("listBlobs", null));
-    }
+
+	public async call(): Promise<ListBlobsResults> {
+		const res = new ListBlobsResults();
+		await this.callView("listBlobs", null, res);
+		return res;
+	}
 }
 
-export class ListBlobsResults extends wasmclient.ViewResults {
-    blobSizes(): wasmclient.Int32 {
-        return this.res.getInt32(ResBlobSizes);
-    }
+export class ListBlobsResults extends wasmclient.Results {
+
+	blobSizes(): Map<wasmclient.Hash, wasmclient.Int32> {
+		const res = new Map<wasmclient.Hash, wasmclient.Int32>();
+		this.forEach((key, val) => {
+			res.set(this.toHash(key), this.toInt32(val));
+		});
+		return res;
+	}
 }
 
 ///////////////////////////// CoreBlobService /////////////////////////////
 
 export class CoreBlobService extends wasmclient.Service {
-    public constructor(cl: wasmclient.ServiceClient) {
-        super(cl, 0xfd91bc63, new Map());
-    }
 
-    public storeBlob(): StoreBlobFunc {
-        return new StoreBlobFunc(this);
-    }
+	public constructor(cl: wasmclient.ServiceClient) {
+		super(cl, 0xfd91bc63, new Map());
+	}
 
-    public getBlobField(): GetBlobFieldView {
-        return new GetBlobFieldView(this);
-    }
+	public storeBlob(): StoreBlobFunc {
+		return new StoreBlobFunc(this);
+	}
 
-    public getBlobInfo(): GetBlobInfoView {
-        return new GetBlobInfoView(this);
-    }
+	public getBlobField(): GetBlobFieldView {
+		return new GetBlobFieldView(this);
+	}
 
-    public listBlobs(): ListBlobsView {
-        return new ListBlobsView(this);
-    }
+	public getBlobInfo(): GetBlobInfoView {
+		return new GetBlobInfoView(this);
+	}
+
+	public listBlobs(): ListBlobsView {
+		return new ListBlobsView(this);
+	}
 }

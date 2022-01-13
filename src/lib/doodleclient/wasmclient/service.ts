@@ -2,11 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as wasmclient from "./index";
-import { IKeyPair } from "./crypto";
-import { IOnLedger } from "./goshimmer/models/on_ledger";
-import { Colors } from "./colors";
-import { Buffer } from "./buffer";
-import { Hash } from "./crypto";
+import {Hash, IKeyPair} from "./crypto";
+import {IOnLedger} from "./goshimmer/models/on_ledger";
+import {Colors} from "./colors";
+import {Buffer} from './buffer';
 
 export type EventHandlers = Map<string, (message: string[]) => void>;
 
@@ -21,15 +20,18 @@ export class Service {
     constructor(client: wasmclient.ServiceClient, scHname: wasmclient.Hname, eventHandlers: EventHandlers) {
         this.serviceClient = client;
         this.scHname = scHname;
-        this.configureWebSocketsEventHandlers(eventHandlers);
+        if (eventHandlers.size != 0) {
+            this.configureWebSocketsEventHandlers(eventHandlers);
+        }
     }
 
-    public async callView(viewName: string, args: wasmclient.Arguments): Promise<wasmclient.Results> {
-        return await this.serviceClient.waspClient.callView(
+    public async callView(viewName: string, args: wasmclient.Arguments, res: wasmclient.Results): Promise<void> {
+        await this.serviceClient.waspClient.callView(
             this.serviceClient.configuration.chainId,
             this.scHname.toString(16),
             viewName,
-            args.encodeCall()
+            args.encodeCall(),
+            res
         );
     }
 
@@ -41,7 +43,7 @@ export class Service {
         onLedger: boolean
     ): Promise<string> {
         const chainId = this.serviceClient.configuration.chainId;
-        if (!onLedger) {
+        if (! onLedger) {
             // requested off-ledger request
             const requestID = await this.serviceClient.waspClient.postOffLedgerRequest(chainId, this.scHname, hFuncName, args, transfer, keyPair);
             return requestID;
@@ -62,7 +64,7 @@ export class Service {
 
     // overrides default contract name
     public serviceContractName(contractName: string): void {
-        this.scHname = Hash.from(Buffer.from(contractName)).readUInt32LE(0);
+        this.scHname = Hash.from(Buffer.from(contractName)).readUInt32LE(0)
     }
 
     public async waitRequest(reqID: wasmclient.RequestID): Promise<void> {
