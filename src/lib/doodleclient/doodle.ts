@@ -238,17 +238,18 @@ export function onDoodleGameStarted(event: events.EventGameStarted): void {
     Log(LogTag.SmartContract, "Event: EventGameStarted");
 }
 
-let onDoodlePlayerJoinsNextBigBlindHandler: (event: events.EventPlayerJoinsNextBigBlind) => void;
+let onDoodlePlayerJoinsNextBigBlindHandler: undefined | ((event: events.EventPlayerJoinsNextBigBlind) => void);
 export function setOnDoodlePlayerJoinsNextBigBlind(handler: (event: events.EventPlayerJoinsNextBigBlind) => void) {
     onDoodlePlayerJoinsNextBigBlindHandler = handler;
 }
 
 export function onDoodlePlayerJoinsNextBigBlind(event: events.EventPlayerJoinsNextBigBlind): void {
     Log(LogTag.SmartContract, "Event: EventPlayerJoinsNextBigBlind");
-    onDoodlePlayerJoinsNextBigBlindHandler(event);
+
+    if (onDoodlePlayerJoinsNextBigBlindHandler) onDoodlePlayerJoinsNextBigBlindHandler(event);
 }
 
-let onDoodlePlayerJoinsNextHandHandler: (event: events.EventPlayerJoinsNextHand) => void;
+let onDoodlePlayerJoinsNextHandHandler: undefined | ((event: events.EventPlayerJoinsNextHand) => void);
 export function setOnDoodlePlayerJoinsNextHand(handler: (event: events.EventPlayerJoinsNextHand) => void) {
     onDoodlePlayerJoinsNextHandHandler = handler;
 }
@@ -258,17 +259,17 @@ export function onDoodlePlayerJoinsNextHand(event: events.EventPlayerJoinsNextHa
         LogTag.SmartContract,
         `Event: EventPlayerJoinsNextHand -> Table ${event.tableNumber} Seat ${event.tableSeatNumber} Chip count: ${event.playersInitialChipCount}`
     );
-    onDoodlePlayerJoinsNextHandHandler(event);
+    if (onDoodlePlayerJoinsNextHandHandler) onDoodlePlayerJoinsNextHandHandler(event);
 }
 
-let onDoodlePlayerLeftHandler: (event: events.EventPlayerLeft) => void;
+let onDoodlePlayerLeftHandler: undefined | ((event: events.EventPlayerLeft) => void);
 export function setOnDoodlePlayerLeftHandler(handler: (event: events.EventPlayerLeft) => void) {
     onDoodlePlayerLeftHandler = handler;
 }
 
 export function onDoodlePlayerLeft(event: events.EventPlayerLeft): void {
     Log(LogTag.SmartContract, `Event: EventPlayerLeft -> Table ${event.tableNumber} Seat ${event.tableSeatNumber}`);
-    onDoodlePlayerLeftHandler(event);
+    if (onDoodlePlayerLeftHandler) onDoodlePlayerLeftHandler(event);
 }
 
 export function onDoodlePlayerWinsAllPots(event: events.EventPlayerWinsAllPots): void {
