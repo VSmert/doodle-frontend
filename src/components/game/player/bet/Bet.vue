@@ -8,7 +8,7 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 
-import ChipStack from '../../chipStack/ChipStack.vue';
+import ChipStack from '@/components/game/chipStack/ChipStack.vue';
 
 @Options({
     props: {
@@ -20,7 +20,7 @@ export default class Bet extends Vue {}
 </script>
 
 <style scoped lang="less">
-@import '../../table/currency.less';
+@import '@/components/game/table/currency.less';
 @import 'bet.less';
 </style>
 

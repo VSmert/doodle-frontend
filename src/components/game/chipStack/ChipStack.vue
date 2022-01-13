@@ -14,7 +14,7 @@ import { Options, Vue } from 'vue-class-component';
 
 import Chip from './Chip.vue';
 import ChipHelper from './ChipHelper';
-import IChipStack from '../../models/IChipStack';
+import IChipStack from '@/components/models/IChipStack';
 
 @Options({
     props: {

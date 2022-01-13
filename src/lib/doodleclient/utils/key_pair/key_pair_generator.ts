@@ -1,6 +1,6 @@
-import { IKeyPair } from "../../wasmclient/crypto";
-import { Base58 } from "../../wasmclient/crypto/base58";
-import { Seed } from "../../wasmclient/crypto/seed";
+import { IKeyPair } from "@/lib/doodleclient/wasmclient/crypto";
+import { Base58 } from "@/lib/doodleclient/wasmclient/crypto/base58";
+import { Seed } from "@/lib/doodleclient/wasmclient/crypto/seed";
 
 export function generatePrivateKeyAndAddress(): [privateKey: string, publicKey: string, address: string] {
     const seedBuffer = Seed.generate();

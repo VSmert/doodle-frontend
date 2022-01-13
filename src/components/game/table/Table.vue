@@ -18,10 +18,10 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 
-import ICard from '../../models/ICard';
-import Card from '../card/Card.vue';
-import Player from '../player/Player.vue';
-import { IPlayer } from '../player/Player.vue';
+import ICard from '@/components/models/ICard';
+import Card from '@/components/game/card/Card.vue';
+import Player from '@/components/game/player/Player.vue';
+import { IPlayer } from '@/components/game/player/Player.vue';
 
 @Options({
     components: {

@@ -10,7 +10,7 @@
 import { Options, Vue } from 'vue-class-component';
 import { PropType } from 'vue';
 
-import ICard from '../../models/ICard';
+import ICard from '@/components/models/ICard';
 
 @Options({
     props: {

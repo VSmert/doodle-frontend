@@ -1,4 +1,4 @@
-import { Configuration } from "../wasmclient/configuration";
+import { Configuration } from "@/lib/doodleclient/wasmclient/configuration";
 
 export async function GetChainId(configuration: Configuration): Promise<string> {
     const response = await fetch(configuration.waspApiUrl + "/adm/chainrecords");

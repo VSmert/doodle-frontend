@@ -22,9 +22,9 @@
 import { Options, Vue } from "vue-class-component";
 import { useStorage } from "@vueuse/core";
 
-import * as doodleClient from "../../lib/doodleclient/doodle";
-import { Log, LogTag } from "../../lib/doodleclient/utils/logger";
-import * as miscUtils from "../../lib/doodleclient/utils/misc";
+import * as doodleClient from "@/lib/doodleclient/doodle";
+import { Log, LogTag } from "@/lib/doodleclient/utils/logger";
+import * as miscUtils from "@/lib/doodleclient/utils/misc";
 
 import Table from "./table/Table.vue";
 import ButtonGroup from "./buttons/ButtonGroup.vue";
