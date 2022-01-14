@@ -219,7 +219,6 @@ export async function leaveTable(tableNumber: number): Promise<boolean> {
         Log(LogTag.SmartContract, `Leaving table ${tableNumber}`);
         const leaveTableFunc = doodleService.leaveTable();
         leaveTableFunc.tableNumber(tableNumber);
-        leaveTableFunc.transfer(Transfer.iotas(1n));
         leaveTableFunc.sign(doodleService.keyPair!);
         await leaveTableFunc.post();
 
