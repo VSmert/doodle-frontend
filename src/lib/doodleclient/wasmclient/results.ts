@@ -1,7 +1,7 @@
 // The Results struct is used to gather all arguments for a smart
 // contract function call and encode it into a deterministic byte array
 import * as wasmclient from "./index";
-import {Buffer} from "./buffer";
+import { Buffer } from "./buffer";
 
 export class Results extends wasmclient.Decoder {
     protected keys = new Map<string, Buffer>();
@@ -13,13 +13,13 @@ export class Results extends wasmclient.Decoder {
 
     protected forEach(keyValue: (key: Buffer, val: Buffer) => void): void {
         this.res.forEach((val, key) => {
-            let keyBuf = this.keys.get(key);
+            const keyBuf = this.keys.get(key);
             if (keyBuf === undefined) {
                 wasmclient.panic("missing key");
                 return;
             }
             keyValue(keyBuf, val);
-        })
+        });
     }
 
     protected get(key: string): Buffer | undefined {
