@@ -21,7 +21,7 @@ export class EventGameEnded extends wasmclient.Event {
 	public readonly tableNumber: wasmclient.Uint32;
 	
 	public constructor(msg: string[]) {
-		super(msg)
+		super(msg);
 		this.tableNumber = this.nextUint32();
 	}
 }
@@ -32,7 +32,7 @@ export class EventGameStarted extends wasmclient.Event {
 	public readonly tableNumber: wasmclient.Uint32;
 	
 	public constructor(msg: string[]) {
-		super(msg)
+		super(msg);
 		this.paidBigBlindTableSeatNumber = this.nextUint16();
 		this.paidSmallBlindTableSeatNumber = this.nextUint16();
 		this.tableNumber = this.nextUint32();
@@ -46,7 +46,7 @@ export class EventPlayerJoinsNextBigBlind extends wasmclient.Event {
 	public readonly tableSeatNumber: wasmclient.Uint16;
 	
 	public constructor(msg: string[]) {
-		super(msg)
+		super(msg);
 		this.playerAgentId = this.nextAgentID();
 		this.playersInitialChipCount = this.nextUint64();
 		this.tableNumber = this.nextUint32();
@@ -61,7 +61,7 @@ export class EventPlayerJoinsNextHand extends wasmclient.Event {
 	public readonly tableSeatNumber: wasmclient.Uint16;
 	
 	public constructor(msg: string[]) {
-		super(msg)
+		super(msg);
 		this.playerAgentId = this.nextAgentID();
 		this.playersInitialChipCount = this.nextUint64();
 		this.tableNumber = this.nextUint32();
@@ -74,7 +74,7 @@ export class EventPlayerLeft extends wasmclient.Event {
 	public readonly tableSeatNumber: wasmclient.Uint16;
 	
 	public constructor(msg: string[]) {
-		super(msg)
+		super(msg);
 		this.tableNumber = this.nextUint32();
 		this.tableSeatNumber = this.nextUint16();
 	}
@@ -86,7 +86,7 @@ export class EventPlayerWinsAllPots extends wasmclient.Event {
 	public readonly totalPotSize: wasmclient.Uint64;
 	
 	public constructor(msg: string[]) {
-		super(msg)
+		super(msg);
 		this.tableNumber = this.nextUint32();
 		this.tableSeatNumber = this.nextUint16();
 		this.totalPotSize = this.nextUint64();
