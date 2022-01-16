@@ -302,7 +302,7 @@ export class GetMaxBlobSizeResults extends wasmclient.Results {
 export class CoreGovernanceService extends wasmclient.Service {
 
 	public constructor(cl: wasmclient.ServiceClient) {
-		super(cl, 0x17cf909f, new Map());
+		super(cl, 0x17cf909f);
 	}
 
 	public addAllowedStateControllerAddress(): AddAllowedStateControllerAddressFunc {

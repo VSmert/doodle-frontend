@@ -1,7 +1,7 @@
 // The Results struct is used to gather all arguments for a smart
 // contract function call and encode it into a deterministic byte array
 import * as wasmclient from "./index";
-import { Buffer } from "./buffer";
+import {Buffer} from "./buffer";
 
 export class Results extends wasmclient.Decoder {
     protected keys = new Map<string, Buffer>();

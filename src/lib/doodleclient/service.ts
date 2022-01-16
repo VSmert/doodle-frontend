@@ -222,7 +222,11 @@ export class GetTableSeatResults extends wasmclient.Results {
 export class DoodleService extends wasmclient.Service {
 
 	public constructor(cl: wasmclient.ServiceClient) {
-		super(cl, 0xb40a047a, events.eventHandlers);
+		super(cl, 0xb40a047a);
+	}
+
+	public newEventHandler(): events.DoodleEvents {
+		return new events.DoodleEvents();
 	}
 
 	public init(): InitFunc {
