@@ -22,6 +22,8 @@ import ICard from '@/components/models/ICard';
 import Card from '@/components/game/card/Card.vue';
 import Player from '@/components/game/player/Player.vue';
 import { IPlayer } from '@/components/game/player/Player.vue';
+import { Doodle } from '@/lib/doodleclient';
+import * as events from "./events"
 
 @Options({
     components: {
@@ -32,15 +34,24 @@ import { IPlayer } from '@/components/game/player/Player.vue';
         tableNumber: {
             type: Number,
             default: 0
+        },
+        doodle:{
+            type: Doodle
         }
     }
 })
 
 export default class Table extends Vue {
     tableNumber! : number;
-
+    doodle!: Doodle;
     mounted(){
         console.log(`Table #${this.tableNumber}`);
+        this.doodle.registerEvents(new events.JoinNextHandEvent());
+        this.doodle.registerEvents(new events.JoinNextBigBlindEvent());
+        this.doodle.registerEvents(new events.PlayerLeftEvent());
+        this.doodle.registerEvents(new events.PlayerWinsAllPotsEvent());
+        this.doodle.registerEvents(new events.GameStartedEvent());
+        this.doodle.registerEvents(new events.GameEndedEvent());
     }
 
     player_playing = 3;

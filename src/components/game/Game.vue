@@ -1,7 +1,7 @@
 <template>
     <div class="bg">
         <div id="game">
-            <Table :tableNumber=currentTableNumber />
+            <Table :tableNumber=currentTableNumber :doodle=doodle />
             <ButtonGroup class="left">
                 <Button class="purple" :isPressable="!requestingFunds && userData.l2Balance == 0" @button-pressed="requestFunds">
                     <div v-if="requestingFunds">Requesting...</div>
@@ -22,7 +22,7 @@
 import { Options, Vue } from "vue-class-component";
 import { useStorage } from "@vueuse/core";
 
-import * as doodleClient from "@/lib/doodleclient/doodle";
+import {Doodle} from "@/lib/doodleclient/doodle";
 import { Log, LogTag } from "@/lib/doodleclient/utils/logger";
 import * as miscUtils from "@/lib/doodleclient/utils/misc";
 
@@ -41,7 +41,7 @@ export default class Game extends Vue {
     userData: UserData = new UserData("", "", "");
     currentTableNumber : number = 1;
     requestingFunds = false;
-
+    doodle: Doodle | undefined;
     async mounted() {
         await this.loadUserKeyPairAndAddress();
     }
@@ -54,15 +54,14 @@ export default class Game extends Vue {
         let userBase58PrivateKey = userBase58PrivateKeyStorage.value;
         let userBase58PublicKey = userBase58PublicKeyStorage.value;
         let userAddress = userAddressStorage.value;
-
-        const success = await doodleClient.Initialize(userBase58PrivateKey, userBase58PublicKey, userAddress);
+        this.doodle = new Doodle();
+        const success = await this.doodle.initialize(userBase58PrivateKey, userBase58PublicKey, userAddress);
         if (!success) throw new Error("Could not initialize doodle client");
-
         const arePrivatekeyAndAddressDefined = userBase58PrivateKey !== "" && userBase58PublicKey !== "" && userAddress !== "";
         if (!arePrivatekeyAndAddressDefined) {
-            userBase58PrivateKeyStorage.value = doodleClient.userWalletPrivKey;
-            userBase58PublicKeyStorage.value = doodleClient.userWalletPubKey;
-            userAddressStorage.value = doodleClient.userWalletAddress;
+            userBase58PrivateKeyStorage.value = this.doodle.userWalletPrivKey;
+            userBase58PublicKeyStorage.value = this.doodle.userWalletPubKey;
+            userAddressStorage.value = this.doodle.userWalletAddress;
         }
 
         this.userData = new UserData(userBase58PrivateKeyStorage.value, userBase58PublicKeyStorage.value, userAddressStorage.value);
@@ -97,12 +96,12 @@ export default class Game extends Vue {
     }
 
     private async requestL1Funds() : Promise<bigint> {
-        let userL1Balance = await doodleClient.getL1IOTABalance(this.userData.address);
+        let userL1Balance = await this.doodle!.getL1IOTABalance(this.userData.address);
         if (userL1Balance > 0) return userL1Balance;
 
         Log(LogTag.Funds, "Requesting funds");
 
-        const success = await doodleClient.requestL1Funds(this.userData.address);
+        const success = await this.doodle!.requestL1Funds(this.userData.address);
         const couldNotGetFundsError = "Could not request dummy IOTA from faucet.";
 
         if (!success) {
@@ -112,7 +111,7 @@ export default class Game extends Vue {
 
         await miscUtils.delay(3000);
         for (let tryNumber = 1; tryNumber <= 5; tryNumber++) {
-            userL1Balance = await doodleClient.getL1IOTABalance(this.userData.address);
+            userL1Balance = await this.doodle!.getL1IOTABalance(this.userData.address);
             if (userL1Balance > 0n) break;
             await miscUtils.delay(3000);
         }
@@ -129,7 +128,7 @@ export default class Game extends Vue {
         }
         else {
             Log(LogTag.Funds, `Depositing ${depositToChainAmount} IOTA from L1 to L2. Recipient account: ${this.userData.address}`);
-            const success = await doodleClient.depositInL2(
+            const success = await this.doodle!.depositInL2(
                 this.userData.privateKey,
                 this.userData.publicKey,
                 depositToChainAmount
@@ -146,7 +145,7 @@ export default class Game extends Vue {
 
             await miscUtils.delay(2000);
             for (let tryNumber = 1; tryNumber <= 5; tryNumber++) {
-                userL2Balance = await doodleClient.getL2IOTABalance(this.userData.privateKey, this.userData.publicKey);
+                userL2Balance = await this.doodle!.getL2IOTABalance(this.userData.privateKey, this.userData.publicKey);
                 if (userL2Balance > 0n) break;
                 Log(LogTag.Funds, `Try #${tryNumber} -> Retrying...`)
                 await miscUtils.delay(2000);
@@ -161,21 +160,21 @@ export default class Game extends Vue {
             return 0n;
         }
 
-        const balanceInL2 = await doodleClient.getL2IOTABalance(this.userData.privateKey, this.userData.publicKey);
+        const balanceInL2 = await this.doodle!.getL2IOTABalance(this.userData.privateKey, this.userData.publicKey);
         return balanceInL2;
     }
 
     private async updateL1Balance() : Promise<void>{
-        this.userData.l1Balance = await doodleClient.getL1IOTABalance(this.userData.address);
+        this.userData.l1Balance = await this.doodle!.getL1IOTABalance(this.userData.address);
     }
 
     private async updateL2Balance() : Promise<void>{
-        this.userData.l2Balance = await doodleClient.getL2IOTABalance(this.userData.privateKey, this.userData.publicKey);
+        this.userData.l2Balance = await this.doodle!.getL2IOTABalance(this.userData.privateKey, this.userData.publicKey);
     }
 
     async joinNextHand(): Promise<void> {
         // TODO: Pass table and table seat number
-        const success = await doodleClient.joinNextHand(this.currentTableNumber, 1, 400n);
+        const success = await this.doodle!.joinNextHand(this.currentTableNumber, 1, 400n);
         if(success) {
             await miscUtils.delay(4000);
             await this.updateL2Balance();
@@ -184,7 +183,7 @@ export default class Game extends Vue {
     }
     async joinNextBigBlind(): Promise<void> {
         // TODO: Pass table and table seat number
-        const success = await doodleClient.joinNextBigBlind(this.currentTableNumber, 1, 400n);
+        const success = await this.doodle!.joinNextBigBlind(this.currentTableNumber, 1, 400n);
         if(success) {
             await miscUtils.delay(4000);
             await this.updateL2Balance();
@@ -193,7 +192,7 @@ export default class Game extends Vue {
     }
 
     async leaveTable(): Promise<void> {
-        const success = await doodleClient.leaveTable(this.currentTableNumber);
+        const success = await this.doodle!.leaveTable(this.currentTableNumber);
         if(success) {
             await miscUtils.delay(4000);
             await this.updateL2Balance();

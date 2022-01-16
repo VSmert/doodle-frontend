@@ -284,7 +284,7 @@ export class IsRequestProcessedResults extends wasmclient.Results {
 export class CoreBlockLogService extends wasmclient.Service {
 
 	public constructor(cl: wasmclient.ServiceClient) {
-		super(cl, 0xf538ef2b, new Map());
+		super(cl, 0xf538ef2b);
 	}
 
 	public controlAddresses(): ControlAddressesView {
