@@ -1,4 +1,4 @@
-import { Buffer } from './buffer';
+import { Buffer } from "./buffer";
 
 export interface IConfiguration {
     seed: Buffer | null;
@@ -9,13 +9,13 @@ export interface IConfiguration {
 
 export class Configuration implements IConfiguration {
     seed: Buffer | null = null;
-    waspWebSocketUrl: string = '';
-    waspApiUrl: string = '';
-    goShimmerApiUrl: string = '';
-    chainId: string = '';
+    waspWebSocketUrl: string = "";
+    waspApiUrl: string = "";
+    goShimmerApiUrl: string = "";
+    chainId: string = "";
 
     constructor(configuration: IConfiguration) {
-        if(!configuration) throw new Error("Configuration not defined");
+        if (!configuration) throw new Error("Configuration not defined");
 
         this.seed = configuration.seed;
         this.waspWebSocketUrl = configuration.waspWebSocketUrl;

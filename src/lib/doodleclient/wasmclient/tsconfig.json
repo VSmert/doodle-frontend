@@ -1,20 +1,18 @@
 {
-  "compilerOptions": {
-    "strict": true,
-    "lib": ["ES2021", "esnext", "dom"],
-    "target": "ES2021",
-    "module": "esnext",
-    "sourceMap": true,
-    "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./*"]
+    "compilerOptions": {
+        "strict": true,
+        "lib": ["ES2021", "esnext", "dom"],
+        "target": "ES2021",
+        "module": "esnext",
+        "sourceMap": true,
+        "allowSyntheticDefaultImports": true,
+        "moduleResolution": "node",
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./*"]
+        }
     },
-  },
-  "preferBuiltins": true,
-  "include": ["./**/*.ts"],
-  "exclude": [
-    "node_modules"
-  ],
+    "preferBuiltins": true,
+    "include": ["./**/*.ts"],
+    "exclude": ["node_modules"]
 }

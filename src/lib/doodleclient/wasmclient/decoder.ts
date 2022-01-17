@@ -1,8 +1,8 @@
 // The Results struct is used to gather all arguments for a smart
 // contract function call and encode it into a deterministic byte array
 import * as wasmclient from "./index";
-import {Base58} from "./crypto";
-import {Buffer} from "./buffer";
+import { Base58 } from "./crypto";
+import { Buffer } from "./buffer";
 
 export class Decoder {
     private static checkDefault(bytes: Buffer | undefined, typeID: wasmclient.Int32): Buffer {
@@ -29,7 +29,7 @@ export class Decoder {
     }
 
     protected toBytes(bytes: Buffer | undefined): wasmclient.Bytes {
-        return Decoder.checkDefault(bytes, wasmclient.TYPE_BYTES)
+        return Decoder.checkDefault(bytes, wasmclient.TYPE_BYTES);
     }
 
     protected toBool(bytes: Buffer | undefined): wasmclient.Bool {

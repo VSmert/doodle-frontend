@@ -10,20 +10,17 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { Component, Prop, Vue } from "vue-property-decorator";
 
-import Chip from './Chip.vue';
-import ChipHelper from './ChipHelper';
-import IChipStack from '@/components/models/IChipStack';
+import Chip from "./Chip.vue";
+import ChipHelper from "./ChipHelper";
+import IChipStack from "@/components/models/IChipStack";
 
-@Options({
-    props: {
-        totalChipCount: Number,
-    },
+@Component({
     components: { Chip },
 })
 export default class Bet extends Vue {
-    totalChipCount! : bigint;
+    @Prop() totalChipCount!: bigint;
 
     get chipDenominations(): number[] {
         return ChipHelper.Denominations;
@@ -37,9 +34,9 @@ export default class Bet extends Vue {
 
             const denominationBigInt = BigInt(denomination);
             const chipsToEvaluate = BigInt(this.totalChipCount) - BigInt(accountedForChips);
-            let chipsInDenomination = Math.floor(Number(chipsToEvaluate /denominationBigInt));
+            let chipsInDenomination = Math.floor(Number(chipsToEvaluate / denominationBigInt));
             if (chipsInDenomination > 0) {
-                let chipStack : IChipStack = { Denomination: denomination, Count: chipsInDenomination };
+                let chipStack: IChipStack = { Denomination: denomination, Count: chipsInDenomination };
                 totalDenominationChipCount.push(chipStack);
                 accountedForChips += BigInt(chipsInDenomination) * denominationBigInt;
             }
@@ -48,9 +45,8 @@ export default class Bet extends Vue {
     }
 
     get chipCountInDenomination() {
-        return (denomination: number) => {
-            let chipCountInDenomination =
-                this.totalDenominationChipCount.find((t) => t.Denomination == denomination)?.Count ?? 0;
+        return (denomination: number): number => {
+            let chipCountInDenomination = this.totalDenominationChipCount.find((t) => t.Denomination == denomination)?.Count ?? 0;
             return chipCountInDenomination;
         };
     }

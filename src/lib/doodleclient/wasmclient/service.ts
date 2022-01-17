@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as wasmclient from "./index";
-import {Hash, IKeyPair} from "./crypto";
-import {IOnLedger} from "./goshimmer/models/on_ledger";
-import {Colors} from "./colors";
-import {Buffer} from './buffer';
+import { Hash, IKeyPair } from "./crypto";
+import { IOnLedger } from "./goshimmer/models/on_ledger";
+import { Colors } from "./colors";
+import { Buffer } from "./buffer";
 
 export interface IEventHandler {
     callHandler(topic: string, params: string[]): void;
@@ -15,7 +15,7 @@ export class Service {
     private serviceClient: wasmclient.ServiceClient;
     private webSocket: WebSocket | null = null;
     public keyPair: IKeyPair | null = null;
-    private eventHandlers: Array<IEventHandler> = new Array();
+    private eventHandlers: Array<IEventHandler> = [];
     public scHname: wasmclient.Hname;
     private waspWebSocketUrl: string = "";
 
@@ -42,7 +42,7 @@ export class Service {
         onLedger: boolean
     ): Promise<string> {
         const chainId = this.serviceClient.configuration.chainId;
-        if (! onLedger) {
+        if (!onLedger) {
             // requested off-ledger request
             const requestID = await this.serviceClient.waspClient.postOffLedgerRequest(chainId, this.scHname, hFuncName, args, transfer, keyPair);
             return requestID;
@@ -62,9 +62,8 @@ export class Service {
     }
 
     public register(handler: IEventHandler): void {
-        if(this.eventHandlers.length === 0)
-            this.configureWebSocketsEventHandlers();
-            
+        if (this.eventHandlers.length === 0) this.configureWebSocketsEventHandlers();
+
         for (let i = 0; i < this.eventHandlers.length; i++) {
             if (this.eventHandlers[i] === handler) {
                 return;
@@ -75,7 +74,7 @@ export class Service {
 
     public unregister(handler: IEventHandler): void {
         // remove handler
-        this.eventHandlers = this.eventHandlers.filter(h => h !== handler);
+        this.eventHandlers = this.eventHandlers.filter((h) => h !== handler);
     }
 
     // overrides default contract name
