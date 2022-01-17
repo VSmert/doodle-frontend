@@ -2,7 +2,7 @@
     <div class="bg">
         <div id="game">
             <Table :tableNumber="currentTableNumber" :doodle="doodle" />
-            <!-- <ButtonGroup class="left">
+            <ButtonGroup class="left">
                 <Button class="purple" :isPressable="!requestingFunds && userData.l2Balance == 0" @button-pressed="requestFunds">
                     <div v-if="requestingFunds">Requesting...</div>
                     <div v-else-if="userData.l2Balance == 0">Request play IOTA</div>
@@ -13,13 +13,13 @@
                 <Button class="red" @button-pressed="leaveTable">Leave table</Button>
                 <Button class="green" @button-pressed="joinNextHand">Join next hand</Button>
                 <Button class="green" @button-pressed="joinNextBigBlind">Join next big blind</Button>
-            </ButtonGroup> -->
+            </ButtonGroup>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import { useStorage } from "@vueuse/core";
 
 import { Doodle } from "@/lib/doodleclient/doodle";
@@ -27,19 +27,21 @@ import { Log, LogTag } from "@/lib/doodleclient/utils/logger";
 import * as miscUtils from "@/lib/doodleclient/utils/misc";
 
 import Table from "./table/Table.vue";
-// import ButtonGroup from "./buttons/ButtonGroup.vue";
-// import Button from "./buttons/Button.vue";
+import ButtonGroup from "./buttons/ButtonGroup.vue";
+import Button from "./buttons/Button.vue";
 
 @Component({
     components: {
         Table,
+        ButtonGroup,
+        Button
     },
 })
 export default class Game extends Vue {
     private userData: UserData = new UserData("", "", "");
     private currentTableNumber = 1;
 
-    @Prop(Boolean) requestingFunds = false;
+    private requestingFunds = false;
     private doodle: Doodle = new Doodle();
 
     async mounted(): Promise<void> {

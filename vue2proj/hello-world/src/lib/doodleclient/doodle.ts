@@ -1,7 +1,6 @@
 // Copyright 2020 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-import * as events from "./events";
 import * as service from "./service";
 import { ServiceClient, Transfer, IEventHandler } from "./wasmclient";
 import { Configuration } from "./wasmclient/configuration";
@@ -21,7 +20,7 @@ export class Doodle {
     public userWalletPubKey: string | undefined;
     public userWalletAddress: string | undefined;
 
-    public initialized: boolean = false;
+    public initialized = false;
     public async initialize(userBase58PrivateKey: string, userBase58PublicKey: string, userAddress: string): Promise<boolean> {
         if (this.initialized) return this.initialized;
         Log(LogTag.Site, "Initializing");
