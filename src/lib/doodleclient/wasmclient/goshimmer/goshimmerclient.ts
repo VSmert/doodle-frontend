@@ -29,7 +29,7 @@ export class GoShimmerClient {
     private readonly goShimmerConfiguration: GoShimmerClientConfiguration;
     private readonly powManager: PoWWorkerManager = new PoWWorkerManager();
 
-    constructor(configuration : Configuration, coreAccountsService: CoreAccountsService) {
+    constructor(configuration: Configuration, coreAccountsService: CoreAccountsService) {
         this.coreAccountsService = coreAccountsService;
         this.goShimmerConfiguration = { APIUrl: configuration.goShimmerApiUrl, SeedUnsafe: configuration.seed };
     }
@@ -120,12 +120,7 @@ export class GoShimmerClient {
         return response;
     }
 
-    public async postOnLedgerRequest(
-        chainId: string,
-        payload: IOnLedger,
-        transfer: bigint = 1n,
-        keyPair: IKeyPair
-    ): Promise<string> {
+    public async postOnLedgerRequest(chainId: string, payload: IOnLedger, transfer: bigint = 1n, keyPair: IKeyPair): Promise<string> {
         if (transfer <= 0) {
             transfer = 1n;
         }

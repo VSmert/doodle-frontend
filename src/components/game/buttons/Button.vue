@@ -1,5 +1,5 @@
 <template>
-    <div class="button" :class="{'is-pressed': isPressed}" @mousedown.left="setPressed" @mouseup.left="reset" @mouseleave.left="reset">
+    <div class="button" :class="{ 'is-pressed': isPressed }" @mousedown.left="setPressed" @mouseup.left="reset" @mouseleave.left="reset">
         <div class="body">
             <div class="text"><slot></slot></div>
         </div>
@@ -7,34 +7,26 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { Component, Prop, Vue } from "vue-property-decorator";
 
-@Options({
-    props: {
-        isPressable: {
-            type: Boolean,
-            default: true
-        }
-    }
-})
+@Component
 export default class Button extends Vue {
-    isPressable! : boolean;
-    isPressed = false;
+    @Prop({ default : true}) isPressable!: boolean;
+    isPressed: boolean = false;
 
-    setPressed(){
-        if(this.isPressable)
-        {
+    setPressed(): void {
+        if (this.isPressable) {
             this.isPressed = true;
-            this.$emit('button-pressed')
+            this.$emit("button-pressed");
         }
     }
 
-    reset(){
+    reset(): void {
         this.isPressed = false;
     }
 }
 </script>
 
 <style scoped lang="less">
-@import 'button.less';
+@import "button.less";
 </style>

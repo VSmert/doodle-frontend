@@ -5,8 +5,8 @@
 // >>>> DO NOT CHANGE THIS FILE! <<<<
 // Change the json schema instead
 
-import * as wasmclient from "./wasmclient"
-import * as events from "./events"
+import * as wasmclient from "./wasmclient";
+import * as events from "./events";
 
 const ArgPotNumber = "potNumber";
 const ArgTableNumber = "tableNumber";
@@ -28,236 +28,229 @@ const ResTableCount = "tableCount";
 ///////////////////////////// init /////////////////////////////
 
 export class InitFunc extends wasmclient.ClientFunc {
-	
-	public async post(): Promise<wasmclient.RequestID> {
-		return await super.post(0x1f44d644, null);
-	}
+    public async post(): Promise<wasmclient.RequestID> {
+        return await super.post(0x1f44d644, null);
+    }
 }
 
 ///////////////////////////// joinNextBigBlind /////////////////////////////
 
 export class JoinNextBigBlindFunc extends wasmclient.ClientFunc {
-	private args: wasmclient.Arguments = new wasmclient.Arguments();
-	
-	public tableNumber(v: wasmclient.Uint32): void {
-		this.args.set(ArgTableNumber, this.args.fromUint32(v));
-	}
-	
-	public tableSeatNumber(v: wasmclient.Uint16): void {
-		this.args.set(ArgTableSeatNumber, this.args.fromUint16(v));
-	}
-	
-	public async post(): Promise<wasmclient.RequestID> {
-		return await super.post(0x806a30f9, this.args);
-	}
+    private args: wasmclient.Arguments = new wasmclient.Arguments();
+
+    public tableNumber(v: wasmclient.Uint32): void {
+        this.args.set(ArgTableNumber, this.args.fromUint32(v));
+    }
+
+    public tableSeatNumber(v: wasmclient.Uint16): void {
+        this.args.set(ArgTableSeatNumber, this.args.fromUint16(v));
+    }
+
+    public async post(): Promise<wasmclient.RequestID> {
+        return await super.post(0x806a30f9, this.args);
+    }
 }
 
 ///////////////////////////// joinNextHand /////////////////////////////
 
 export class JoinNextHandFunc extends wasmclient.ClientFunc {
-	private args: wasmclient.Arguments = new wasmclient.Arguments();
-	
-	public tableNumber(v: wasmclient.Uint32): void {
-		this.args.set(ArgTableNumber, this.args.fromUint32(v));
-	}
-	
-	public tableSeatNumber(v: wasmclient.Uint16): void {
-		this.args.set(ArgTableSeatNumber, this.args.fromUint16(v));
-	}
-	
-	public async post(): Promise<wasmclient.RequestID> {
-		return await super.post(0x1bdf6468, this.args);
-	}
+    private args: wasmclient.Arguments = new wasmclient.Arguments();
+
+    public tableNumber(v: wasmclient.Uint32): void {
+        this.args.set(ArgTableNumber, this.args.fromUint32(v));
+    }
+
+    public tableSeatNumber(v: wasmclient.Uint16): void {
+        this.args.set(ArgTableSeatNumber, this.args.fromUint16(v));
+    }
+
+    public async post(): Promise<wasmclient.RequestID> {
+        return await super.post(0x1bdf6468, this.args);
+    }
 }
 
 ///////////////////////////// leaveTable /////////////////////////////
 
 export class LeaveTableFunc extends wasmclient.ClientFunc {
-	private args: wasmclient.Arguments = new wasmclient.Arguments();
-	
-	public tableNumber(v: wasmclient.Uint32): void {
-		this.args.set(ArgTableNumber, this.args.fromUint32(v));
-	}
-	
-	public async post(): Promise<wasmclient.RequestID> {
-		this.args.mandatory(ArgTableNumber);
-		return await super.post(0xf6082907, this.args);
-	}
+    private args: wasmclient.Arguments = new wasmclient.Arguments();
+
+    public tableNumber(v: wasmclient.Uint32): void {
+        this.args.set(ArgTableNumber, this.args.fromUint32(v));
+    }
+
+    public async post(): Promise<wasmclient.RequestID> {
+        this.args.mandatory(ArgTableNumber);
+        return await super.post(0xf6082907, this.args);
+    }
 }
 
 ///////////////////////////// getPotInfo /////////////////////////////
 
 export class GetPotInfoView extends wasmclient.ClientView {
-	private args: wasmclient.Arguments = new wasmclient.Arguments();
-	
-	public potNumber(v: wasmclient.Uint16): void {
-		this.args.set(ArgPotNumber, this.args.fromUint16(v));
-	}
-	
-	public tableNumber(v: wasmclient.Uint32): void {
-		this.args.set(ArgTableNumber, this.args.fromUint32(v));
-	}
+    private args: wasmclient.Arguments = new wasmclient.Arguments();
 
-	public async call(): Promise<GetPotInfoResults> {
-		this.args.mandatory(ArgPotNumber);
-		this.args.mandatory(ArgTableNumber);
-		const res = new GetPotInfoResults();
-		await this.callView("getPotInfo", this.args, res);
-		return res;
-	}
+    public potNumber(v: wasmclient.Uint16): void {
+        this.args.set(ArgPotNumber, this.args.fromUint16(v));
+    }
+
+    public tableNumber(v: wasmclient.Uint32): void {
+        this.args.set(ArgTableNumber, this.args.fromUint32(v));
+    }
+
+    public async call(): Promise<GetPotInfoResults> {
+        this.args.mandatory(ArgPotNumber);
+        this.args.mandatory(ArgTableNumber);
+        const res = new GetPotInfoResults();
+        await this.callView("getPotInfo", this.args, res);
+        return res;
+    }
 }
 
 export class GetPotInfoResults extends wasmclient.Results {
-
-	potSize(): wasmclient.Uint64 {
-		return this.toUint64(this.get(ResPotSize));
-	}
+    potSize(): wasmclient.Uint64 {
+        return this.toUint64(this.get(ResPotSize));
+    }
 }
 
 ///////////////////////////// getTableCount /////////////////////////////
 
 export class GetTableCountView extends wasmclient.ClientView {
-
-	public async call(): Promise<GetTableCountResults> {
-		const res = new GetTableCountResults();
-		await this.callView("getTableCount", null, res);
-		return res;
-	}
+    public async call(): Promise<GetTableCountResults> {
+        const res = new GetTableCountResults();
+        await this.callView("getTableCount", null, res);
+        return res;
+    }
 }
 
 export class GetTableCountResults extends wasmclient.Results {
-
-	tableCount(): wasmclient.Uint32 {
-		return this.toUint32(this.get(ResTableCount));
-	}
+    tableCount(): wasmclient.Uint32 {
+        return this.toUint32(this.get(ResTableCount));
+    }
 }
 
 ///////////////////////////// getTableInfo /////////////////////////////
 
 export class GetTableInfoView extends wasmclient.ClientView {
-	private args: wasmclient.Arguments = new wasmclient.Arguments();
-	
-	public tableNumber(v: wasmclient.Uint32): void {
-		this.args.set(ArgTableNumber, this.args.fromUint32(v));
-	}
+    private args: wasmclient.Arguments = new wasmclient.Arguments();
 
-	public async call(): Promise<GetTableInfoResults> {
-		this.args.mandatory(ArgTableNumber);
-		const res = new GetTableInfoResults();
-		await this.callView("getTableInfo", this.args, res);
-		return res;
-	}
+    public tableNumber(v: wasmclient.Uint32): void {
+        this.args.set(ArgTableNumber, this.args.fromUint32(v));
+    }
+
+    public async call(): Promise<GetTableInfoResults> {
+        this.args.mandatory(ArgTableNumber);
+        const res = new GetTableInfoResults();
+        await this.callView("getTableInfo", this.args, res);
+        return res;
+    }
 }
 
 export class GetTableInfoResults extends wasmclient.Results {
+    bigBlindInSeatNumber(): wasmclient.Uint16 {
+        return this.toUint16(this.get(ResBigBlindInSeatNumber));
+    }
 
-	bigBlindInSeatNumber(): wasmclient.Uint16 {
-		return this.toUint16(this.get(ResBigBlindInSeatNumber));
-	}
+    handInProgress(): boolean {
+        return this.toBool(this.get(ResHandInProgress));
+    }
 
-	handInProgress(): boolean {
-		return this.toBool(this.get(ResHandInProgress));
-	}
+    potsCount(): wasmclient.Uint16 {
+        return this.toUint16(this.get(ResPotsCount));
+    }
 
-	potsCount(): wasmclient.Uint16 {
-		return this.toUint16(this.get(ResPotsCount));
-	}
+    size(): wasmclient.Uint16 {
+        return this.toUint16(this.get(ResSize));
+    }
 
-	size(): wasmclient.Uint16 {
-		return this.toUint16(this.get(ResSize));
-	}
-
-	smallBlindInSeatNumber(): wasmclient.Uint16 {
-		return this.toUint16(this.get(ResSmallBlindInSeatNumber));
-	}
+    smallBlindInSeatNumber(): wasmclient.Uint16 {
+        return this.toUint16(this.get(ResSmallBlindInSeatNumber));
+    }
 }
 
 ///////////////////////////// getTableSeat /////////////////////////////
 
 export class GetTableSeatView extends wasmclient.ClientView {
-	private args: wasmclient.Arguments = new wasmclient.Arguments();
-	
-	public tableNumber(v: wasmclient.Uint32): void {
-		this.args.set(ArgTableNumber, this.args.fromUint32(v));
-	}
-	
-	public tableSeatNumber(v: wasmclient.Uint16): void {
-		this.args.set(ArgTableSeatNumber, this.args.fromUint16(v));
-	}
+    private args: wasmclient.Arguments = new wasmclient.Arguments();
 
-	public async call(): Promise<GetTableSeatResults> {
-		this.args.mandatory(ArgTableNumber);
-		this.args.mandatory(ArgTableSeatNumber);
-		const res = new GetTableSeatResults();
-		await this.callView("getTableSeat", this.args, res);
-		return res;
-	}
+    public tableNumber(v: wasmclient.Uint32): void {
+        this.args.set(ArgTableNumber, this.args.fromUint32(v));
+    }
+
+    public tableSeatNumber(v: wasmclient.Uint16): void {
+        this.args.set(ArgTableSeatNumber, this.args.fromUint16(v));
+    }
+
+    public async call(): Promise<GetTableSeatResults> {
+        this.args.mandatory(ArgTableNumber);
+        this.args.mandatory(ArgTableSeatNumber);
+        const res = new GetTableSeatResults();
+        await this.callView("getTableSeat", this.args, res);
+        return res;
+    }
 }
 
 export class GetTableSeatResults extends wasmclient.Results {
+    agentId(): wasmclient.AgentID {
+        return this.toAgentID(this.get(ResAgentId));
+    }
 
-	agentId(): wasmclient.AgentID {
-		return this.toAgentID(this.get(ResAgentId));
-	}
+    chipCount(): wasmclient.Uint64 {
+        return this.toUint64(this.get(ResChipCount));
+    }
 
-	chipCount(): wasmclient.Uint64 {
-		return this.toUint64(this.get(ResChipCount));
-	}
+    isInHand(): boolean {
+        return this.toBool(this.get(ResIsInHand));
+    }
 
-	isInHand(): boolean {
-		return this.toBool(this.get(ResIsInHand));
-	}
+    joiningNextBigBlind(): boolean {
+        return this.toBool(this.get(ResJoiningNextBigBlind));
+    }
 
-	joiningNextBigBlind(): boolean {
-		return this.toBool(this.get(ResJoiningNextBigBlind));
-	}
-
-	joiningNextHand(): boolean {
-		return this.toBool(this.get(ResJoiningNextHand));
-	}
+    joiningNextHand(): boolean {
+        return this.toBool(this.get(ResJoiningNextHand));
+    }
 }
 
 ///////////////////////////// DoodleService /////////////////////////////
 
 export class DoodleService extends wasmclient.Service {
+    public constructor(cl: wasmclient.ServiceClient) {
+        super(cl, 0xb40a047a);
+    }
 
-	public constructor(cl: wasmclient.ServiceClient) {
-		super(cl, 0xb40a047a);
-	}
+    public newEventHandler(): events.DoodleEvents {
+        return new events.DoodleEvents();
+    }
 
-	public newEventHandler(): events.DoodleEvents {
-		return new events.DoodleEvents();
-	}
+    public init(): InitFunc {
+        return new InitFunc(this);
+    }
 
-	public init(): InitFunc {
-		return new InitFunc(this);
-	}
+    public joinNextBigBlind(): JoinNextBigBlindFunc {
+        return new JoinNextBigBlindFunc(this);
+    }
 
-	public joinNextBigBlind(): JoinNextBigBlindFunc {
-		return new JoinNextBigBlindFunc(this);
-	}
+    public joinNextHand(): JoinNextHandFunc {
+        return new JoinNextHandFunc(this);
+    }
 
-	public joinNextHand(): JoinNextHandFunc {
-		return new JoinNextHandFunc(this);
-	}
+    public leaveTable(): LeaveTableFunc {
+        return new LeaveTableFunc(this);
+    }
 
-	public leaveTable(): LeaveTableFunc {
-		return new LeaveTableFunc(this);
-	}
+    public getPotInfo(): GetPotInfoView {
+        return new GetPotInfoView(this);
+    }
 
-	public getPotInfo(): GetPotInfoView {
-		return new GetPotInfoView(this);
-	}
+    public getTableCount(): GetTableCountView {
+        return new GetTableCountView(this);
+    }
 
-	public getTableCount(): GetTableCountView {
-		return new GetTableCountView(this);
-	}
+    public getTableInfo(): GetTableInfoView {
+        return new GetTableInfoView(this);
+    }
 
-	public getTableInfo(): GetTableInfoView {
-		return new GetTableInfoView(this);
-	}
-
-	public getTableSeat(): GetTableSeatView {
-		return new GetTableSeatView(this);
-	}
+    public getTableSeat(): GetTableSeatView {
+        return new GetTableSeatView(this);
+    }
 }

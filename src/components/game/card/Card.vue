@@ -7,21 +7,16 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import { PropType } from 'vue';
+import { Component, Prop, Vue } from "vue-property-decorator";
 
-import ICard from '@/components/models/ICard';
+import ICard from "@/components/models/ICard";
 
-@Options({
-    props: {
-        card: {
-            type: Object as PropType<ICard>,
-        },
-    },
-})
-export default class Card extends Vue {}
+@Component
+export default class Card extends Vue {
+    @Prop(Object) card!: ICard;
+}
 </script>
 
 <style scoped lang="less">
-@import 'card.less';
+@import "card.less";
 </style>

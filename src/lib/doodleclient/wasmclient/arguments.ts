@@ -1,9 +1,9 @@
 // Copyright 2020 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-import {Bytes, Int32, panic, Items, Item} from "."
-import {Encoder} from "./encoder"
-import {Buffer} from "./buffer";
+import { Bytes, Int32, panic, Items, Item } from ".";
+import { Encoder } from "./encoder";
+import { Buffer } from "./buffer";
 
 // The Arguments struct is used to gather all arguments for this smart
 // contract function call and encode it into this deterministic byte array
@@ -24,7 +24,7 @@ export class Arguments extends Encoder {
 
     public mandatory(key: string): void {
         if (!this.args.has(key)) {
-            panic("missing mandatory " + key)
+            panic("missing mandatory " + key);
         }
     }
 
@@ -59,11 +59,11 @@ export class Arguments extends Encoder {
     }
 
     public encodeCall(): Items {
-        const items = new Items()
+        const items = new Items();
         for (const [key, val] of this.args) {
             const k = Buffer.from(key).toString("base64");
             const v = val.toString("base64");
-            items.Items.push(new Item(k, v))
+            items.Items.push(new Item(k, v));
         }
         return items;
     }

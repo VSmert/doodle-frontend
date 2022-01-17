@@ -5,17 +5,12 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { Component, Vue } from "vue-property-decorator";
 
-@Options({
-    components: {
-    },
-})
-export default class ButtonGroup extends Vue {
-
-}
+@Component
+export default class ButtonGroup extends Vue {}
 </script>
 
 <style scoped lang="less">
-@import 'buttonGroup.less';
+@import "buttonGroup.less";
 </style>

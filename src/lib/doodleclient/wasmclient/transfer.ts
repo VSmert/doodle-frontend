@@ -1,9 +1,9 @@
 // Copyright 2020 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-import * as wasmclient from "./index"
-import {Base58} from "./crypto";
-import {Buffer} from "./buffer";
+import * as wasmclient from "./index";
+import { Base58 } from "./crypto";
+import { Buffer } from "./buffer";
 import { Colors } from "./colors";
 
 export class Transfer {
@@ -21,7 +21,7 @@ export class Transfer {
 
     set(color: string, amount: wasmclient.Uint64) {
         if (color == Colors.IOTA_COLOR) {
-            color = Colors.IOTA_COLOR_STRING
+            color = Colors.IOTA_COLOR_STRING;
         }
         this.xfer.set(color, amount);
     }
