@@ -5,7 +5,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import 'reflect-metadata'
+import { Component, Vue } from "vue-property-decorator";
 import Game from "./components/game/Game.vue";
 
 @Component({
@@ -14,7 +15,7 @@ import Game from "./components/game/Game.vue";
     },
 })
 export default class App extends Vue {
-    @Prop(Boolean) isDevelopment = false;
+    isDevelopment = false;
 
     mounted(): void {
         this.isDevelopment = process.env.NODE_ENV === "development";

@@ -14,8 +14,8 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
 export default class Chip extends Vue {
-    @Prop(Number) denomination!: number;
-    @Prop(Number) chipCount!: number;
+    @Prop() denomination!: number;
+    @Prop() chipCount!: bigint;
 
     get nextChipTopPosition() {
         return (currentIndex: number): number => -2 + currentIndex * 5;
