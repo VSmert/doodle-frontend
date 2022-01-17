@@ -17,19 +17,19 @@ import ChipHelper from "@/components/game/chipStack/ChipHelper";
     },
 })
 export default class Bank extends Vue {
-    @Prop(Number) chipCount!: number;
-    @Prop(Number) bankOnTable!: number;
+    @Prop() chipCount!: bigint;
+    @Prop() bankOnTable!: bigint;
 
     // TODO: Improve this to use mod
-    get mockChips(): number {
-        if (this.chipCount <= 0) return 0;
-        if (ChipHelper.Denominations.find((t) => t == this.chipCount) !== undefined) return this.chipCount;
+    get mockChips(): bigint {
+        if (this.chipCount <= 0n) return 0n;
+        if (ChipHelper.Denominations.find((t) => t == Number(this.chipCount)) !== undefined) return this.chipCount;
 
-        if (this.chipCount < 5) return 1;
-        if (this.chipCount <= 9) return 6;
-        if (this.chipCount < 15) return 11;
-        if (this.chipCount == 15) return 15;
-        return 16;
+        if (this.chipCount < 5n) return 1n;
+        if (this.chipCount <= 9n) return 6n;
+        if (this.chipCount < 15n) return 11n;
+        if (this.chipCount == 15n) return 15n;
+        return 16n;
     }
 }
 </script>

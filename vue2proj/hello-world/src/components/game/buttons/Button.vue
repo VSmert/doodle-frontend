@@ -9,17 +9,10 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 
-@Component({
-    props: {
-        isPressable: {
-            type: Boolean,
-            default: true,
-        },
-    },
-})
+@Component
 export default class Button extends Vue {
-    @Prop(Boolean) isPressable!: boolean;
-    @Prop(Boolean) isPressed = false;
+    @Prop({ default : true}) isPressable!: boolean;
+    isPressed: boolean = false;
 
     setPressed(): void {
         if (this.isPressable) {

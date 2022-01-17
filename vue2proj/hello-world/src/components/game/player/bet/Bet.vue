@@ -11,13 +11,10 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import ChipStack from "@/components/game/chipStack/ChipStack.vue";
 
 @Component({
-    props: {
-        chipCount: Number,
-    },
-    components: { ChipStack },
+    components: { ChipStack }
 })
 export default class Bet extends Vue {
-    @Prop(Number) chipCount!: number;
+    @Prop() chipCount!: bigint;
 }
 </script>
 
