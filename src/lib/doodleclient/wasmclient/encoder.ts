@@ -1,9 +1,9 @@
 // Copyright 2020 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-import * as wasmclient from "./index"
-import {Base58} from "./crypto";
-import {Buffer} from "./buffer";
+import * as wasmclient from "./index";
+import { Base58 } from "./crypto";
+import { Buffer } from "./buffer";
 
 // The Arguments struct is used to gather all arguments for this smart
 // contract function call and encode it into this deterministic byte array

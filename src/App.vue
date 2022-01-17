@@ -1,24 +1,28 @@
 <template>
-    <Game @contextmenu.prevent />
+    <div id="app">
+        <Game @contextmenu.prevent />
+    </div>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import Game from './components/game/Game.vue';
+import 'reflect-metadata'
+import { Component, Vue } from "vue-property-decorator";
+import Game from "./components/game/Game.vue";
 
-@Options({
+@Component({
     components: {
-        Game
+        Game,
     },
 })
 export default class App extends Vue {
     isDevelopment = false;
-    mounted() {
-        this.isDevelopment = process.env.NODE_ENV === "development"
+
+    mounted(): void {
+        this.isDevelopment = process.env.NODE_ENV === "development";
     }
 }
 </script>
 
 <style lang="less">
-@import 'app.less';
+@import "app.less";
 </style>

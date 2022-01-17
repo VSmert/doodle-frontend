@@ -10,21 +10,19 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { Component, Prop, Vue } from "vue-property-decorator";
 
-@Options({
-    props: {
-        denomination: Number,
-        chipCount: Number,
-    },
-})
+@Component
 export default class Chip extends Vue {
+    @Prop() denomination!: number;
+    @Prop() chipCount!: bigint;
+
     get nextChipTopPosition() {
-        return (currentIndex: number) => -2 + currentIndex * 5;
+        return (currentIndex: number): number => -2 + currentIndex * 5;
     }
 }
 </script>
 
 <style scoped lang="less">
-@import 'chip.less';
+@import "chip.less";
 </style>

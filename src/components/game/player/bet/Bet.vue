@@ -6,24 +6,23 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { Component, Prop, Vue } from "vue-property-decorator";
 
-import ChipStack from '@/components/game/chipStack/ChipStack.vue';
+import ChipStack from "@/components/game/chipStack/ChipStack.vue";
 
-@Options({
-    props: {
-        chipCount: Number,
-    },
-    components: { ChipStack },
+@Component({
+    components: { ChipStack }
 })
-export default class Bet extends Vue {}
+export default class Bet extends Vue {
+    @Prop() chipCount!: bigint;
+}
 </script>
 
 <style scoped lang="less">
-@import '@/components/game/table/currency.less';
-@import 'bet.less';
+@import "@/components/game/table/currency.less";
+@import "bet.less";
 </style>
 
 <style lang="less">
-@import 'betChipsPositions.less';
+@import "betChipsPositions.less";
 </style>

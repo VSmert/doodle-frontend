@@ -1,5 +1,5 @@
-import { blake2b } from 'blakejs';
-import { Buffer } from '../../buffer';
+import { blake2b } from "blakejs";
+import { Buffer } from "../../buffer";
 
 export default class ProofOfWork {
     public static calculateProofOfWork(target: number, message: Buffer): number {
@@ -18,7 +18,7 @@ export default class ProofOfWork {
 
             if (leadingZeros >= target) {
                 // eslint-disable-next-line no-console
-                console.log('PoW Single Thread done');
+                console.log("PoW Single Thread done");
                 return nonce;
             }
         }

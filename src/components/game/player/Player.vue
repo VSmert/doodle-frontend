@@ -8,31 +8,30 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { Component, Prop, Vue } from "vue-property-decorator";
 
-import Bank from './bank/Bank.vue';
-import Bet from './bet/Bet.vue';
+import Bank from "./bank/Bank.vue";
+import Bet from "./bet/Bet.vue";
 
 export interface IPlayer {
-    name : string;
+    name: string;
     color: string;
-    bank : bigint;
+    bank: bigint;
     onTable: bigint;
     hasCards: boolean;
 }
 
-@Options({
-    props: {
-        player: Object,
-    },
+@Component({
     components: {
         Bank,
         Bet,
     },
 })
-export default class Player extends Vue {}
+export default class Player extends Vue {
+    @Prop(Object) player!: IPlayer;
+}
 </script>
 
 <style lang="less">
-@import 'player.less';
+@import "player.less";
 </style>
