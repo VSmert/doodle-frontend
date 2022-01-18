@@ -177,7 +177,7 @@ export class Doodle {
         if (initialChipCount <= 0) return false;
 
         try {
-            Log(LogTag.SmartContract, `Joining next hand with ${initialChipCount} IOTA`);
+            Log(LogTag.SmartContract, `Executing JoinNextHandFunc with ${initialChipCount} IOTA`);
             const joinNextHandFunc = this.doodleService!.joinNextHand();
 
             if (tableNumber > 0) joinNextHandFunc.tableNumber(tableNumber);
@@ -199,7 +199,7 @@ export class Doodle {
         if (initialChipCount <= 0) return false;
 
         try {
-            Log(LogTag.SmartContract, `Joining next big blind with ${initialChipCount} IOTA`);
+            Log(LogTag.SmartContract, `Executing JoinNextBigBlindFunc with ${initialChipCount} IOTA`);
             const joinNextBigBlindFunc = this.doodleService!.joinNextBigBlind();
 
             if (tableNumber > 0) joinNextBigBlindFunc.tableNumber(tableNumber);
