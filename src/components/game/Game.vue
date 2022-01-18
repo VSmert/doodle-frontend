@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Watch, Vue } from "vue-property-decorator";
 import { useStorage } from "@vueuse/core";
 
 import { Doodle } from "@/lib/doodleclient/doodle";
@@ -44,11 +44,19 @@ export default class Game extends Vue {
     private requestingFunds = false;
     private doodle: Doodle = new Doodle();
 
-    async mounted(): Promise<void> {
-        await this.loadUserKeyPairAndAddress();
+    mounted(){
+        this.doodle = new Doodle();
     }
 
-    private async loadUserKeyPairAndAddress(): Promise<void> {
+    @Watch("doodle")
+    async onDoodleChange(doodle : Doodle) {
+        if(!doodle.initialized)
+            await this.loadUserKeyPairAndAddress(doodle);
+    }
+
+    private async loadUserKeyPairAndAddress(doodle : Doodle): Promise<void> {
+        if(doodle.initialized) return;
+
         const userBase58PrivateKeyStorage = useStorage("user-base58-private-key", "");
         const userBase58PublicKeyStorage = useStorage("user-base58-public-key", "");
         const userAddressStorage = useStorage("user-address", "");
@@ -56,14 +64,14 @@ export default class Game extends Vue {
         let userBase58PrivateKey = userBase58PrivateKeyStorage.value;
         let userBase58PublicKey = userBase58PublicKeyStorage.value;
         let userAddress = userAddressStorage.value;
-        this.doodle = new Doodle();
-        const success = await this.doodle.initialize(userBase58PrivateKey, userBase58PublicKey, userAddress);
+
+        const success = await doodle.initialize(userBase58PrivateKey, userBase58PublicKey, userAddress);
         if (!success) throw new Error("Could not initialize doodle client");
         const arePrivatekeyAndAddressDefined = userBase58PrivateKey !== "" && userBase58PublicKey !== "" && userAddress !== "";
         if (!arePrivatekeyAndAddressDefined) {
-            userBase58PrivateKeyStorage.value = this.doodle.userWalletPrivKey;
-            userBase58PublicKeyStorage.value = this.doodle.userWalletPubKey;
-            userAddressStorage.value = this.doodle.userWalletAddress;
+            userBase58PrivateKeyStorage.value = doodle.userWalletPrivKey;
+            userBase58PublicKeyStorage.value = doodle.userWalletPubKey;
+            userAddressStorage.value = doodle.userWalletAddress;
         }
 
         this.userData = new UserData(userBase58PrivateKeyStorage.value, userBase58PublicKeyStorage.value, userAddressStorage.value);
