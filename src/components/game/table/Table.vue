@@ -5,25 +5,28 @@
         </div>
         <div class="players">
             <Player
-                v-for="(player, index) in players"
-                :key="index"
+                v-for="player in players"
+                :key="player.tableSeatNumber"
                 class="player"
-                :class="['player-' + (index + 1), { playing: player_playing === index }]"
+                :class="['player-' + (player.tableSeatNumber), { playing: player_playing === player.tableSeatNumber }]"
                 :player="player"
+                :doodle="doodle"
             />
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Watch, Vue } from "vue-property-decorator";
 
 import ICard from "@/components/models/ICard";
 import Card from "@/components/game/card/Card.vue";
 import Player from "@/components/game/player/Player.vue";
-import { IPlayer } from "@/components/game/player/Player.vue";
 import { Doodle } from "@/lib/doodleclient";
-//import * as events from "./events";
+
+import { IPlayer } from "@/components/models/player";
+import { ITableInfo } from "@/lib/doodleclient/response_interfaces";
+//import { GameEndedEvent, GameStartedEvent } from "./events";
 
 @Component({
     components: {
@@ -33,29 +36,50 @@ import { Doodle } from "@/lib/doodleclient";
 })
 export default class Table extends Vue {
     @Prop({ default: 0 }) tableNumber!: number;
-    @Prop(Object) doodle!: Doodle;
+    @Prop() doodle!: Doodle;
+
+    private tableInfo! : ITableInfo;
+    private players : IPlayer[] = [];
+    private player_playing : number = 3;
 
     mounted(): void {
         console.log(`Table #${this.tableNumber}`);
-        // this.doodle.registerEvents(new events.JoinNextHandEvent());
-        // this.doodle.registerEvents(new events.JoinNextBigBlindEvent());
-        // this.doodle.registerEvents(new events.PlayerLeftEvent());
-        // this.doodle.registerEvents(new events.PlayerWinsAllPotsEvent());
-        // this.doodle.registerEvents(new events.GameStartedEvent());
-        // this.doodle.registerEvents(new events.GameEndedEvent());
     }
 
-    player_playing = 3;
-    players: IPlayer[] = [
-        { name: "rivy33", color: "dodgerblue", bank: 16n, onTable: 65n, hasCards: false },
-        { name: "kattar", color: "cyan", bank: 80n, onTable: 0n, hasCards: false },
-        { name: "mikelaire", color: "lightcoral", bank: 77n, onTable: 0n, hasCards: false },
-        { name: "tomtom", color: "crimson", bank: 250n, onTable: 0n, hasCards: false },
-        { name: "nana", color: "#444", bank: 45n, onTable: 0n, hasCards: false },
-        { name: "ionion", color: "forestgreen", bank: 125n, onTable: 0n, hasCards: false },
-        { name: "link6996", color: "goldenrod", bank: 13n, onTable: 0n, hasCards: false },
-        { name: "gossboganon", color: "gold", bank: 6n, onTable: 0n, hasCards: false },
-    ];
+    @Watch("doodle.initialized", { immediate: true})
+    async onDoodleChange(initialized : boolean) {
+        if(!initialized) return;
+
+        this.tableInfo = await this.doodle.getTableInfo(this.tableNumber);
+        const tableSeats = await this.doodle.getTableSeats(this.tableInfo);
+
+        // TODO: Extract this mapping into helper function
+        for (let index = 0; index < tableSeats.length; index++) {
+            const tableSeat = tableSeats[index];
+            const player : IPlayer = { tableNumber: this.tableInfo.number, tableSeatNumber : tableSeat.number,
+                                       name : tableSeat.agentID, color: "dodgerblue",
+                                       bank : tableSeat.chipCount, onTable: 0n,
+                                       hasCards: false,  };
+            this.players.push(player);
+        }
+
+        // this.doodle.registerEvents(new GameStartedEvent(this.tableInfo));
+        // this.doodle.registerEvents(new GameEndedEvent(this.tableInfo));
+    }
+
+    // TODO: Implement seat number to color switch
+    //players: IPlayer[] = [
+
+        // { name: "rivy33", color: "dodgerblue", bank: 16n, onTable: 65n, hasCards: false, tableNumber: this.tableNumber, tableSeatNumber : 1 },
+        // { name: "kattar", color: "cyan", bank: 80n, onTable: 0n, hasCards: false, tableNumber: this.tableNumber, tableSeatNumber : 2 },
+        // { name: "mikelaire", color: "lightcoral", bank: 77n, onTable: 0n, hasCards: false, tableNumber: this.tableNumber, tableSeatNumber : 3 },
+        // { name: "tomtom", color: "crimson", bank: 250n, onTable: 0n, hasCards: false, tableNumber: this.tableNumber, tableSeatNumber : 4 },
+        // { name: "nana", color: "#444", bank: 45n, onTable: 0n, hasCards: false, tableNumber: this.tableNumber, tableSeatNumber : 5 },
+        // { name: "ionion", color: "forestgreen", bank: 125n, onTable: 0n, hasCards: false, tableNumber: this.tableNumber, tableSeatNumber : 6 },
+        // { name: "link6996", color: "goldenrod", bank: 13n, onTable: 0n, hasCards: false, tableNumber: this.tableNumber, tableSeatNumber : 7 },
+        // { name: "gossboganon", color: "gold", bank: 6n, onTable: 0n, hasCards: false, tableNumber: this.tableNumber, tableSeatNumber : 8 },
+    //];
+
     figures = ["S", "H", "C", "D"];
     values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 
