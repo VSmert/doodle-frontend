@@ -10,8 +10,6 @@ abstract class TableSeatSpecificEvent extends TableSpecificEvent {
         super(tableNumber);
         this.tableSeatNumber = tableSeatNumber;
     }
-
-    abstract callHandler(topic: string, params: string[]): void;
 }
 
 export class JoinNextHandEvent extends TableSeatSpecificEvent {
