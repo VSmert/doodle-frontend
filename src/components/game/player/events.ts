@@ -2,14 +2,13 @@ import * as events from "@/lib/doodleclient/events";
 import { LogTag, Log } from "@/lib/doodleclient/utils/logger";
 
 import { TableSpecificEvent } from "@/components/game/table/events";
-import { IPlayer } from "@/components/models/player";
 
 abstract class TableSeatSpecificEvent extends TableSpecificEvent {
     protected readonly tableSeatNumber: number;
 
-    public constructor(player: IPlayer) {
-        super(player.tableNumber);
-        this.tableSeatNumber = player.tableSeatNumber;
+    public constructor(tableNumber: number, tableSeatNumber: number) {
+        super(tableNumber);
+        this.tableSeatNumber = tableSeatNumber;
     }
 
     abstract callHandler(topic: string, params: string[]): void;
