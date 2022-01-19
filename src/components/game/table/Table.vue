@@ -26,7 +26,7 @@ import { Doodle } from "@/lib/doodleclient";
 
 import { IPlayer } from "@/components/models/player";
 import { ITableInfo } from "@/lib/doodleclient/response_interfaces";
-//import { GameEndedEvent, GameStartedEvent } from "./events";
+import { GameEndedEvent, GameStartedEvent } from "./events";
 
 @Component({
     components: {
@@ -63,8 +63,8 @@ export default class Table extends Vue {
             this.players.push(player);
         }
 
-        // this.doodle.registerEvents(new GameStartedEvent(this.tableInfo));
-        // this.doodle.registerEvents(new GameEndedEvent(this.tableInfo));
+        this.doodle.registerEvents(new GameStartedEvent(this.tableInfo.number));
+        this.doodle.registerEvents(new GameEndedEvent(this.tableInfo.number));
     }
 
     // TODO: Implement seat number to color switch
