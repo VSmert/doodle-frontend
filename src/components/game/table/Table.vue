@@ -65,22 +65,22 @@ export default class Table extends Vue {
     figures = ["S", "H", "C", "D"];
     values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 
-  private toPlayers(tableSeats: ITableSeat[]) : IPlayer[] {
+    private toPlayers(tableSeats: ITableSeat[]) : IPlayer[] {
     const players : IPlayer[] = [];
     for(let index=0;index<tableSeats.length;index++) {
-      const tableSeat=tableSeats[index];
-      const player: IPlayer={
+        const tableSeat=tableSeats[index];
+        const player: IPlayer={
         tableNumber: this.tableInfo.number, tableSeatNumber: tableSeat.number,
         name: tableSeat.agentID, color: toColor(tableSeat.number),
         bank: tableSeat.chipCount, onTable: 0n,
         hasCards: false,
-      };
-      players.push(player);
+        };
+        players.push(player);
     }
 
     Log(LogTag.SmartContract, `Loaded ${tableSeats.length} players. ${JSON.stringify(players)}`);
     return players;
-  }
+    }
 
     get cards(): ICard[] {
         let all: ICard[] = [];
