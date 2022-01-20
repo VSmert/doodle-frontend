@@ -67,14 +67,12 @@ export default class Table extends Vue {
     let eventsHandler = new DoodleEvents();
 
     eventsHandler.onDoodleGameStarted((event: EventGameStarted) => {
-      if(event.tableNumber!=this.tableNumber)
-        return;
+      if(event.tableNumber != this.tableNumber) return;
       Log(LogTag.SmartContract, `Event: EventGameStarted -> Table ${event.tableNumber} paidBigBlindTableSeatNumber ${event.paidBigBlindTableSeatNumber} paidSmallBlindTableSeatNumber ${event.paidSmallBlindTableSeatNumber}`);
     });
 
     eventsHandler.onDoodleGameEnded((event: EventGameEnded) => {
-      if(event.tableNumber!=this.tableNumber)
-        return;
+      if(event.tableNumber != this.tableNumber) return;
       Log(LogTag.SmartContract, `Event: EventGameEnded -> Table ${event.tableNumber}`);
     });
 
