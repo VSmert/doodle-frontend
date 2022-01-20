@@ -22,11 +22,10 @@ import { Component, Prop, Watch, Vue } from "vue-property-decorator";
 import ICard from "@/components/models/ICard";
 import Card from "@/components/game/card/Card.vue";
 import Player from "@/components/game/player/Player.vue";
-import { Doodle } from "@/lib/doodleclient";
+import { Doodle, DoodleEvents, EventGameEnded, EventGameStarted } from "@/lib/doodleclient";
 
 import { IPlayer } from "@/components/models/player";
 import { ITableInfo, ITableSeat } from "@/lib/doodleclient/response_interfaces";
-import { GameEndedEvent, GameStartedEvent } from "./events";
 import { toColor } from "./seat_colors";
 import { Log, LogTag } from "@/lib/doodleclient/utils/logger";
 
@@ -58,12 +57,30 @@ export default class Table extends Vue {
         const tableSeats = await this.doodle.getTableSeats(this.tableInfo);
         this.players = this.toPlayers(tableSeats);
 
-        this.doodle.registerEvents(new GameStartedEvent(this.tableInfo.number));
-        this.doodle.registerEvents(new GameEndedEvent(this.tableInfo.number));
+        this.registerEvents();
     }
 
     figures = ["S", "H", "C", "D"];
     values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+
+  private registerEvents() {
+    let eventsHandler = new DoodleEvents();
+
+    eventsHandler.onDoodleGameStarted((event: EventGameStarted) => {
+      if(event.tableNumber!=this.tableNumber)
+        return;
+      Log(LogTag.SmartContract, `Event: EventGameStarted -> Table ${event.tableNumber} paidBigBlindTableSeatNumber ${event.paidBigBlindTableSeatNumber} paidSmallBlindTableSeatNumber ${event.paidSmallBlindTableSeatNumber}`);
+    });
+
+    eventsHandler.onDoodleGameEnded((event: EventGameEnded) => {
+      if(event.tableNumber!=this.tableNumber)
+        return;
+      Log(LogTag.SmartContract, `Event: EventGameEnded -> Table ${event.tableNumber}`);
+    });
+
+    Log(LogTag.Site, `Registered events for table ${this.tableNumber}`);
+    this.doodle.registerEvents(eventsHandler);
+  }
 
     private toPlayers(tableSeats: ITableSeat[]) : IPlayer[] {
     const players : IPlayer[] = [];

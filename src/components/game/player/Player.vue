@@ -13,8 +13,8 @@ import { Component, Prop, Watch, Vue } from "vue-property-decorator";
 import Bank from "./bank/Bank.vue";
 import Bet from "./bet/Bet.vue";
 import { IPlayer } from "@/components/models/player"
-import { Doodle } from "@/lib/doodleclient";
-import { JoinNextBigBlindEvent, JoinNextHandEvent, PlayerLeftEvent, PlayerWinsAllPotsEvent } from "./events";
+import { Doodle, DoodleEvents, EventPlayerJoinsNextBigBlind, EventPlayerJoinsNextHand, EventPlayerLeft, EventPlayerWinsAllPots } from "@/lib/doodleclient";
+import { Log, LogTag } from "@/lib/doodleclient/utils/logger";
 
 @Component({
     components: {
@@ -30,10 +30,34 @@ export default class Player extends Vue {
     onDoodleChange(initialized : boolean) {
         if(!initialized) return;
 
-        this.doodle.registerEvents(new JoinNextHandEvent(this.player.tableNumber, this.player.tableSeatNumber));
-        this.doodle.registerEvents(new JoinNextBigBlindEvent(this.player.tableNumber, this.player.tableSeatNumber));
-        this.doodle.registerEvents(new PlayerLeftEvent(this.player.tableNumber, this.player.tableSeatNumber));
-        this.doodle.registerEvents(new PlayerWinsAllPotsEvent(this.player.tableNumber, this.player.tableSeatNumber));
+        this.registerEvents();
+    }
+
+    private registerEvents() {
+        let eventsHandler = new DoodleEvents();
+        eventsHandler.onDoodlePlayerJoinsNextHand((event: EventPlayerJoinsNextHand) => {
+            if (event.tableNumber != this.player.tableNumber || event.tableSeatNumber != this.player.tableSeatNumber) return;
+            Log(LogTag.SmartContract, `Event: EventPlayerJoinsNextHand -> Table ${event.tableNumber} Seat ${event.tableSeatNumber} Chip count: ${event.playersInitialChipCount}`);
+        });
+
+        eventsHandler.onDoodlePlayerJoinsNextBigBlind((event: EventPlayerJoinsNextBigBlind) => {
+            if (event.tableNumber != this.player.tableNumber || event.tableSeatNumber != this.player.tableSeatNumber) return;
+            Log(LogTag.SmartContract, `Event: EventPlayerJoinsNextBigBlind -> Table ${event.tableNumber} Seat ${event.tableSeatNumber} Chip count: ${event.playersInitialChipCount}`);
+        });
+
+        eventsHandler.onDoodlePlayerLeft((event: EventPlayerLeft) => {
+            if (event.tableNumber != this.player.tableNumber || event.tableSeatNumber != this.player.tableSeatNumber) return;
+            Log(LogTag.SmartContract, `Event: EventPlayerLeft -> Table ${event.tableNumber} Seat ${event.tableSeatNumber}`);
+        });
+
+        eventsHandler.onDoodlePlayerWinsAllPots((event: EventPlayerWinsAllPots) => {
+            if (event.tableNumber != this.player.tableNumber || event.tableSeatNumber != this.player.tableSeatNumber) return;
+            Log(LogTag.SmartContract, `Event: PlayerWinsAllPots -> Table ${event.tableNumber} TableSeatNumber ${event.tableSeatNumber} TotalPotSize ${event.totalPotSize}`
+            );
+        });
+
+        this.doodle.registerEvents(eventsHandler);
+        Log(LogTag.Site, `Registered events for player ${this.player.tableSeatNumber} in table ${this.player.tableNumber}`);
     }
 }
 </script>
