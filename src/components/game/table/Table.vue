@@ -25,8 +25,10 @@ import Player from "@/components/game/player/Player.vue";
 import { Doodle } from "@/lib/doodleclient";
 
 import { IPlayer } from "@/components/models/player";
-import { ITableInfo } from "@/lib/doodleclient/response_interfaces";
+import { ITableInfo, ITableSeat } from "@/lib/doodleclient/response_interfaces";
 import { GameEndedEvent, GameStartedEvent } from "./events";
+import { toColor } from "./seat_colors";
+import { Log, LogTag } from "@/lib/doodleclient/utils/logger";
 
 @Component({
     components: {
@@ -38,9 +40,9 @@ export default class Table extends Vue {
     @Prop({ default: 0 }) tableNumber!: number;
     @Prop() doodle!: Doodle;
 
-    private tableInfo! : ITableInfo;
-    private players : IPlayer[] = [];
-    private player_playing : number = 3;
+    tableInfo! : ITableInfo;
+    players : IPlayer[] = [];
+    player_playing : number = 3;
 
     mounted(): void {
         console.log(`Table #${this.tableNumber}`);
@@ -51,37 +53,34 @@ export default class Table extends Vue {
         if(!initialized) return;
 
         this.tableInfo = await this.doodle.getTableInfo(this.tableNumber);
-        const tableSeats = await this.doodle.getTableSeats(this.tableInfo);
+        Log(LogTag.SmartContract, "Table info: " + JSON.stringify(this.tableInfo));
 
-        // TODO: Extract this mapping into helper function
-        for (let index = 0; index < tableSeats.length; index++) {
-            const tableSeat = tableSeats[index];
-            const player : IPlayer = { tableNumber: this.tableInfo.number, tableSeatNumber : tableSeat.number,
-                                       name : tableSeat.agentID, color: "dodgerblue",
-                                       bank : tableSeat.chipCount, onTable: 0n,
-                                       hasCards: false,  };
-            this.players.push(player);
-        }
+        const tableSeats = await this.doodle.getTableSeats(this.tableInfo);
+        this.players = this.toPlayers(tableSeats);
 
         this.doodle.registerEvents(new GameStartedEvent(this.tableInfo.number));
         this.doodle.registerEvents(new GameEndedEvent(this.tableInfo.number));
     }
 
-    // TODO: Implement seat number to color switch
-    //players: IPlayer[] = [
-
-        // { name: "rivy33", color: "dodgerblue", bank: 16n, onTable: 65n, hasCards: false, tableNumber: this.tableNumber, tableSeatNumber : 1 },
-        // { name: "kattar", color: "cyan", bank: 80n, onTable: 0n, hasCards: false, tableNumber: this.tableNumber, tableSeatNumber : 2 },
-        // { name: "mikelaire", color: "lightcoral", bank: 77n, onTable: 0n, hasCards: false, tableNumber: this.tableNumber, tableSeatNumber : 3 },
-        // { name: "tomtom", color: "crimson", bank: 250n, onTable: 0n, hasCards: false, tableNumber: this.tableNumber, tableSeatNumber : 4 },
-        // { name: "nana", color: "#444", bank: 45n, onTable: 0n, hasCards: false, tableNumber: this.tableNumber, tableSeatNumber : 5 },
-        // { name: "ionion", color: "forestgreen", bank: 125n, onTable: 0n, hasCards: false, tableNumber: this.tableNumber, tableSeatNumber : 6 },
-        // { name: "link6996", color: "goldenrod", bank: 13n, onTable: 0n, hasCards: false, tableNumber: this.tableNumber, tableSeatNumber : 7 },
-        // { name: "gossboganon", color: "gold", bank: 6n, onTable: 0n, hasCards: false, tableNumber: this.tableNumber, tableSeatNumber : 8 },
-    //];
-
     figures = ["S", "H", "C", "D"];
     values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+
+  private toPlayers(tableSeats: ITableSeat[]) : IPlayer[] {
+    const players : IPlayer[] = [];
+    for(let index=0;index<tableSeats.length;index++) {
+      const tableSeat=tableSeats[index];
+      const player: IPlayer={
+        tableNumber: this.tableInfo.number, tableSeatNumber: tableSeat.number,
+        name: tableSeat.agentID, color: toColor(tableSeat.number),
+        bank: tableSeat.chipCount, onTable: 0n,
+        hasCards: false,
+      };
+      players.push(player);
+    }
+
+    Log(LogTag.SmartContract, `Loaded ${tableSeats.length} players. ${JSON.stringify(players)}`);
+    return players;
+  }
 
     get cards(): ICard[] {
         let all: ICard[] = [];
