@@ -17,12 +17,14 @@ const doodleHandlers = new Map<string, (evt: DoodleEvents, msg: string[]) => voi
 ]);
 
 export class DoodleEvents implements wasmclient.IEventHandler {
+    /* eslint-disable @typescript-eslint/no-empty-function */
     gameEnded: (evt: EventGameEnded) => void = () => {};
     gameStarted: (evt: EventGameStarted) => void = () => {};
     playerJoinsNextBigBlind: (evt: EventPlayerJoinsNextBigBlind) => void = () => {};
     playerJoinsNextHand: (evt: EventPlayerJoinsNextHand) => void = () => {};
     playerLeft: (evt: EventPlayerLeft) => void = () => {};
     playerWinsAllPots: (evt: EventPlayerWinsAllPots) => void = () => {};
+    /* eslint-enable @typescript-eslint/no-empty-function */
 
     public callHandler(topic: string, params: string[]): void {
         const handler = doodleHandlers.get(topic);
