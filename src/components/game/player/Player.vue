@@ -52,8 +52,7 @@ export default class Player extends Vue {
 
         eventsHandler.onDoodlePlayerWinsAllPots((event: EventPlayerWinsAllPots) => {
             if (event.tableNumber != this.player.tableNumber || event.tableSeatNumber != this.player.tableSeatNumber) return;
-            Log(LogTag.SmartContract, `Event: PlayerWinsAllPots -> Table ${event.tableNumber} TableSeatNumber ${event.tableSeatNumber} TotalPotSize ${event.totalPotSize}`
-            );
+            Log(LogTag.SmartContract, `Event: PlayerWinsAllPots -> Table ${event.tableNumber} TableSeatNumber ${event.tableSeatNumber} TotalPotSize ${event.totalPotSize}`);
         });
 
         this.doodle.registerEvents(eventsHandler);
