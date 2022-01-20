@@ -9,10 +9,10 @@ export interface IConfiguration {
 
 export class Configuration implements IConfiguration {
     seed: Buffer | null = null;
-    waspWebSocketUrl: string = "";
-    waspApiUrl: string = "";
-    goShimmerApiUrl: string = "";
-    chainId: string = "";
+    waspWebSocketUrl = "";
+    waspApiUrl = "";
+    goShimmerApiUrl = "";
+    chainId = "";
 
     constructor(configuration: IConfiguration) {
         if (!configuration) throw new Error("Configuration not defined");

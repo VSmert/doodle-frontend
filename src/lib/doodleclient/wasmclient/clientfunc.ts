@@ -7,7 +7,7 @@ import { IKeyPair } from "./crypto";
 export class ClientFunc {
     protected svc: wasmclient.Service;
     private keyPair: IKeyPair | null = null;
-    private onLedger: boolean = false;
+    private onLedger = false;
     private xfer: wasmclient.Transfer = new wasmclient.Transfer();
 
     constructor(svc: wasmclient.Service) {
