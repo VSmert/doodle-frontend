@@ -41,7 +41,7 @@ export default class Table extends Vue {
 
     tableInfo! : ITableInfo;
     players : IPlayer[] = [];
-    player_playing : number = 3;
+    player_playing = 3;
 
     mounted(): void {
         console.log(`Table #${this.tableNumber}`);

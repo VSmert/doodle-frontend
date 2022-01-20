@@ -12,7 +12,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 @Component
 export default class Button extends Vue {
     @Prop({ default : true}) isPressable!: boolean;
-    isPressed: boolean = false;
+    isPressed = false;
 
     setPressed(): void {
         if (this.isPressable) {
