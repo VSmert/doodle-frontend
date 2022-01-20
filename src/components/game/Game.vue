@@ -87,7 +87,7 @@ export default class Game extends Vue {
         this.userData.l1Balance = await this.requestL1Funds();
         this.logL1Balance();
 
-        this.userData.l2Balance = await this.depositInL2(1000n);
+        this.userData.l2Balance = await this.depositInL2(1201n);
 
         this.logL1Balance();
         this.logL2Balance();
