@@ -63,22 +63,22 @@ export default class Table extends Vue {
     figures = ["S", "H", "C", "D"];
     values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 
-  private registerEvents() {
-    const eventsHandler = new DoodleEvents();
+    private registerEvents() {
+        const eventsHandler = new DoodleEvents();
 
-    eventsHandler.onDoodleGameStarted((event: EventGameStarted) => {
-      if(event.tableNumber != this.tableNumber) return;
-      Log(LogTag.SmartContract, `Event: EventGameStarted -> Table ${event.tableNumber} paidBigBlindTableSeatNumber ${event.paidBigBlindTableSeatNumber} paidSmallBlindTableSeatNumber ${event.paidSmallBlindTableSeatNumber}`);
-    });
+        eventsHandler.onDoodleGameStarted((event: EventGameStarted) => {
+            if(event.tableNumber != this.tableNumber) return;
+            Log(LogTag.SmartContract, `Event: EventGameStarted -> Table ${event.tableNumber} paidBigBlindTableSeatNumber ${event.paidBigBlindTableSeatNumber} paidSmallBlindTableSeatNumber ${event.paidSmallBlindTableSeatNumber}`);
+        });
 
-    eventsHandler.onDoodleGameEnded((event: EventGameEnded) => {
-      if(event.tableNumber != this.tableNumber) return;
-      Log(LogTag.SmartContract, `Event: EventGameEnded -> Table ${event.tableNumber}`);
-    });
+        eventsHandler.onDoodleGameEnded((event: EventGameEnded) => {
+            if(event.tableNumber != this.tableNumber) return;
+            Log(LogTag.SmartContract, `Event: EventGameEnded -> Table ${event.tableNumber}`);
+        });
 
-    Log(LogTag.Site, `Registered events for table ${this.tableNumber}`);
-    this.doodle.registerEvents(eventsHandler);
-  }
+        Log(LogTag.Site, `Registered events for table ${this.tableNumber}`);
+        this.doodle.registerEvents(eventsHandler);
+    }
 
     private toPlayers(tableSeats: ITableSeat[]) : IPlayer[] {
     const players : IPlayer[] = [];
