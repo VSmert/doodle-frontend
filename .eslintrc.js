@@ -16,4 +16,5 @@ module.exports = {
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/ban-ts-comment": "off",
     },
+    ignorePatterns : ["src/lib/doodleclient/wasmclient/core*/*", "src/lib/doodleclient/wasmclient/buffer/*"]
 };
