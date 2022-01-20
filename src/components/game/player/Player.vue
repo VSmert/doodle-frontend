@@ -34,7 +34,7 @@ export default class Player extends Vue {
     }
 
     private registerEvents() {
-        let eventsHandler = new DoodleEvents();
+        const eventsHandler = new DoodleEvents();
         eventsHandler.onDoodlePlayerJoinsNextHand((event: EventPlayerJoinsNextHand) => {
             if (event.tableNumber != this.player.tableNumber || event.tableSeatNumber != this.player.tableSeatNumber) return;
             Log(LogTag.SmartContract, `Event: EventPlayerJoinsNextHand -> Table ${event.tableNumber} Seat ${event.tableSeatNumber} Chip count: ${event.playersInitialChipCount}`);
