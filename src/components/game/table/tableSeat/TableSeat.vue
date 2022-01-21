@@ -36,8 +36,6 @@ export default class Table extends Vue {
     async onDoodleChange(initialized : boolean) {
         if(!initialized) return;
 
-        Log(LogTag.SmartContract, `Table seat ${this.tableSeat.number} ${JSON.stringify(this.tableSeat)}`);
-
         await this.updateTableSeat();
 
         this.setEvents();
