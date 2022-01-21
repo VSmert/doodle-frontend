@@ -11,6 +11,7 @@ import * as keyPairGenerator from "./utils/key_pair/key_pair_generator";
 import configJson from "./config.dev.json";
 import { Base58, getAgentId } from "./wasmclient/crypto";
 import { ITableInfo, ITableSeat } from "./response_interfaces";
+import { range } from "./utils/misc";
 
 export class Doodle {
     private doodleService: service.DoodleService | undefined;
@@ -121,45 +122,49 @@ export class Doodle {
 
     public async getTableSeats(tableInfo: ITableInfo, tableSeatNumbers?: number[]): Promise<ITableSeat[]> {
         try {
-            Log(LogTag.SmartContract, `Getting seat infos for table ${tableInfo.number}`);
-
             const getTableSeatView = this.doodleService!.getTableSeat();
             getTableSeatView.tableNumber(tableInfo.number);
 
             const tableSeats: ITableSeat[] = [];
 
             if (!tableSeatNumbers || tableSeatNumbers.length == 0) {
-                for (let tableSeatNumber = 1; tableSeatNumber <= tableInfo.size; tableSeatNumber++) {
-                    getTableSeatView.tableSeatNumber(tableSeatNumber);
-                    const getTableSeatResult = await getTableSeatView.call();
-                    const agentID = getTableSeatResult.agentId();
-                    const tableSeat: ITableSeat = {
-                        number: tableSeatNumber,
-                        agentID: agentID,
-                        chipCount: getTableSeatResult.chipCount(),
-                        isInHand: getTableSeatResult.isInHand(),
-                        joiningNextHand: getTableSeatResult.joiningNextHand(),
-                        joiningNextBigBlind: getTableSeatResult.joiningNextBigBlind(),
-                    };
-                    tableSeats.push(tableSeat);
-                }
+                const tableSeatNumbers: number[] = range(1, tableInfo.size);
+                await Promise.all(
+                    tableSeatNumbers.map(async (tableSeatNumber) => {
+                        Log(LogTag.SmartContract, `Getting seat infos for table ${tableInfo.number} table seat ${tableSeatNumber}`);
+                        getTableSeatView.tableSeatNumber(tableSeatNumber);
+                        const getTableSeatResult = await getTableSeatView.call();
+                        const agentID = getTableSeatResult.agentId();
+                        const tableSeat: ITableSeat = {
+                            number: tableSeatNumber,
+                            agentID: agentID,
+                            chipCount: getTableSeatResult.chipCount(),
+                            isInHand: getTableSeatResult.isInHand(),
+                            joiningNextHand: getTableSeatResult.joiningNextHand(),
+                            joiningNextBigBlind: getTableSeatResult.joiningNextBigBlind(),
+                        };
+                        tableSeats.push(tableSeat);
+                    })
+                );
             } else {
-                tableSeatNumbers.forEach(async (tableSeatNumber) => {
-                    getTableSeatView.tableSeatNumber(tableSeatNumber);
-                    const getTableSeatResult = await getTableSeatView.call();
-                    const agentID = getTableSeatResult.agentId();
-                    const tableSeat: ITableSeat = {
-                        number: tableSeatNumber,
-                        agentID: agentID,
-                        chipCount: getTableSeatResult.chipCount(),
-                        isInHand: getTableSeatResult.isInHand(),
-                        joiningNextHand: getTableSeatResult.joiningNextHand(),
-                        joiningNextBigBlind: getTableSeatResult.joiningNextBigBlind(),
-                    };
-                    tableSeats.push(tableSeat);
-                });
+                await Promise.all(
+                    tableSeatNumbers.map(async (tableSeatNumber) => {
+                        Log(LogTag.SmartContract, `Getting seat infos for table ${tableInfo.number} table seat ${tableSeatNumber}`);
+                        getTableSeatView.tableSeatNumber(tableSeatNumber);
+                        const getTableSeatResult = await getTableSeatView.call();
+                        const agentID = getTableSeatResult.agentId();
+                        const tableSeat: ITableSeat = {
+                            number: tableSeatNumber,
+                            agentID: agentID,
+                            chipCount: getTableSeatResult.chipCount(),
+                            isInHand: getTableSeatResult.isInHand(),
+                            joiningNextHand: getTableSeatResult.joiningNextHand(),
+                            joiningNextBigBlind: getTableSeatResult.joiningNextBigBlind(),
+                        };
+                        tableSeats.push(tableSeat);
+                    })
+                );
             }
-
             return tableSeats;
         } catch (ex: unknown) {
             const error = ex as Error;
