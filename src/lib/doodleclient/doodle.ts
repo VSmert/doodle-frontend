@@ -122,7 +122,6 @@ export class Doodle {
     public async getTableSeats(tableInfo: ITableInfo, tableSeatNumbers?: number[]): Promise<ITableSeat[]> {
         try {
             Log(LogTag.SmartContract, `Getting seat infos for table ${tableInfo.number}`);
-            const emptyAgentID = "1111111111111111111111111111111111111";
 
             const getTableSeatView = this.doodleService!.getTableSeat();
             getTableSeatView.tableNumber(tableInfo.number);
@@ -134,8 +133,6 @@ export class Doodle {
                     getTableSeatView.tableSeatNumber(tableSeatNumber);
                     const getTableSeatResult = await getTableSeatView.call();
                     const agentID = getTableSeatResult.agentId();
-                    if (agentID == emptyAgentID) continue;
-
                     const tableSeat: ITableSeat = {
                         number: tableSeatNumber,
                         agentID: agentID,
@@ -151,17 +148,15 @@ export class Doodle {
                     getTableSeatView.tableSeatNumber(tableSeatNumber);
                     const getTableSeatResult = await getTableSeatView.call();
                     const agentID = getTableSeatResult.agentId();
-                    if (agentID != emptyAgentID) {
-                        const tableSeat: ITableSeat = {
-                            number: tableSeatNumber,
-                            agentID: agentID,
-                            chipCount: getTableSeatResult.chipCount(),
-                            isInHand: getTableSeatResult.isInHand(),
-                            joiningNextHand: getTableSeatResult.joiningNextHand(),
-                            joiningNextBigBlind: getTableSeatResult.joiningNextBigBlind(),
-                        };
-                        tableSeats.push(tableSeat);
-                    }
+                    const tableSeat: ITableSeat = {
+                        number: tableSeatNumber,
+                        agentID: agentID,
+                        chipCount: getTableSeatResult.chipCount(),
+                        isInHand: getTableSeatResult.isInHand(),
+                        joiningNextHand: getTableSeatResult.joiningNextHand(),
+                        joiningNextBigBlind: getTableSeatResult.joiningNextBigBlind(),
+                    };
+                    tableSeats.push(tableSeat);
                 });
             }
 
