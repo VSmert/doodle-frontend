@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <Game @contextmenu.prevent />
+        <Game @contextmenu.native="(e) => { e.preventDefault(); }"/>
     </div>
 </template>
 
