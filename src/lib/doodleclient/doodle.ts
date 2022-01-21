@@ -120,6 +120,20 @@ export class Doodle {
         }
     }
 
+    public async getTableCount(): Promise<number> {
+        try {
+            Log(LogTag.SmartContract, `Getting table count`);
+            const getTableCountView = this.doodleService!.getTableCount();
+            const getTableCountResults = await getTableCountView.call();
+            const tableCount = getTableCountResults.tableCount();
+            return tableCount;
+        } catch (ex: unknown) {
+            const error = ex as Error;
+            Log(LogTag.Error, error.message);
+            throw ex;
+        }
+    }
+
     public async getTableSeats(tableInfo: ITableInfo, tableSeatNumbers?: number[]): Promise<ITableSeat[]> {
         try {
             const getTableSeatView = this.doodleService!.getTableSeat();
