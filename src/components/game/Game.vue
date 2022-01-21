@@ -38,11 +38,11 @@ import Button from "./buttons/Button.vue";
     },
 })
 export default class Game extends Vue {
-    private userData: UserData = new UserData("", "", "");
-    private currentTableNumber = 5;
+    userData: UserData = new UserData("", "", "");
+    currentTableNumber = 1;
 
-    private requestingFunds = false;
-    private doodle: Doodle = new Doodle();
+    requestingFunds = false;
+    doodle: Doodle = new Doodle();
 
     mounted(){
         this.doodle = new Doodle();
@@ -51,7 +51,10 @@ export default class Game extends Vue {
     @Watch("doodle")
     async onDoodleChange(doodle : Doodle) {
         if(!doodle.initialized)
+        {
             await this.loadUserKeyPairAndAddress(doodle);
+            this.currentTableNumber = await doodle.getTableCount();
+        }
     }
 
     private async loadUserKeyPairAndAddress(doodle : Doodle): Promise<void> {
