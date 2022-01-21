@@ -3,15 +3,9 @@
         <div class="card-place">
             <Card v-for="(card, index) in five_cards" :key="index" :card="card" />
         </div>
-        <div class="players">
-            <Player
-                v-for="player in players"
-                :key="player.tableSeatNumber"
-                class="player"
-                :class="['player-' + (player.tableSeatNumber), { playing: player_playing === player.tableSeatNumber }]"
-                :player="player"
-                :doodle="doodle"
-            />
+        <div class="table-seats">
+            <TableSeat v-for="tableSeat in tableSeats" :key="tableSeat.Number"
+            :doodle="doodle" :tableNumber="tableNumber" :tableSeat="tableSeat"/>
         </div>
     </div>
 </template>
@@ -21,18 +15,16 @@ import { Component, Prop, Watch, Vue } from "vue-property-decorator";
 
 import ICard from "@/components/models/ICard";
 import Card from "@/components/game/card/Card.vue";
-import Player from "@/components/game/player/Player.vue";
+import TableSeat from "@/components/game/table/tableSeat/TableSeat.vue";
 import { Doodle, DoodleEvents, EventGameEnded, EventGameStarted } from "@/lib/doodleclient";
 
-import { IPlayer } from "@/components/models/player";
 import { ITableInfo, ITableSeat } from "@/lib/doodleclient/response_interfaces";
-import { toColor } from "./seat_colors";
 import { Log, LogTag } from "@/lib/doodleclient/utils/logger";
 
 @Component({
     components: {
         Card,
-        Player,
+        TableSeat,
     },
 })
 export default class Table extends Vue {
@@ -40,7 +32,8 @@ export default class Table extends Vue {
     @Prop() doodle!: Doodle;
 
     tableInfo! : ITableInfo;
-    players : IPlayer[] = [];
+    tableSeats : ITableSeat[] = [];
+
     player_playing = 3;
 
     mounted(): void {
@@ -54,8 +47,7 @@ export default class Table extends Vue {
         this.tableInfo = await this.doodle.getTableInfo(this.tableNumber);
         Log(LogTag.SmartContract, "Table info: " + JSON.stringify(this.tableInfo));
 
-        const tableSeats = await this.doodle.getTableSeats(this.tableInfo);
-        this.players = this.toPlayers(tableSeats);
+        this.tableSeats = await this.doodle.getTableSeats(this.tableInfo);
 
         this.registerEvents();
     }
@@ -78,23 +70,6 @@ export default class Table extends Vue {
 
         Log(LogTag.Site, `Registered events for table ${this.tableNumber}`);
         this.doodle.registerEvents(eventsHandler);
-    }
-
-    private toPlayers(tableSeats: ITableSeat[]) : IPlayer[] {
-        const players : IPlayer[] = [];
-        for(let index = 0; index < tableSeats.length; index++) {
-            const tableSeat=tableSeats[index];
-            const player: IPlayer={
-            tableNumber: this.tableInfo.number, tableSeatNumber: tableSeat.number,
-            name: tableSeat.agentID, color: toColor(tableSeat.number),
-            bank: tableSeat.chipCount, onTable: 0n,
-            hasCards: false,
-        };
-        players.push(player);
-    }
-
-    Log(LogTag.SmartContract, `Loaded ${tableSeats.length} players. ${JSON.stringify(players)}`);
-    return players;
     }
 
     get cards(): ICard[] {

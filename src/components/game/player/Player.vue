@@ -61,7 +61,3 @@ export default class Player extends Vue {
     }
 }
 </script>
-
-<style lang="less">
-@import "player.less";
-</style>

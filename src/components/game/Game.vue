@@ -39,7 +39,7 @@ import Button from "./buttons/Button.vue";
 })
 export default class Game extends Vue {
     private userData: UserData = new UserData("", "", "");
-    private currentTableNumber = 1;
+    private currentTableNumber = 5;
 
     private requestingFunds = false;
     private doodle: Doodle = new Doodle();
