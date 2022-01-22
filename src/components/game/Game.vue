@@ -1,18 +1,19 @@
 <template>
-    <div class="bg">
-        <div id="game">
+    <div v-if="doodle.initialized" class="bg">
+        <div v-if="currentTableNumber > 0" id="game">
             <Table :tableNumber="currentTableNumber" :doodle="doodle" />
             <ButtonGroup class="left">
                 <Button class="purple" :isPressable="!requestingFunds && userData.l2Balance == 0" @button-pressed="requestFunds">
                     <div v-if="requestingFunds">Requesting...</div>
+                    <div v-else-if="userData.l2Balance == -1">Loading...</div>
                     <div v-else-if="userData.l2Balance == 0">Request play IOTA</div>
                     <div v-else>L2 Balance: {{ userData.l2Balance }} IOTA</div>
                 </Button>
             </ButtonGroup>
-            <ButtonGroup class="right">
-                <Button class="red" @button-pressed="leaveTable">Leave table</Button>
-                <Button class="green" @button-pressed="joinNextHand">Join next hand</Button>
-                <Button class="green" @button-pressed="joinNextBigBlind">Join next big blind</Button>
+            <ButtonGroup v-if="userData.l2Balance > 0" class="right">
+                <Button class="red" :isPressable="!requestingFunds" @button-pressed="leaveTable">Leave table</Button>
+                <Button class="green" :isPressable="!requestingFunds" @button-pressed="joinNextHand">Join next hand</Button>
+                <Button class="green" :isPressable="!requestingFunds" @button-pressed="joinNextBigBlind">Join next big blind</Button>
             </ButtonGroup>
         </div>
     </div>
@@ -39,7 +40,7 @@ import Button from "./buttons/Button.vue";
 })
 export default class Game extends Vue {
     userData: UserData = new UserData("", "", "");
-    currentTableNumber = 1;
+    currentTableNumber = 0;
 
     requestingFunds = false;
     doodle: Doodle = new Doodle();
@@ -213,8 +214,8 @@ class UserData {
     privateKey: string;
     publicKey: string;
     address: string;
-    l1Balance = 0n;
-    l2Balance = 0n;
+    l1Balance = -1n;
+    l2Balance = -1n;
     chainBalance = 0n;
 
     constructor(privateKey: string, publicKey: string, address: string) {
