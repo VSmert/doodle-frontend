@@ -145,7 +145,6 @@ export class Doodle {
                 const tableSeatNumbers: number[] = range(1, tableInfo.size);
                 await Promise.all(
                     tableSeatNumbers.map(async (tableSeatNumber) => {
-                        Log(LogTag.SmartContract, `Getting seat infos for table ${tableInfo.number} table seat ${tableSeatNumber}`);
                         getTableSeatView.tableSeatNumber(tableSeatNumber);
                         const getTableSeatResult = await getTableSeatView.call();
                         const agentID = getTableSeatResult.agentId();
@@ -163,7 +162,6 @@ export class Doodle {
             } else {
                 await Promise.all(
                     tableSeatNumbers.map(async (tableSeatNumber) => {
-                        Log(LogTag.SmartContract, `Getting seat infos for table ${tableInfo.number} table seat ${tableSeatNumber}`);
                         getTableSeatView.tableSeatNumber(tableSeatNumber);
                         const getTableSeatResult = await getTableSeatView.call();
                         const agentID = getTableSeatResult.agentId();

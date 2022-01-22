@@ -61,7 +61,7 @@ export default class Table extends Vue {
                                   bank: tableSeat.chipCount, onTable: 0n,
                                   hasCards: false};
 
-        Log(LogTag.SmartContract, `Table seat ${this.tableSeat.number}: Player ${JSON.stringify(player)}`);
+        Log(LogTag.SmartContract, `Table seat ${JSON.stringify(this.tableSeat)} -> Player ${JSON.stringify(player)}`);
         return player;
     }
 
@@ -90,7 +90,6 @@ export default class Table extends Vue {
 
     private registerEvents() {
         this.doodle.registerEvents(this.eventsHandler);
-        Log(LogTag.Site, `Registered events for table seat ${this.tableSeat.number} in table ${this.tableInfo.number}`);
     }
 }
 </script>

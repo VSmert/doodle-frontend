@@ -45,7 +45,6 @@ export default class Player extends Vue {
 
     private registerEvents() {
         this.doodle.registerEvents(this.eventsHandler);
-        Log(LogTag.Site, `Registered events for player ${this.player.tableSeatNumber} in table ${this.player.tableNumber}`);
     }
 }
 </script>

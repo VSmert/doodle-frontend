@@ -36,10 +36,6 @@ export default class Table extends Vue {
 
     eventsHandler = new DoodleEvents();
 
-    mounted(): void {
-        console.log(`Table #${this.tableNumber}`);
-    }
-
     @Watch("doodle.initialized", { immediate: true})
     async onDoodleChange(initialized : boolean) {
         if(!initialized) return;
