@@ -9,6 +9,7 @@ import * as wasmclient from "./wasmclient";
 import * as events from "./events";
 
 const ArgPotNumber = "potNumber";
+const ArgPublicKey = "publicKey";
 const ArgTableNumber = "tableNumber";
 const ArgTableSeatNumber = "tableSeatNumber";
 
@@ -38,6 +39,10 @@ export class InitFunc extends wasmclient.ClientFunc {
 export class JoinNextBigBlindFunc extends wasmclient.ClientFunc {
     private args: wasmclient.Arguments = new wasmclient.Arguments();
 
+    public publicKey(v: string): void {
+        this.args.set(ArgPublicKey, this.args.fromString(v));
+    }
+
     public tableNumber(v: wasmclient.Uint32): void {
         this.args.set(ArgTableNumber, this.args.fromUint32(v));
     }
@@ -47,6 +52,7 @@ export class JoinNextBigBlindFunc extends wasmclient.ClientFunc {
     }
 
     public async post(): Promise<wasmclient.RequestID> {
+        this.args.mandatory(ArgPublicKey);
         return await super.post(0x806a30f9, this.args);
     }
 }
@@ -56,6 +62,10 @@ export class JoinNextBigBlindFunc extends wasmclient.ClientFunc {
 export class JoinNextHandFunc extends wasmclient.ClientFunc {
     private args: wasmclient.Arguments = new wasmclient.Arguments();
 
+    public publicKey(v: string): void {
+        this.args.set(ArgPublicKey, this.args.fromString(v));
+    }
+
     public tableNumber(v: wasmclient.Uint32): void {
         this.args.set(ArgTableNumber, this.args.fromUint32(v));
     }
@@ -65,6 +75,7 @@ export class JoinNextHandFunc extends wasmclient.ClientFunc {
     }
 
     public async post(): Promise<wasmclient.RequestID> {
+        this.args.mandatory(ArgPublicKey);
         return await super.post(0x1bdf6468, this.args);
     }
 }

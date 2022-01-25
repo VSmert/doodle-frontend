@@ -185,7 +185,7 @@ export class Doodle {
         }
     }
 
-    public async joinNextHand(tableNumber: number, tableSeatNumber: number, initialChipCount: bigint): Promise<boolean> {
+    public async joinNextHand(publicKey: string, tableNumber: number, tableSeatNumber: number, initialChipCount: bigint): Promise<boolean> {
         if (initialChipCount <= 0) return false;
 
         try {
@@ -197,6 +197,7 @@ export class Doodle {
 
             if (tableNumber > 0) joinNextHandFunc.tableNumber(tableNumber);
             if (tableSeatNumber > 0) joinNextHandFunc.tableSeatNumber(tableSeatNumber);
+            joinNextHandFunc.publicKey(publicKey);
 
             joinNextHandFunc.transfer(Transfer.iotas(initialChipCount));
             joinNextHandFunc.sign(this.doodleService!.keyPair!);
@@ -210,7 +211,7 @@ export class Doodle {
         }
     }
 
-    public async joinNextBigBlind(tableNumber: number, tableSeatNumber: number, initialChipCount: bigint): Promise<boolean> {
+    public async joinNextBigBlind(publicKey: string, tableNumber: number, tableSeatNumber: number, initialChipCount: bigint): Promise<boolean> {
         if (initialChipCount <= 0) return false;
 
         try {
@@ -222,6 +223,7 @@ export class Doodle {
 
             if (tableNumber > 0) joinNextBigBlindFunc.tableNumber(tableNumber);
             if (tableSeatNumber > 0) joinNextBigBlindFunc.tableSeatNumber(tableSeatNumber);
+            joinNextBigBlindFunc.publicKey(publicKey);
 
             joinNextBigBlindFunc.transfer(Transfer.iotas(initialChipCount));
             joinNextBigBlindFunc.sign(this.doodleService!.keyPair!);

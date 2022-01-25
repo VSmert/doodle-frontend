@@ -183,7 +183,7 @@ export default class Game extends Vue {
 
     async joinNextHand(): Promise<void> {
         // TODO: Pass table and table seat number
-        const success = await this.doodle.joinNextHand(this.currentTableNumber, 1, 400n);
+        const success = await this.doodle.joinNextHand(this.userData.publicKey, this.currentTableNumber, 1, 400n);
         if (success) {
             await miscUtils.delay(4000);
             await this.updateL2Balance();
@@ -192,7 +192,7 @@ export default class Game extends Vue {
     }
     async joinNextBigBlind(): Promise<void> {
         // TODO: Pass table and table seat number
-        const success = await this.doodle.joinNextBigBlind(this.currentTableNumber, 1, 400n);
+        const success = await this.doodle.joinNextBigBlind(this.userData.publicKey, this.currentTableNumber, 1, 400n);
         if (success) {
             await miscUtils.delay(4000);
             await this.updateL2Balance();
